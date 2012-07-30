@@ -13,4 +13,4 @@ class Simulator(object):
                     self.aircraft_list.remove(plane)
             else:
                 continue
-            break
+            #break
