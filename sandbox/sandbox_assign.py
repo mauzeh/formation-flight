@@ -57,13 +57,19 @@ class Group:
 
         # first do the intervals whose lower bound falls in the main interval
         for interval in self.intervals:
-            slack.start = max(slack.start, interval.start)
+            print interval
+            if interval.start > slack.start:
+                slack.start = max(slack.start, interval.start)
+                print slack
 
         # first do the intervals whose upper bound falls in the main interval
         for interval in self.intervals:
-            slack.end = min(slack.end, interval.end)
+            print interval
+            if interval.end < slack.end:
+                slack.end = min(slack.end, interval.end)
+                print slack
 
-        #assert slack.start < slack.end, 'Invalid slack: start should be lower than end'
+        assert slack.start <= slack.end, 'Invalid slack: start should be lower than end'
 
         return slack
 
