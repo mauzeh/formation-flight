@@ -1,11 +1,13 @@
 from formation_flight.aircraft import Aircraft
+from formation_flight.formation import Assigner
 from formation_flight.simulator import Simulator
 from formation_flight.waypoint import Waypoint
-from lib.events import EventHandler
+#from lib.events import EventHandler
 
 if __name__ == '__main__':
 
-    handler = EventHandler()
+#    handler = EventHandler()
+    assigner = Assigner()
 
     sim = Simulator()
     sim.time = range(0, 60*60*18, 60)
@@ -15,14 +17,14 @@ if __name__ == '__main__':
     aircraft1.waypoints = [Waypoint('CDG'),
                            Waypoint('AMS'),
                            Waypoint('JFK')]
-    sim.aircraft_list.append(aircraft1)
+    sim.aircraft.append(aircraft1)
 
     aircraft2 = Aircraft("LH23 744")
     aircraft2.departure_time = 60*60
     aircraft2.waypoints = [Waypoint('FRA'),
                            Waypoint('AMS'),
                            Waypoint('ORD')]
-    sim.aircraft_list.append(aircraft2)
+    sim.aircraft.append(aircraft2)
 
     sim.execute()
 

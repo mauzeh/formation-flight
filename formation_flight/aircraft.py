@@ -1,7 +1,7 @@
 from .point import *
 from pydispatch import dispatcher
 
-class Aircraft:
+class Aircraft(object):
 
     """
     Represents an aircraft.
