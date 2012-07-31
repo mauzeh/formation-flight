@@ -57,17 +57,13 @@ class Group:
 
         # first do the intervals whose lower bound falls in the main interval
         for interval in self.intervals:
-            print interval
             if interval.start > slack.start:
                 slack.start = max(slack.start, interval.start)
-                print slack
 
         # first do the intervals whose upper bound falls in the main interval
         for interval in self.intervals:
-            print interval
             if interval.end < slack.end:
                 slack.end = min(slack.end, interval.end)
-                print slack
 
         assert slack.start <= slack.end, 'Invalid slack: start should be lower than end'
 
@@ -79,12 +75,7 @@ class Group:
 
 def generate_sets(intervals, sets):
 
-    print 'Received intervals: %s' % intervals
-    print 'Received sets: %s' % sets
-
     for interval in intervals:
-
-        print 'working on interval %s'%interval
 
         for set in sets:
 
@@ -96,7 +87,6 @@ def generate_sets(intervals, sets):
             slack = copy_set.get_slack()
 
             if interval.is_within(slack):
-                print 'Yes, we can add %s to set %s' % (interval, set)
                 copy_set.intervals.append(interval)
                 sets.append(copy_set)
     return sets
@@ -117,12 +107,12 @@ if __name__ == '__main__':
 
     # Filter out any intervals that do not overlap at all
     for other_interval in intervals:
+        # lower bound match
         if (other_interval.start >= interval.start) & (other_interval.start <= interval.end):
-            print 'lower bound match: %s fits within %s' % (other_interval, interval)
             candidates_by_start.append(other_interval)
             continue
+        # upper bound match
         if (other_interval.end <= interval.end) & (other_interval.end >= interval.start):
-            print 'upper bound match: %s fits within %s' % (other_interval, interval)
             candidates_by_end.append(other_interval)
             continue
 
