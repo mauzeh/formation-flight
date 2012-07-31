@@ -1,13 +1,7 @@
-This is the first version of a simulation framework
-for the application of formation flight in commercial
-aviation. The simulation framework is written in Python.
+This is the first version of a simulation framework for the application of formation flight in commercial aviation. The simulation framework is written in Python.
 
-It is part of a Msc thesis project at the faculty of
-Aerospace Engineering at Delft University of Technology.
+It is part of a Msc thesis project at the faculty of Aerospace Engineering at Delft University of Technology.
 
-Currently, this project is in its infantile stages and
-a lot is going to change.
+Currently, this project is in its infantile stages and a lot is going to change.
 
-It is also my first attempt at managing an open-source
-project. Please bear with me as I learn how to properly
-communicate and document the code.
+It is also my first attempt at managing an open-source project. Please bear with me as I learn how to properly communicate and document the code.
