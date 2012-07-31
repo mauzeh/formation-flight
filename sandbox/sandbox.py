@@ -1,11 +1,30 @@
+from formation_flight.aircraft import Aircraft
+from formation_flight.formation import Formation
+from formation_flight.waypoint import Waypoint
+
 if __name__ == '__main__':
 
-    object1 = object()
-    object2 = object()
-    my_list = [object1, object2]
+    point = Waypoint('AMS')
+    print point.distance_to(Waypoint('FRA'))
+    print point.distance_to(Waypoint('CDG'))
+    print point.distance_to(Waypoint('BRU'))
+    print point.distance_to(Waypoint('ZRH'))
 
-    print my_list
+    aircraft1 = Aircraft("AF")
+    aircraft1.speed = 1
+    aircraft1.departure_time = 0
+    aircraft1.waypoints = [Waypoint('CDG'),
+                           Waypoint('AMS'),
+                           Waypoint('JFK'),
+                           Waypoint('ORD')]
 
-    del object1
+    aircraft2 = Aircraft("LH")
+    aircraft2.departure_time = 0
+    aircraft2.waypoints = [Waypoint('FRA'),
+                           Waypoint('AMS'),
+                           Waypoint('JFK'),
+                           Waypoint('ORD')]
 
-    print my_list
+    formation = Formation()
+    formation.route = [Waypoint('AMS'), Waypoint('JFK')]
+    formation.start_time = 0

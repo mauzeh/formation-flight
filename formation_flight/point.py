@@ -6,7 +6,7 @@ class Earth(object):
 
     # 6371.00 in km, 3440.07 in NM
     # always make sure this is a float!!!
-    R = 6371.00
+    R = 3440.07
 
 class Point(object):
 
