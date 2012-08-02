@@ -1,6 +1,7 @@
 from pydispatch import dispatcher
 from formation_flight.aircraft import Aircraft
 from formation_flight.waypoint import Waypoint
+from lib.intervals import Interval, group
 
 class Formation(object):
     """Represents a group of aircraft flying together"""
@@ -31,33 +32,28 @@ class Assigner(object):
         # List of assigned formations (each containing assigned aircraft)
         self.formations = []
 
-        dispatcher.connect(self.add_to_queue, 'takeoff')
+        dispatcher.connect(self.assign, 'takeoff')
 
-    def add_to_queue(self, signal, sender, data = None, time = 0):
+    def assign(self, signal, sender, data = None, time = 0):
+        """Assign departing aircraft into pending or new formations."""
 
         assert type(sender) == Aircraft
         self.aircraft_queue.append(sender)
-        self.execute()
-
-    def execute(self):
-        """Assign aircraft in the queue into pending or new formations."""
 
         # @todo How to balance if we try to compose a new formation and/or add to existing?
 
-        pending_formations = []
-        for formation in self.formations:
-            if formation.status == 'pending':
-                pending_formations.append(formation)
+        # how much time the arrival at the virtual hub can be delayed/expedited
+        # @todo Move this to a central location
+        slack = 10
 
-        # Try to create a formation from the queuing aircraft
+        print 'current time: %s' % time
+
+        # Create formations from the queuing aircraft
+        intervals = []
         for aircraft in self.aircraft_queue:
-            pass
 
-        # Find a formation that fits the time window of the current aircraft
-        for aircraft in self.aircraft_queue:
-            for formation in pending_formations:
-                formation_start_point = formation.route[0]
-                print(formation_start_point)
+            # determine the ETA at the virtual hub
+            hub_eta = time + aircraft.time_to_current_waypoint()
+            intervals.append(Interval(aircraft.name, int(hub_eta - slack), int(hub_eta + slack)))
 
-
-        pass
+        print group(intervals)

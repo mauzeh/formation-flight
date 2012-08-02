@@ -10,21 +10,35 @@ if __name__ == '__main__':
     assigner = Assigner()
 
     sim = Simulator()
-    sim.time = range(0, 60*60*18, 60)
+    sim.time = range(0, 120, 1)
 
-    aircraft1 = Aircraft("AF65 330")
-    aircraft1.departure_time = 0
-    aircraft1.waypoints = [Waypoint('CDG'),
+    aircraft = Aircraft("AF65 330")
+    aircraft.departure_time = 0
+    aircraft.waypoints = [Waypoint('CDG'),
                            Waypoint('AMS'),
                            Waypoint('JFK')]
-    sim.aircraft.append(aircraft1)
+    sim.aircraft.append(aircraft)
 
-    aircraft2 = Aircraft("LH23 744")
-    aircraft2.departure_time = 60*60
-    aircraft2.waypoints = [Waypoint('FRA'),
+    aircraft = Aircraft("LH23 744")
+    aircraft.departure_time = 0
+    aircraft.waypoints = [Waypoint('FRA'),
                            Waypoint('AMS'),
                            Waypoint('ORD')]
-    sim.aircraft.append(aircraft2)
+    sim.aircraft.append(aircraft)
+
+    aircraft = Aircraft("SN23 744")
+    aircraft.departure_time = 0
+    aircraft.waypoints = [Waypoint('BRU'),
+                          Waypoint('AMS'),
+                          Waypoint('ORD')]
+    sim.aircraft.append(aircraft)
+
+    aircraft = Aircraft("LX23 744")
+    aircraft.departure_time = 90
+    aircraft.waypoints = [Waypoint('ZRH'),
+                          Waypoint('AMS'),
+                          Waypoint('ORD')]
+    sim.aircraft.append(aircraft)
 
     sim.execute()
 

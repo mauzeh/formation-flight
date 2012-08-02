@@ -16,10 +16,16 @@ class Aircraft(object):
         self.departure_time = 0
 
         # km/second
-        self.speed = .257222222
+        #self.speed = .257222222
 
         # km/hour
         #self.speed = 926
+
+        # kts (NM/h)
+        # self.speed = 500
+
+        # NM/minute
+        self.speed = 500/60
 
         self._airtime = 0
         self._current_position = None
@@ -31,8 +37,7 @@ class Aircraft(object):
         self._distance_flown = 0
         self._waiting = True
 
-
-    def get_position(self, time = 0):
+    def get_position(self, simtime = 0):
         """
         Calculates the position of the aircraft from its starting point.
 
@@ -44,7 +49,7 @@ class Aircraft(object):
 
         # the time that this aircraft has been in flight, from the scheduled
         # moment of departure
-        self._airtime = time - self.departure_time
+        self._airtime = simtime - self.departure_time
 
         # determine the total time spent flying all previous segments
         distance_of_previous_segments = 0
@@ -76,7 +81,7 @@ class Aircraft(object):
             dispatcher.send(
                 'waypoint-reached',
                 sender = self,
-                time = time,
+                time = simtime,
                 data = 'Waypoint "%s" reached' % self._current_waypoint.name
             )
 
@@ -86,7 +91,7 @@ class Aircraft(object):
                 dispatcher.send(
                     'destination-reached',
                     sender = self,
-                    time = time,
+                    time = simtime,
                     data = 'Destination "%s" reached' % self._current_waypoint.name
                 )
                 return 0
@@ -127,11 +132,16 @@ class Aircraft(object):
         if(self._waiting):
             dispatcher.send(
                 'takeoff',
-                time = time,
+                time = simtime,
                 sender = self,
                 data = self
             )
             self._waiting = False
+
+    def time_to_current_waypoint(self):
+        """Determine how much time is left before the current waypoint is reached"""
+        return self._current_position.distance_to(self.waypoints[1]) /\
+               self.speed
 
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
