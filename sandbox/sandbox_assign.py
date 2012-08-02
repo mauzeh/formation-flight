@@ -45,87 +45,93 @@ class Group:
             if interval == candidate: return True
         return False
 
-    def get_slack(self):
-        """
-        Return an interval containing the overlap of all member intervals.
-        """
-        # This is the main interval
-        first_interval = self.intervals[0]
-
-        # The biggest slack would equal the first interval
-        slack = Interval('Slack', first_interval.start, first_interval.end)
-
-        # first do the intervals whose lower bound falls in the main interval
-        for interval in self.intervals:
-            if interval.start > slack.start:
-                slack.start = max(slack.start, interval.start)
-
-        # first do the intervals whose upper bound falls in the main interval
-        for interval in self.intervals:
-            if interval.end < slack.end:
-                slack.end = min(slack.end, interval.end)
-
-        assert slack.start <= slack.end, 'Invalid slack: start should be lower than end'
-
-        return slack
-
+    def __len__(self):
+        return len(self.intervals)
 
     def __repr__(self):
-        return self.intervals.__repr__()
+        return self.intervals.__repr__() + '\n'
 
-def generate_sets(intervals, sets):
+def filter(intervals):
+    """Filter out any intervals that do not overlap with the first one in the list"""
 
-    for interval in intervals:
-
-        for set in sets:
-
-            # Skip if already contains
-            if(set.contains(interval)):
-                continue
-
-            copy_set = copy.deepcopy(set)
-            slack = copy_set.get_slack()
-
-            if interval.is_within(slack):
-                copy_set.intervals.append(interval)
-                sets.append(copy_set)
-    return sets
-
-if __name__ == '__main__':
-
-    intervals = []
-    intervals.append(Interval('A', 0, 4))
-    intervals.append(Interval('B', 1, 5))
-    intervals.append(Interval('C', 2, 6))
-    intervals.append(Interval('D', -1, 3))
-    intervals.append(Interval('E', -2, 1))
-    intervals.append(Interval('F', -2, 0))
-
-    interval = intervals[0]
+    test_interval = intervals[0]
     candidates_by_start = []
     candidates_by_end = []
 
-    # Filter out any intervals that do not overlap at all
-    for other_interval in intervals:
-        # lower bound match
-        if (other_interval.start >= interval.start) & (other_interval.start <= interval.end):
-            candidates_by_start.append(other_interval)
+    for interval in intervals:
+        # exact match: add to lower bound
+        if (interval.start == test_interval.start) & (interval.end == test_interval.end):
+            candidates_by_start.append(interval)
             continue
-        # upper bound match
-        if (other_interval.end <= interval.end) & (other_interval.end >= interval.start):
-            candidates_by_end.append(other_interval)
+            # lower bound match
+        if (interval.start > test_interval.start) & (interval.start < test_interval.end):
+            candidates_by_start.append(interval)
+            continue
+            # upper bound match
+        if (interval.end < test_interval.end) & (interval.end > test_interval.start):
+            candidates_by_end.append(interval)
             continue
 
-    candidates = Group()
-    candidates.intervals = sorted(candidates_by_start, key = lambda interval: interval.start) +\
-                           sorted(candidates_by_end,   key = lambda interval: interval.end, reverse = True)
+    return candidates_by_start + candidates_by_end
 
-    print 'candidates are %s' % candidates
+def group_intervals(intervals):
 
-    # Create sets of intervals where all intervals overlap each other as well, not just
-    # our primary interval
-    first_set = Group()
-    first_set.intervals.append(intervals[0])
+    grouped_intervals = []
 
-    print generate_sets(candidates.intervals, [first_set])
+    for i in range(0, len(intervals)):
 
+        candidates = copy.deepcopy(intervals)
+
+        # Put this interval at the beginning of the list
+        candidates.pop(i)
+        candidates.insert(0, intervals[i])
+
+        group = Group()
+
+        while len(candidates) > 0:
+            filtered_intervals = filter(candidates)
+            group.intervals.append(filtered_intervals)
+            candidates = list(set(candidates) - set(filtered_intervals))
+
+        grouped_intervals.append(group)
+
+    return grouped_intervals
+
+if __name__ == '__main__':
+
+#    print filter([
+#        Interval('G', 0, 2),
+#        Interval('A', 1, 3),
+#        Interval('B', 2, 4),
+#        Interval('C', 1, 3),
+#        Interval('D', 3, 5),
+#        Interval('E', 4, 6),
+#        Interval('F', 2, 4),
+#    ])
+#
+#    print filter([
+#        Interval('B', 2, 4),
+#        Interval('D', 3, 5),
+#        Interval('E', 4, 6),
+#        Interval('F', 2, 4),
+#    ])
+
+    print group_intervals([
+       Interval('A', 1, 3),
+       Interval('B', 2, 4),
+       Interval('C', 1, 3),
+       Interval('D', 3, 5),
+       Interval('E', 4, 6),
+       Interval('F', 2, 4),
+       Interval('G', 0, 2),
+    ])
+
+    print group_intervals([
+        Interval('D', 3, 5),
+        Interval('C', 1, 3),
+        Interval('A', 1, 3),
+        Interval('G', 0, 2),
+        Interval('B', 2, 4),
+        Interval('E', 4, 6),
+        Interval('F', 2, 4),
+    ])
