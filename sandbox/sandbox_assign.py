@@ -127,5 +127,6 @@ if __name__ == '__main__':
     first_set = Group()
     first_set.intervals.append(intervals[0])
 
+    #testing GIT stuff
     print generate_sets(candidates.intervals, [first_set])
 
