@@ -74,64 +74,75 @@ def filter(intervals):
 
     return candidates_by_start + candidates_by_end
 
-def group_intervals(intervals):
+def get_winning_combination(candidate_sets):
 
-    grouped_intervals = []
+    candidate_sets = generate_combinations(candidate_sets)
+
+    solutions = []
+
+    for candidates in candidate_sets:
+        results = filter(candidates)
+        remaining = list(set(candidates) - set(results))
+        solutions.append([results, remaining])
+
+    # Challenge: which one is the "best"? For now, let's take the
+    # one with the least elements in remaining as best. If there are multiple
+    # winners, we take the first winner in the list as best.
+    best_solution = solutions[0]
+    for solution in solutions:
+        if len(solution[1]) > len(best_solution[1]):
+            best_solution = solution
+
+    return best_solution
+
+def generate_combinations(intervals):
+
+    combinations = []
 
     for i in range(0, len(intervals)):
 
-        candidates = copy.deepcopy(intervals)
+        combination = copy.deepcopy(intervals)
+        combination.insert(0, combination.pop(i))
+        combinations.append(combination)
 
-        # Put this interval at the beginning of the list
-        candidates.pop(i)
-        candidates.insert(0, intervals[i])
+    return combinations
 
-        group = Group()
 
-        while len(candidates) > 0:
-            filtered_intervals = filter(candidates)
-            group.intervals.append(filtered_intervals)
-            candidates = list(set(candidates) - set(filtered_intervals))
-
-        grouped_intervals.append(group)
-
-    return grouped_intervals
+def group(intervals):
+    winner, left = get_winning_combination(intervals)
+    if len(left) == 0:
+        return winner
+    else :
+        return [winner] + [group(left)]
 
 if __name__ == '__main__':
 
-#    print filter([
-#        Interval('G', 0, 2),
-#        Interval('A', 1, 3),
-#        Interval('B', 2, 4),
-#        Interval('C', 1, 3),
-#        Interval('D', 3, 5),
-#        Interval('E', 4, 6),
-#        Interval('F', 2, 4),
-#    ])
-#
-#    print filter([
-#        Interval('B', 2, 4),
-#        Interval('D', 3, 5),
-#        Interval('E', 4, 6),
-#        Interval('F', 2, 4),
-#    ])
-
-    print group_intervals([
-       Interval('A', 1, 3),
-       Interval('B', 2, 4),
-       Interval('C', 1, 3),
-       Interval('D', 3, 5),
-       Interval('E', 4, 6),
-       Interval('F', 2, 4),
-       Interval('G', 0, 2),
-    ])
-
-    print group_intervals([
-        Interval('D', 3, 5),
-        Interval('C', 1, 3),
-        Interval('A', 1, 3),
+    print group([
         Interval('G', 0, 2),
         Interval('B', 2, 4),
+        Interval('C', 1, 3),
+        Interval('D', 3, 5),
+        Interval('A', 1, 3),
         Interval('E', 4, 6),
         Interval('F', 2, 4),
+    ])
+
+    print group([
+        Interval('G', 0, 2),
+        Interval('C', 1, 3),
+        Interval('A', 1, 3),
+        Interval('B', 2, 4),
+        Interval('E', 4, 6),
+        Interval('D', 3, 5),
+        Interval('F', 2, 4),
+    ])
+
+    print group([
+        Interval('A', 1, 3),
+        Interval('B', 2, 4),
+        Interval('C', 1, 3),
+        Interval('D', 3, 5),
+        Interval('E', 4, 6),
+        Interval('F', 2, 4),
+        Interval('G', 0, 2),
     ])
