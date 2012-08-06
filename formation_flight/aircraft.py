@@ -64,15 +64,14 @@ class Aircraft(object):
         # moment of departure
         self._simtime    = simtime
         previous_airtime = self._airtime
-        new_airtime      = simtime - self.departure_time
-        self._airtime    = new_airtime
-        self._time_delta = new_airtime - previous_airtime
+        self._airtime    = simtime - self.departure_time
+        self._time_delta = self._airtime - previous_airtime
+        self._distance_flown = self._distance_flown + self.speed * self._time_delta
 
     def get_position(self):
         return self._current_position
 
     def get_distance_flown(self):
-        self._distance_flown = self._distance_flown + self.speed * self._time_delta
         return self._distance_flown
 
     def has_reached_waypoint(self):

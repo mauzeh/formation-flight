@@ -11,7 +11,7 @@ if __name__ == '__main__':
     assigner = Assigner()
 
     sim = Simulator()
-    sim.time = range(0, 120, 1)
+    sim.time = range(0, 90, 1)
 
     route = Route([Waypoint('CDG'),
                    Waypoint('AMS'),
@@ -24,7 +24,7 @@ if __name__ == '__main__':
     route = Route([Waypoint('FRA'),
                    Waypoint('AMS'),
                    Waypoint('LHR'),
-                   Waypoint('MCO')])
+                   Waypoint('JFK')])
     aircraft = Aircraft("FRA", route)
     aircraft.departure_time = 0
     sim.aircraft.append(aircraft)
