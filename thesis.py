@@ -18,7 +18,7 @@ if __name__ == '__main__':
                    Waypoint('LHR'),
                    Waypoint('MCO')])
     aircraft = Aircraft("CDG", route)
-    aircraft.departure_time = 0
+    aircraft.departure_time = 10
     sim.aircraft.append(aircraft)
 
     route = Route([Waypoint('FRA'),
