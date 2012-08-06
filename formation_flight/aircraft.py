@@ -17,12 +17,13 @@ class Aircraft(object):
         # kts (NM/h)
         # self.speed = 500
 
-        # NM/minute
-        self.speed = 600/60
+        # KM/minute
+        self.speed = 10
 
         self._airtime = 0
         self._simtime = 0
         self._current_position = None
+        self._distance_flown = 0
         self._waiting = True
         self._landed = False
 
@@ -39,11 +40,7 @@ class Aircraft(object):
         2. Lat/lon: 30N 30E = 30 30, but 30S 30W = -30 -30
 
         """
-
-        # the time that this aircraft has been in flight, from the scheduled
-        # moment of departure
-        self._simtime = simtime
-        self._airtime = simtime - self.departure_time
+        self.set_time(simtime)
 
         if not self.is_in_flight(): return False
 
@@ -61,11 +58,22 @@ class Aircraft(object):
 
         return True
 
+    def set_time(self, simtime):
+
+        # the time that this aircraft has been in flight, from the scheduled
+        # moment of departure
+        self._simtime    = simtime
+        previous_airtime = self._airtime
+        new_airtime      = simtime - self.departure_time
+        self._airtime    = new_airtime
+        self._time_delta = new_airtime - previous_airtime
+
     def get_position(self):
         return self._current_position
 
     def get_distance_flown(self):
-        return self._airtime * self.speed
+        self._distance_flown = self._distance_flown + self.speed * self._time_delta
+        return self._distance_flown
 
     def has_reached_waypoint(self):
         """
@@ -98,8 +106,7 @@ class Aircraft(object):
             return False
 
         # don't even bother if we have landed
-        flight_time = self.route.get_length() / self.speed
-        if self._airtime > flight_time:
+        if self.get_distance_flown() > self.route.get_length():
             if not self._landed:
                 self._landed = True
                 dispatcher.send(
@@ -109,7 +116,6 @@ class Aircraft(object):
                     data = 'Destination "%s" reached' % self.route.get_destination()
                 )
             return False
-
 
         return True
 

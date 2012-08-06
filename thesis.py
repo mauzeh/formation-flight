@@ -14,6 +14,12 @@ if __name__ == '__main__':
     sim.time = range(0, 120, 1)
 
     route = Route([Waypoint('CDG'),
+                   Waypoint('AMS')])
+    aircraft = Aircraft("SHORT", route)
+    aircraft.departure_time = 0
+    sim.aircraft.append(aircraft)
+
+    route = Route([Waypoint('CDG'),
                    Waypoint('AMS'),
                    Waypoint('LHR'),
                    Waypoint('MCO')])
