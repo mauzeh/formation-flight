@@ -13,5 +13,5 @@ class Waypoint(Point):
                 super(Waypoint, self).__init__(float(row[1]), float(row[2]), row[0])
 
     def __repr__(self):
-        #return '%s' % self.name
-        return '%s (%s, %s)' % (self.name, self.lat, self.lon)
+        return '%s' % self.name
+        #return '%s (%s, %s)' % (self.name, self.lat, self.lon)

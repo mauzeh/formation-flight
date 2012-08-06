@@ -32,7 +32,7 @@ class Assigner(object):
         # List of assigned formations (each containing assigned aircraft)
         self.formations = []
 
-        dispatcher.connect(self.assign, 'takeoff')
+        #dispatcher.connect(self.assign, 'takeoff')
 
     def assign(self, signal, sender, data = None, time = 0):
         """Assign departing aircraft into pending or new formations."""

@@ -9,10 +9,10 @@ class Aircraft(object):
     Uses the waypoints to fly the aircraft. Waypoints can be dynamically set.
     """
 
-    def __init__(self, name):
+    def __init__(self, name, route):
 
         self.name = name
-        self.waypoints = []
+        self.route = route
         self.departure_time = 0
 
         # km/second
@@ -28,14 +28,10 @@ class Aircraft(object):
         self.speed = 600/60
 
         self._airtime = 0
+        self._simtime = 0
         self._current_position = None
-        self._current_waypoint = None
-        self._previous_waypoint = None
-        self._segment_number = 0
-        self._initial_bearing = 0
-        self._current_bearing = 0
-        self._distance_flown = 0
         self._waiting = True
+        self._landed = False
 
     def get_position(self, simtime = 0):
         """
@@ -49,101 +45,57 @@ class Aircraft(object):
 
         # the time that this aircraft has been in flight, from the scheduled
         # moment of departure
+        self._simtime = simtime
         self._airtime = simtime - self.departure_time
 
+        if not self.is_in_flight(): return -1
+
+        current_waypoint = self.route.get_current_segment(self.get_distance_flown()).start
+        distance_from_current_waypoint = self.route.get_distance_into_current_segment(self.get_distance_flown())
+
+        return self.route.get_current_position(self.get_distance_flown())
+
+        print ''
+        print '-------------------------------------------------------'
+        print 'airtime: %s' % self._airtime
+        print 'current waypoint: %s' % current_waypoint
+#        print 'Total flight distance: %s' % self.route.get_length()
+#        print 'Segments flown: %s' % self.route.get_segments_flown(self.get_distance_flown())
+#        print 'Current Segment: %s' % self.route.get_current_segment(self.get_distance_flown())
+#        print 'Distance into current segment: %s km' % self.route.get_distance_into_current_segment(self.get_distance_flown())
+#        print self.route.get_segments()
+
+    def get_distance_flown(self):
+        return self._airtime * self.speed
+
+    def is_in_flight(self):
+
         # if negative, aircraft waits on ground
-        if(self._airtime < 0):
-            return -1
+        if self._airtime < 0:
+            return False
 
-        self.get_active_segment(simtime)
-
-        R = Earth.R
-        d = self._distance_flown/R
-        self._initial_bearing = self._previous_waypoint.bearing_to(self._current_waypoint)
-
-        theta = math.radians(self._initial_bearing)
-
-        lat1 = math.radians(self._previous_waypoint.lat)
-        lon1 = math.radians(self._previous_waypoint.lon)
-
-        part1 = math.cos(d) * math.sin(lat1)
-        part2 = math.cos(theta) * math.cos(lat1) * math.sin(d)
-        lat2  = math.asin(part1 + part2)
-
-        part3 = math.sin(theta) * math.sin(d) * math.cos(lat1)
-        part4 = math.cos(d) - math.sin(lat1) * math.sin(lat2)
-        lon2  = lon1 + math.atan2(part3, part4)
-
-        # Normalize between -pi and pi
-        lon2  = lon2 - 2 * math.pi * math.floor((lon2 + math.pi) / (2 * math.pi))
-
-        # Calculate the end bearing of the aircraft...
-        y = math.sin(lon1 - lon2) * math.cos(lat1)
-        x = math.cos(lat2) * math.sin(lat1) - math.sin(lat2) *\
-                                              math.cos(lat1) *\
-                                              math.cos(lon1 - lon2)
-        self._current_bearing = (math.degrees(math.atan2(y, x)) + 180) % 360
-        self._current_position = Point(math.degrees(lat2), math.degrees(lon2))
-
-        print 'current (t=%s) segment: %s - %s' % (simtime, self._previous_waypoint, self._current_waypoint)
-        #print 'current position: %s' % self._current_position
+        # don't even bother if we have landed
+        flight_time = self.route.get_length() / self.speed
+        if self._airtime > flight_time:
+            if not self._landed:
+                self._landed = True
+                dispatcher.send(
+                    'destination-reached',
+                    sender = self,
+                    #time = simtime,
+                    data = 'Destination "%s" reached' % self.route.get_destination()
+                )
+            return False
 
         if(self._waiting):
             dispatcher.send(
                 'takeoff',
-                time = simtime,
+                #time = simtime,
                 sender = self,
                 data = self
             )
             self._waiting = False
-
-    def get_active_segment(self, simtime):
-
-        # determine the total time spent flying all previous segments
-        distance_of_previous_segments = 0
-
-        self._previous_waypoint = self.waypoints[self._segment_number]
-        self._current_waypoint  = self.waypoints[self._segment_number + 1]
-
-        if(self._segment_number > 0):
-            for i in range(1, len(self.waypoints)-1):
-                waypoint = self.waypoints[i]
-                distance_of_previous_segments +=\
-                self._previous_waypoint.distance_to(waypoint)
-                self._previous_waypoint = waypoint
-
-        time_spent_in_previous_segments = distance_of_previous_segments / self.speed
-
-        self._distance_flown = self._airtime * self.speed
-        self._distance_flown_in_segment = self.speed *\
-                                          (self._airtime -
-                                           time_spent_in_previous_segments)
-        segment_length = self._previous_waypoint.distance_to(self._current_waypoint)
-
-        if(self._distance_flown_in_segment >= segment_length):
-
-            # No more segments left, so we stop
-            if(self._segment_number >= len(self.waypoints)-2):
-
-                dispatcher.send(
-                    'destination-reached',
-                    sender = self,
-                    time = simtime,
-                    data = 'Destination "%s" reached' % self._current_waypoint.name
-                )
-                return 0
-
-            dispatcher.send(
-                'waypoint-reached',
-                sender = self,
-                time = simtime,
-                data = 'Waypoint "%s" reached' % self._current_waypoint.name
-            )
-
-            # Safe to switch to next segment
-            self._segment_number = self._segment_number + 1
-            self._previous_waypoint = self.waypoints[self._segment_number]
-            self._current_waypoint  = self.waypoints[self._segment_number + 1]
+        return True
 
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
