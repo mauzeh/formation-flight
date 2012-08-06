@@ -1,6 +1,6 @@
 from formation_flight.aircraft import Aircraft
 from formation_flight.formation import Formation
-from formation_flight.waypoint import Waypoint
+from formation_flight.geo.waypoint import Waypoint
 
 if __name__ == '__main__':
 

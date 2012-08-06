@@ -1,7 +1,7 @@
 from pydispatch import dispatcher
 from formation_flight.aircraft import Aircraft
-from formation_flight.waypoint import Waypoint
-from lib.intervals import Interval, group
+from formation_flight.geo.waypoint import Waypoint
+from lib.intervals import Interval
 
 class Formation(object):
     """Represents a group of aircraft flying together"""

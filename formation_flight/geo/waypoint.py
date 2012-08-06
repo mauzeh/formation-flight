@@ -1,12 +1,12 @@
-from .point import *
-import csv
 import os
+import csv
+from formation_flight.geo.point import Point
 
 class Waypoint(Point):
 
     def __init__(self, code):
 
-        fn = os.path.join(os.path.dirname(__file__), '..', 'data/waypoints.csv')
+        fn = os.path.join(os.path.dirname(__file__), '../..', 'data/waypoints.csv')
         reader = csv.reader(open(fn))
         for row in reader:
             if(code == row[0]):

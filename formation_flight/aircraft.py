@@ -1,4 +1,3 @@
-from .point import *
 from pydispatch import dispatcher
 
 class Aircraft(object):

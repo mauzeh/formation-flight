@@ -1,8 +1,8 @@
 from formation_flight.aircraft import Aircraft
 from formation_flight.formation import Assigner
-from formation_flight.point import Position, Route, Segment
+from formation_flight.geo.route import Route
+from formation_flight.geo.waypoint import Waypoint
 from formation_flight.simulator import Simulator
-from formation_flight.waypoint import Waypoint
 #from lib.events import EventHandler
 
 if __name__ == '__main__':
