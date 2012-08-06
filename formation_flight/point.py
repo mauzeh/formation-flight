@@ -6,20 +6,17 @@ class Earth(object):
 
     # 6371.00 in km, 3440.07 in NM
     # always make sure this is a float!!!
-    R = 3440.07
+    R = 6371.00
 
 class Point(object):
 
     """Represents a point on earth. Lat/lon in decimal degrees."""
 
-    lat = 0
-    lon = 0
-    name = ''
-
-    def __init__(self, lat, lon, name = 'Point'):
+    def __init__(self, lat, lon, name = 'Point', is_virtual_hub = False):
         self.lat = lat
         self.lon = lon
         self.name = name
+        self.is_virtual_hub = is_virtual_hub
 
     def distance_to(self, point):
         R = Earth.R

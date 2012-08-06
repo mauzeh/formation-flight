@@ -12,35 +12,45 @@ if __name__ == '__main__':
     sim = Simulator()
     sim.time = range(0, 120, 1)
 
-    aircraft = Aircraft("AF65 330")
+    aircraft = Aircraft("CDG")
     aircraft.departure_time = 0
     aircraft.waypoints = [Waypoint('CDG'),
                            Waypoint('AMS'),
                            Waypoint('JFK')]
     sim.aircraft.append(aircraft)
 
-    aircraft = Aircraft("LH23 744")
+    aircraft = Aircraft("FRA")
     aircraft.departure_time = 0
     aircraft.waypoints = [Waypoint('FRA'),
                            Waypoint('AMS'),
                            Waypoint('ORD')]
     sim.aircraft.append(aircraft)
 
-    aircraft = Aircraft("SN23 744")
+    aircraft = Aircraft("BRU")
     aircraft.departure_time = 0
     aircraft.waypoints = [Waypoint('BRU'),
                           Waypoint('AMS'),
-                          Waypoint('ORD')]
+                          Waypoint('LHR'),
+                          Waypoint('MCO')]
     sim.aircraft.append(aircraft)
+    aircraft.get_position(0)
+    aircraft.get_position(5)
+    aircraft.get_position(10)
+    aircraft.get_position(15)
+    aircraft.get_position(15.5)
+    aircraft.get_position(16)
+    aircraft.get_position(17)
+    aircraft.get_position(18)
+    aircraft.get_position(19)
 
-    aircraft = Aircraft("LX23 744")
+    aircraft = Aircraft("ZRH")
     aircraft.departure_time = 90
     aircraft.waypoints = [Waypoint('ZRH'),
                           Waypoint('AMS'),
                           Waypoint('ORD')]
     sim.aircraft.append(aircraft)
 
-    sim.execute()
+    #sim.execute()
 
     # docs: http://docs.python.org/library/profile.html
 #import cProfile, pstats

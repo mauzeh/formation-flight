@@ -44,16 +44,28 @@ class Assigner(object):
 
         # how much time the arrival at the virtual hub can be delayed/expedited
         # @todo Move this to a central location
-        slack = 10
+        slack = 6
 
         print 'current time: %s' % time
+
+        hub = Waypoint('AMS')
 
         # Create formations from the queuing aircraft
         intervals = []
         for aircraft in self.aircraft_queue:
 
             # determine the ETA at the virtual hub
-            hub_eta = time + aircraft.time_to_current_waypoint()
+            hub_eta = time + aircraft._current_position.distance_to(hub) / aircraft.speed
+
+            # discard from queue if aircraft is already passed the hub
+            #if(hub_eta < time)
+
+#            print 'start point: %s' % aircraft.waypoints[0]
+#            print 'start bearing: %s' % aircraft.waypoints[0].bearing_to(aircraft.waypoints[1])
+#            print 'current position: %s' % aircraft._current_position
+#            print 'distance to hub: %s' % aircraft._current_position.distance_to(hub)
+#            print 'hub_eta: %s' % hub_eta
             intervals.append(Interval(aircraft.name, int(hub_eta - slack), int(hub_eta + slack)))
 
-        print group(intervals)
+#        print group(intervals)
+        print intervals
