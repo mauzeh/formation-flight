@@ -43,8 +43,6 @@ class Assigner(object):
         # @todo Move this to a central location
         slack = 6
 
-        print 'current time: %s' % time
-
         hub = Waypoint('AMS')
 
         # Create formations from the queuing aircraft
