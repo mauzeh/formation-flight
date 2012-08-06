@@ -38,7 +38,10 @@ class Point(object):
                                             math.cos(dLon)
         return math.degrees(math.atan2(y, x)) % 360
 
-    def get_destination(self, bearing, distance):
+    def get_position(self, bearing, distance):
+        """
+        Calculate destination given bearing and distance from start.
+        """
 
         R = Earth.R
         d = distance/R
@@ -75,6 +78,9 @@ class Point(object):
         return '%s' % self.name
 
 class Position(Point):
+    """
+    Represents a point with a bearing. Used to denote an aircraft's position.
+    """
 
     def __init__(self, lat, lon, bearing):
         super(Position, self).__init__(lat, lon, 'Position')

@@ -3,6 +3,9 @@ import csv
 from formation_flight.geo.point import Point
 
 class Waypoint(Point):
+    """
+    Performs lookup in airport database for auto-construction of Point
+    """
 
     def __init__(self, code):
 

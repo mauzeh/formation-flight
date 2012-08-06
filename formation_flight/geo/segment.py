@@ -1,4 +1,7 @@
 class Segment(object):
+    """
+    Represents a line between a start and end point
+    """
 
     def __init__(self, start, end):
         self.start = start

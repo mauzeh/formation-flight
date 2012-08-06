@@ -2,7 +2,7 @@ import copy
 
 class Interval:
     """
-    An interval that needs to be grouped
+    A time window that is used to group flights arriving at about the same time.
     """
     def __init__(self, name, start, end):
         self.name = name

@@ -1,6 +1,10 @@
 from pydispatch import dispatcher
 
 class EventHandler:
+    """
+    Keeps track of all events in the system and prints them for debugging
+    purposes.
+    """
 
     def __init__(self):
 

@@ -57,7 +57,7 @@ class Route(object):
         if(distance_flown_in_cur == 0):
             return Position(current_segment.start.lat, current_segment.start.lon, bearing)
 
-        return current_segment.start.get_destination(bearing, distance_flown_in_cur)
+        return current_segment.start.get_position(bearing, distance_flown_in_cur)
 
     def get_destination(self):
         return self.segments[len(self.segments)-1].end
