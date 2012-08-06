@@ -2,12 +2,6 @@ from pydispatch import dispatcher
 
 class Aircraft(object):
 
-    """
-    Represents an aircraft.
-
-    Uses the waypoints to fly the aircraft. Waypoints can be dynamically set.
-    """
-
     def __init__(self, name, route):
 
         self.name = name
@@ -32,7 +26,11 @@ class Aircraft(object):
         self._waiting = True
         self._landed = False
 
-    def get_position(self, simtime = 0):
+        # Which segment the aircraft is in. Used to trigger
+        # "waypoint-reached" event
+        self._segment_index = 0
+
+    def fly(self, simtime = 0):
         """
         Calculates the position of the aircraft from its starting point.
 
@@ -47,25 +45,48 @@ class Aircraft(object):
         self._simtime = simtime
         self._airtime = simtime - self.departure_time
 
-        if not self.is_in_flight(): return -1
+        if not self.is_in_flight(): return False
 
-        current_waypoint = self.route.get_current_segment(self.get_distance_flown()).start
-        distance_from_current_waypoint = self.route.get_distance_into_current_segment(self.get_distance_flown())
+        self._current_position = self.route.get_current_position(self.get_distance_flown())
+        self.has_reached_waypoint()
 
-        return self.route.get_current_position(self.get_distance_flown())
+        if(self._waiting):
+            self._waiting = False
+            dispatcher.send(
+                'takeoff',
+                time = self._simtime,
+                sender = self,
+                data = self
+            )
 
-        print ''
-        print '-------------------------------------------------------'
-        print 'airtime: %s' % self._airtime
-        print 'current waypoint: %s' % current_waypoint
-#        print 'Total flight distance: %s' % self.route.get_length()
-#        print 'Segments flown: %s' % self.route.get_segments_flown(self.get_distance_flown())
-#        print 'Current Segment: %s' % self.route.get_current_segment(self.get_distance_flown())
-#        print 'Distance into current segment: %s km' % self.route.get_distance_into_current_segment(self.get_distance_flown())
-#        print self.route.get_segments()
+        return True
+
+    def get_position(self):
+        return self._current_position
 
     def get_distance_flown(self):
         return self._airtime * self.speed
+
+    def has_reached_waypoint(self):
+        """
+        Fires an event each time an aircraft passes a new waypoint
+
+        Assumes that aircraft do not fly past the same waypoint more than once.
+        Not even if it is further down the flight.
+        """
+        current_segment = self.route.get_current_segment(self.get_distance_flown())
+        index = self.route.segments.index(current_segment)
+
+        if(index > self._segment_index):
+            for i in range(self._segment_index, index):
+                segment = self.route.segments[i]
+                dispatcher.send(
+                    'waypoint-reached',
+                    sender = self,
+                    time = self._simtime,
+                    data = '%s' % segment
+                )
+        self._segment_index = index
 
     def is_in_flight(self):
 
@@ -81,20 +102,14 @@ class Aircraft(object):
                 dispatcher.send(
                     'destination-reached',
                     sender = self,
-                    #time = simtime,
+                    time = self._simtime,
                     data = 'Destination "%s" reached' % self.route.get_destination()
                 )
             return False
 
-        if(self._waiting):
-            dispatcher.send(
-                'takeoff',
-                #time = simtime,
-                sender = self,
-                data = self
-            )
-            self._waiting = False
+
         return True
 
     def __repr__(self):
-        return "%s(%r)" % (self.__class__, self.__dict__)
+        #return "%s(%r)" % (self.__class__, self.__dict__)
+        return self.name

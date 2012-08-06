@@ -1,7 +1,7 @@
 from pydispatch import dispatcher
 from formation_flight.aircraft import Aircraft
 from formation_flight.geo.waypoint import Waypoint
-from lib.intervals import Interval
+from lib.intervals import Interval, group
 
 class Formation(object):
     """Represents a group of aircraft flying together"""
@@ -14,9 +14,6 @@ class Formation(object):
         # pending - Not flying yet, open to receive aircraft
         # active  - Flying. Not open to receive aircraft
         self.status = 'pending'
-
-        # The route that the formation is set to fly. Usually contains two waypoints.
-        self.route = [Waypoint('AMS'), Waypoint('JFK')]
 
         # The time at which the formation is set to start
         self.start_time = 0
@@ -32,7 +29,7 @@ class Assigner(object):
         # List of assigned formations (each containing assigned aircraft)
         self.formations = []
 
-        #dispatcher.connect(self.assign, 'takeoff')
+        dispatcher.connect(self.assign, 'takeoff')
 
     def assign(self, signal, sender, data = None, time = 0):
         """Assign departing aircraft into pending or new formations."""
@@ -55,17 +52,8 @@ class Assigner(object):
         for aircraft in self.aircraft_queue:
 
             # determine the ETA at the virtual hub
-            hub_eta = time + aircraft._current_position.distance_to(hub) / aircraft.speed
+            hub_eta = time + aircraft.get_position().distance_to(hub) / aircraft.speed
 
-            # discard from queue if aircraft is already passed the hub
-            #if(hub_eta < time)
-
-#            print 'start point: %s' % aircraft.waypoints[0]
-#            print 'start bearing: %s' % aircraft.waypoints[0].bearing_to(aircraft.waypoints[1])
-#            print 'current position: %s' % aircraft._current_position
-#            print 'distance to hub: %s' % aircraft._current_position.distance_to(hub)
-#            print 'hub_eta: %s' % hub_eta
             intervals.append(Interval(aircraft.name, int(hub_eta - slack), int(hub_eta + slack)))
 
-#        print group(intervals)
-        print intervals
+        print group(intervals)

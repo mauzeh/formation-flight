@@ -17,9 +17,4 @@ class Simulator(object):
 
         for t in self.time:
             for plane in self.aircraft:
-                pos = plane.get_position(t)
-                if(pos == 0):
-                    self.aircraft.remove(plane)
-            else:
-                continue
-            #break
+                plane.fly(t)
