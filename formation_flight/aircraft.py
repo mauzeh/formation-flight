@@ -73,6 +73,9 @@ class Aircraft(object):
 
         Assumes that aircraft do not fly past the same waypoint more than once.
         Not even if it is further down the flight.
+
+        If several waypoints are reached at once (can happen with really big
+        time intervals) then each waypoint is fired directly after the other.
         """
         current_segment = self.route.get_current_segment(self.get_distance_flown())
         index = self.route.segments.index(current_segment)
