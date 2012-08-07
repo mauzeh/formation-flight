@@ -33,10 +33,25 @@ if __name__ == '__main__':
                    Waypoint('LHR'),
                    Waypoint('JFK')])
     aircraft = Aircraft("FRA_2", route)
-    aircraft.departure_time = 5
+    aircraft.departure_time = 15
+    planes.append(aircraft)
+
+    route = Route([Waypoint('CDG'),
+                   Waypoint('AMS'),
+                   Waypoint('LHR'),
+                   Waypoint('JFK')])
+    aircraft = Aircraft("CDG_2", route)
+    aircraft.departure_time = 18
     planes.append(aircraft)
 
     simulator.execute(range(0, 60, 1), planes)
+
+    print '##############################################################'
+    print '##############################################################'
+    print '##############################################################'
+    print '##############################################################'
+    print '##############################################################'
+    print '##############################################################'
 
     # docs: http://docs.python.org/library/profile.html
 #import cProfile, pstats
