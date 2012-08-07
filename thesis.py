@@ -8,7 +8,7 @@ from lib.events import EventHandler
 if __name__ == '__main__':
 
     handler = EventHandler()
-    #assigner = Assigner()
+    assigner = Assigner()
 
     route = Route([Waypoint('CDG'),
                    Waypoint('AMS'),

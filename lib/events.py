@@ -13,7 +13,7 @@ class EventHandler:
         dispatcher.connect(self.handle)
 
         # Do not respond to these signals
-        self.ignore = []#['fly']
+        self.ignore = ['fly']
 
     def handle(self, signal, sender, data = None, time = 0):
 

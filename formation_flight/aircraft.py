@@ -113,7 +113,7 @@ class Aircraft(object):
                     'waypoint-reached',
                     sender = self,
                     time = simulator.get_time(),
-                    data = '%s' % segment
+                    data = self
                 )
         self._segment_index = index
 

@@ -31,17 +31,25 @@ class Formation(object):
 
     def synchronize(self):
         start_eta = self.get_start_eta()
-        print 'starting sync, formation eta: ', start_eta
+#        print 'starting sync, formation eta: ', start_eta
         for aircraft in self.aircraft:
             formation_time_to_hub = self.get_start_eta() - simulator.get_time()
-            aircraft_time_to_hub  = aircraft.get_waypoint_eta()
-            aircraft.speed =  aircraft.speed * formation_time_to_hub/aircraft_time_to_hub
+            aircraft_time_to_hub  = aircraft.get_waypoint_eta() - simulator.get_time()
+#            print 'formation time to hub %.1f' % formation_time_to_hub
+#            print 'aircraft time to hub %.1f' % aircraft_time_to_hub
+            aircraft.speed = aircraft.speed * aircraft_time_to_hub / formation_time_to_hub
             dispatcher.send(
                 'aircraft-synchronized',
                 time = simulator.get_time(),
                 sender = self,
                 data = aircraft
             )
+        dispatcher.send(
+            'formation-synchronized',
+            time = simulator.get_time(),
+            sender = self,
+            data = self
+        )
 
     def lock(self):
         self.status = 'locked'
@@ -125,8 +133,6 @@ class Assigner(object):
         if len(self.pending_formations) <= 0: return
 
         for formation in self.pending_formations:
-
-            print 'trying to lock formation eta: %d' % formation.get_start_eta()
 
             # if formation ETA is less than 10 time units away, lock it
             if formation.get_start_eta() - simulator.get_time() <= 10:
