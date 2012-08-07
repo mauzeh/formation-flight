@@ -30,26 +30,13 @@ class Formation(object):
         return self.aircraft[0].get_waypoint_eta()
 
     def synchronize(self):
+        """Aligns the arrival times of all aircraft into the hub."""
+
         start_eta = self.get_start_eta()
-#        print 'starting sync, formation eta: ', start_eta
+        formation_time_to_hub = self.get_start_eta() - simulator.get_time()
         for aircraft in self.aircraft:
-            formation_time_to_hub = self.get_start_eta() - simulator.get_time()
             aircraft_time_to_hub  = aircraft.get_waypoint_eta() - simulator.get_time()
-#            print 'formation time to hub %.1f' % formation_time_to_hub
-#            print 'aircraft time to hub %.1f' % aircraft_time_to_hub
             aircraft.speed = aircraft.speed * aircraft_time_to_hub / formation_time_to_hub
-            dispatcher.send(
-                'aircraft-synchronized',
-                time = simulator.get_time(),
-                sender = self,
-                data = aircraft
-            )
-        dispatcher.send(
-            'formation-synchronized',
-            time = simulator.get_time(),
-            sender = self,
-            data = self
-        )
 
     def lock(self):
         self.status = 'locked'
@@ -58,7 +45,7 @@ class Formation(object):
         self.synchronize()
 
         dispatcher.send(
-            'formation-lock',
+            'formation-locked',
             time = simulator.get_time(),
             sender = self,
             data = self

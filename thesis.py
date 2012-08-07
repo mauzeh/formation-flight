@@ -10,32 +10,14 @@ if __name__ == '__main__':
     handler = EventHandler()
     assigner = Assigner()
 
+    planes = []
+
     route = Route([Waypoint('CDG'),
                    Waypoint('AMS'),
                    Waypoint('LHR'),
                    Waypoint('MCO')])
     aircraft = Aircraft("CDG", route)
-    aircraft.departure_time = 5
-
-#    simulator.set_time(4)
-#    aircraft.fly()
-#
-#    simulator.set_time(5)
-#    aircraft.fly()
-#
-#    formation = Formation([aircraft])
-#
-#    simulator.set_time(7)
-#    aircraft.fly()
-#    formation.synchronize()
-#
-#    simulator.set_time(17)
-#    aircraft.fly()
-#    formation.synchronize()
-#
-#    print formation
-
-    planes = []
+    aircraft.departure_time = 0
     planes.append(aircraft)
 
     route = Route([Waypoint('FRA'),
@@ -44,6 +26,14 @@ if __name__ == '__main__':
                    Waypoint('JFK')])
     aircraft = Aircraft("FRA", route)
     aircraft.departure_time = 0
+    planes.append(aircraft)
+
+    route = Route([Waypoint('FRA'),
+                   Waypoint('AMS'),
+                   Waypoint('LHR'),
+                   Waypoint('JFK')])
+    aircraft = Aircraft("FRA", route)
+    aircraft.departure_time = 5
     planes.append(aircraft)
 
     simulator.execute(range(0, 60, 1), planes)
