@@ -55,6 +55,13 @@ class Aircraft(object):
                 sender = self,
                 data = self
             )
+        else:
+            dispatcher.send(
+                'fly',
+                time = self._simtime,
+                sender = self,
+                data = self
+            )
 
         return True
 

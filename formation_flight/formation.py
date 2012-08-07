@@ -30,7 +30,7 @@ class Assigner(object):
         self.formations = []
 
         dispatcher.connect(self.assign, 'takeoff')
-        dispatcher.connect(self.synchronize, 'waypoint-reached')
+        dispatcher.connect(self.synchronize, 'takeoff')
 
     def assign(self, signal, sender, data = None, time = 0):
         """Assign departing aircraft into pending or new formations."""
@@ -55,20 +55,16 @@ class Assigner(object):
 
             intervals.append(Interval(aircraft.name, int(hub_eta - slack), int(hub_eta + slack)))
 
-#        print group(intervals)
+        print group(intervals)
 
     def synchronize(self, signal, sender, data = None, time = 0):
         """Makes sure that all aircraft in a formation arrive simultaneously"""
         assert type(sender) == Aircraft
 
-        print 't = %.1fs trying to sync %s' % (time, sender)
-
         # distance to virtual hub
         hub = Waypoint('AMS')
         distance = sender.get_position().distance_to(hub)
 
-        print 'distance to hub %.1f' % distance
-
         # set speed so that arrival @ hub = 80 units
-        time_to_hub = 80 - time
+        time_to_hub = 79.9999 - time
         sender.speed = distance / time_to_hub

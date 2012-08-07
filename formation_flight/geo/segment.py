@@ -13,5 +13,6 @@ class Segment(object):
         return self.length
 
     def __repr__(self):
-        return "%s -> %s (%s deg)" % (self.start, self.end, self.initial_bearing)
+    #        return "%s -> %s (%s deg)" % (self.start, self.end, self.initial_bearing)
+        return "%s -> %s" % (self.start, self.end)
 
