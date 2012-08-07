@@ -1,4 +1,5 @@
 from pydispatch import dispatcher
+from formation_flight import simulator
 
 class Aircraft(object):
 
@@ -31,7 +32,7 @@ class Aircraft(object):
         # "waypoint-reached" event
         self._segment_index = 0
 
-    def fly(self, simtime = 0):
+    def fly(self):
         """
         Calculates the position of the aircraft from its starting point.
 
@@ -40,7 +41,7 @@ class Aircraft(object):
         2. Lat/lon: 30N 30E = 30 30, but 30S 30W = -30 -30
 
         """
-        self.set_time(simtime)
+        self.set_time()
 
         if not self.is_in_flight(): return False
 
@@ -51,27 +52,26 @@ class Aircraft(object):
             self._waiting = False
             dispatcher.send(
                 'takeoff',
-                time = self._simtime,
+                time = simulator.get_time(),
                 sender = self,
                 data = self
             )
         else:
             dispatcher.send(
                 'fly',
-                time = self._simtime,
+                time = simulator.get_time(),
                 sender = self,
                 data = self
             )
 
         return True
 
-    def set_time(self, simtime):
+    def set_time(self):
 
         # the time that this aircraft has been in flight, from the scheduled
         # moment of departure
-        self._simtime    = simtime
         previous_airtime = self._airtime
-        self._airtime    = simtime - self.departure_time
+        self._airtime    = simulator.get_time() - self.departure_time
         self._time_delta = self._airtime - previous_airtime
         self._distance_flown = self._distance_flown + self.speed * self._time_delta
 
@@ -80,6 +80,18 @@ class Aircraft(object):
 
     def get_distance_flown(self):
         return self._distance_flown
+
+    def get_waypoint_eta(self):
+
+        segment = self.route.get_current_segment(self.get_distance_flown())
+        l       = segment.get_length()
+        d       = self.route.get_distance_into_current_segment(self.get_distance_flown())
+        eta     = simulator.get_time() + (l - d) / self.speed
+#        print 'calling waypoint eta of aircraft at time = %d' % simulator.get_time()
+#        print 'l=%.1f' % l
+#        print 'd=%.1f' % d
+#        print 'aircraft eta = %.1f' % eta
+        return eta
 
     def has_reached_waypoint(self):
         """
@@ -100,7 +112,7 @@ class Aircraft(object):
                 dispatcher.send(
                     'waypoint-reached',
                     sender = self,
-                    time = self._simtime,
+                    time = simulator.get_time(),
                     data = '%s' % segment
                 )
         self._segment_index = index
@@ -118,7 +130,7 @@ class Aircraft(object):
                 dispatcher.send(
                     'destination-reached',
                     sender = self,
-                    time = self._simtime,
+                    time = simulator.get_time(),
                     data = 'Destination "%s" reached' % self.route.get_destination()
                 )
             return False

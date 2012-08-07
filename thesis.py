@@ -1,62 +1,52 @@
 from formation_flight.aircraft import Aircraft
-from formation_flight.formation import Assigner
+from formation_flight.formation import Assigner, Formation
 from formation_flight.geo.route import Route
 from formation_flight.geo.waypoint import Waypoint
-from formation_flight.simulator import Simulator
+from formation_flight import simulator
 from lib.events import EventHandler
 
 if __name__ == '__main__':
 
     handler = EventHandler()
-    assigner = Assigner()
-
-    sim = Simulator()
-    sim.time = range(0, 90, 1)
+    #assigner = Assigner()
 
     route = Route([Waypoint('CDG'),
                    Waypoint('AMS'),
                    Waypoint('LHR'),
                    Waypoint('MCO')])
-    aircraft1 = Aircraft("CDG", route)
-    aircraft1.departure_time = 10
+    aircraft = Aircraft("CDG", route)
+    aircraft.departure_time = 5
+
+#    simulator.set_time(4)
+#    aircraft.fly()
+#
+#    simulator.set_time(5)
+#    aircraft.fly()
+#
+#    formation = Formation([aircraft])
+#
+#    simulator.set_time(7)
+#    aircraft.fly()
+#    formation.synchronize()
+#
+#    simulator.set_time(17)
+#    aircraft.fly()
+#    formation.synchronize()
+#
+#    print formation
+
+    planes = []
+    planes.append(aircraft)
 
     route = Route([Waypoint('FRA'),
                    Waypoint('AMS'),
                    Waypoint('LHR'),
                    Waypoint('JFK')])
-    aircraft2 = Aircraft("FRA", route)
-    aircraft2.departure_time = 0
+    aircraft = Aircraft("FRA", route)
+    aircraft.departure_time = 0
+    planes.append(aircraft)
 
-    aircraft1.fly(8)
-    aircraft2.fly(8)
-    aircraft1.fly(10)
-    aircraft2.fly(10)
-    aircraft1.fly(12)
-    aircraft2.fly(12)
-    aircraft1.fly(16)
-    aircraft2.fly(16)
-    aircraft1.fly(18)
-    aircraft2.fly(18)
-    aircraft1.fly(60)
-    aircraft2.fly(60)
-    aircraft1.fly(79)
-    aircraft2.fly(79)
-    aircraft1.fly(80)
-    aircraft2.fly(80)
-    aircraft1.fly(81)
-    aircraft2.fly(81)
-
-    #    sim.aircraft.append(aircraft)
-#
-#    route = Route([Waypoint('FRA'),
-#                   Waypoint('AMS'),
-#                   Waypoint('LHR'),
-#                   Waypoint('JFK')])
-#    aircraft = Aircraft("FRA", route)
-#    aircraft.departure_time = 0
-#    sim.aircraft.append(aircraft)
-#
-#    sim.execute()
+    simulator.execute(range(0, 60, 1), planes)
 
     # docs: http://docs.python.org/library/profile.html
 #import cProfile, pstats

@@ -1,20 +1,27 @@
 from pydispatch import dispatcher
 
-class Simulator(object):
+__time__ = 0
 
-    def __init__(self):
-        self.time = range(0, 60*60, 1)
-        self.aircraft = []
+def execute(time_range = [], aircraft = []):
 
-    def execute(self):
+    dispatcher.send(
+        'sim-init',
+        sender = 'Simulator',
+        time = 0,
+        data = 'Initializing simulation'
+    )
 
-        dispatcher.send(
-            'sim-init',
-            sender = self,
-            time = 0,
-            data = 'Initializing simulation'
-        )
+    global __time__
 
-        for t in self.time:
-            for plane in self.aircraft:
-                plane.fly(t)
+    for t in time_range:
+        set_time(t)
+        for plane in aircraft:
+            plane.fly()
+
+def get_time():
+    global __time__
+    return __time__
+
+def set_time(t):
+    global __time__
+    __time__ = t

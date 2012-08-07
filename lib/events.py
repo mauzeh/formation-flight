@@ -1,5 +1,6 @@
 from pydispatch import dispatcher
 from formation_flight.aircraft import Aircraft
+from formation_flight.formation import Formation
 
 class EventHandler:
     """
@@ -12,7 +13,7 @@ class EventHandler:
         dispatcher.connect(self.handle)
 
         # Do not respond to these signals
-        self.ignore = []#['waypoint-reached']
+        self.ignore = []#['fly']
 
     def handle(self, signal, sender, data = None, time = 0):
 
@@ -22,9 +23,9 @@ class EventHandler:
         debug = []
 
         print '+-----------------------------------------------------+'
-        print '| %s :: %s' % (sender.__class__.__name__, signal)
+        print '| Time: %d units' % time
+        print '| %s: %s' % (sender.__class__.__name__, signal)
         print '+-----------------------------------------------------+'
-        debug.append(('| % 25s: %s units', ('Time', time)))
 
         if type(data) == Aircraft:
 
@@ -34,10 +35,17 @@ class EventHandler:
             eta     = time + (l - d) / data.speed
 
             debug.append(('| % 25s: %s', ('Aircraft', data.name)))
+            debug.append(('| % 25s: %s', ('Departure time', data.departure_time)))
             debug.append(('| % 25s: %.1f', ('Speed', data.speed)))
             debug.append(('| % 25s: %s (%.1f km)', ('Segment', segment, l)))
             debug.append(('| % 25s: %.1f km', ('Distance into segment', d)))
-            debug.append(('| % 25s: %.1f', ('Waypoint ETA', eta)))
+            debug.append(('| % 25s: %.1f', ('Waypoint ETA', data.get_waypoint_eta())))
+
+        elif type(data) == Formation:
+            debug.append(('| %25s: %s', ('Participants', data.aircraft)))
+            debug.append(('| %25s: %.2f', ('Start ETA', data.get_start_eta())))
+            debug.append(('| %25s: %s', ('Status', data.status)))
+            pass
 
         else:
             print '| Data: %s' % data
