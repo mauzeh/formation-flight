@@ -20,37 +20,38 @@ class EventHandler:
         if(signal in self.ignore):
             return 0
 
-        debug = []
+        lines = []
 
-        print '+-----------------------------------------------------+'
-        print '| Time: %d units' % time
-        print '| %s: %s' % (sender.__class__.__name__, signal)
-        print '+-----------------------------------------------------+'
+        lines.append('+-----------------------------------------------------+')
+        lines.append('| Time: %d units' % time)
+        lines.append('| %s: %s' % (sender.__class__.__name__, signal))
+        lines.append('+-----------------------------------------------------+')
 
         if type(data) == Aircraft:
 
             segment = data.route.get_current_segment(data.get_distance_flown())
-            l       = segment.get_length()
             d       = data.route.get_distance_into_current_segment(data.get_distance_flown())
-            eta     = time + (l - d) / data.speed
 
-            debug.append(('| % 25s: %s', ('Aircraft', data.name)))
-            debug.append(('| % 25s: %s', ('Departure time', data.departure_time)))
-            debug.append(('| % 25s: %.1f', ('Speed', data.speed)))
-            debug.append(('| % 25s: %s (%.1f km)', ('Segment', segment, l)))
-            debug.append(('| % 25s: %.1f km', ('Distance into segment', d)))
-            debug.append(('| % 25s: %.1f', ('Waypoint ETA', data.get_waypoint_eta())))
+            lines.append('| % 25s: %s' % ('Aircraft', data.name))
+            lines.append('| % 25s: %s' % ('Departure time', data.departure_time))
+            lines.append('| % 25s: %.1f' % ('Speed', data.speed))
+            lines.append('| % 25s: %s' % ('Segment', segment))
+            lines.append('| % 25s: %.1f km' % ('Distance into segment', d))
+            lines.append('| % 25s: %.1f' % ('Waypoint ETA', data.get_waypoint_eta()))
 
         elif type(data) == Formation:
-            debug.append(('| %25s: %s', ('Participants', data.aircraft)))
-            debug.append(('| %25s: %.2f', ('Start ETA', data.get_start_eta())))
-            debug.append(('| %25s: %s', ('Status', data.status)))
+            lines.append('| %25s: %s' % ('Participants', data.aircraft))
+            lines.append('| %25s: %.2f' % ('Start ETA', data.get_start_eta()))
+            lines.append('| %25s: %s' % ('Status', data.status))
             pass
 
         else:
             print '| Data: %s' % data
 
-        for line in debug:
-            format, data = line
-            print format % data
+        # output table width (in chars)
+        width = 55
+        for line in lines:
+            line_len = len(line)
+            end_line = '' if line_len >= width else "|"
+            print line + ' ' * (width - line_len - 1) + end_line
         print '+-----------------------------------------------------+'

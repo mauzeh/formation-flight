@@ -24,7 +24,7 @@ if __name__ == '__main__':
                    Waypoint('AMS'),
                    Waypoint('LHR'),
                    Waypoint('JFK')])
-    aircraft = Aircraft("FRA", route)
+    aircraft = Aircraft("FRA_1", route)
     aircraft.departure_time = 0
     planes.append(aircraft)
 
@@ -32,7 +32,7 @@ if __name__ == '__main__':
                    Waypoint('AMS'),
                    Waypoint('LHR'),
                    Waypoint('JFK')])
-    aircraft = Aircraft("FRA", route)
+    aircraft = Aircraft("FRA_2", route)
     aircraft.departure_time = 5
     planes.append(aircraft)
 
