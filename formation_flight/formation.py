@@ -2,7 +2,7 @@ from pydispatch import dispatcher
 from formation_flight.aircraft import Aircraft
 from formation_flight.geo.waypoint import Waypoint
 from lib.intervals import Interval, group
-from formation_flight import simulator
+from formation_flight import simulator, config
 
 class Formation(object):
     """Represents a group of aircraft flying together"""
@@ -86,7 +86,7 @@ class Assigner(object):
 
         # how much time the arrival at the virtual hub can be delayed/expedited
         # @todo Move this to a central location
-        slack = 6
+        slack = config.virtual_hub_arrival_slack
 
         hub = Waypoint('AMS')
 
