@@ -81,9 +81,6 @@ class Aircraft(object):
     def get_distance_flown(self):
         return self._distance_flown
 
-    def get_current_segment(self):
-        return self.route.get_current_segment(self.get_distance_flown())
-
     def get_waypoint_eta(self):
 
         segment = self.route.get_current_segment(self.get_distance_flown())
@@ -95,9 +92,6 @@ class Aircraft(object):
 #        print 'd=%.1f' % d
 #        print 'aircraft eta = %.1f' % eta
         return eta
-
-    def get_current_waypoint(self):
-        return self.get_current_segment().end
 
     def has_reached_waypoint(self):
         """
