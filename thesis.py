@@ -32,6 +32,14 @@ if __name__ == '__main__':
                    Waypoint('JFK')])
     aircraft = Aircraft("FRA_2", route)
     aircraft.departure_time = 8
+    aircraft.departure_time = 15
+    planes.append(aircraft)
+
+    route = Route([Waypoint('CDG'),
+                   Waypoint('AMS'),
+                   Waypoint('JFK')])
+    aircraft = Aircraft("CDG_2", route)
+    aircraft.departure_time = 18
     planes.append(aircraft)
 
     simulator.execute(range(0, 60, 1), planes)
