@@ -62,7 +62,12 @@ class Assigner(object):
     def __init__(self):
 
         # List of aircraft that have not been assigned to a formation
-        self.aircraft_queue = []
+        ams = Waypoint('AMS')
+        ein = Waypoint('EIN')
+        self.aircraft_queue = {
+            ams : [],
+            ein : []
+        }
 
         # List of assigned formations (each containing assigned aircraft)
         # this list is repopulated each time the aircraft queue changes
@@ -78,39 +83,40 @@ class Assigner(object):
         """Assign departing aircraft into pending or new formations."""
 
         assert type(sender) == Aircraft
-        self.aircraft_queue.append(sender)
+        sender_hub = sender.get_current_waypoint()
+        self.aircraft_queue[sender_hub].append(sender)
         self.init_formations()
 
     def init_formations(self):
 
         slack = config.virtual_hub_arrival_slack
-
-        hub = Waypoint('AMS')
-
-        # Create formations from the queuing aircraft
-        candidates = []
-        aircraft_by_name = {}
-        for aircraft in self.aircraft_queue:
-
-            aircraft_by_name[aircraft.name] = aircraft
-
-            # determine the ETA at the virtual hub
-            hub_eta = simulator.get_time() + aircraft.get_position().distance_to(hub) / aircraft.speed
-            candidates.append(Interval(aircraft.name, int(hub_eta - slack), int(hub_eta + slack)))
-
         self.pending_formations = []
-        for interval_group in group(candidates):
-            aircraft_list = []
-            for interval in interval_group:
-                aircraft_list.append(aircraft_by_name[interval.name])
-            formation = Formation(aircraft_list)
-            self.pending_formations.append(Formation(aircraft_list))
-            dispatcher.send(
-                'formation-init',
-                time = simulator.get_time(),
-                sender = self,
-                data = formation
-            )
+
+        for hub, queue in self.aircraft_queue.items():
+
+            # Create formations from the queuing aircraft
+            candidates = []
+            aircraft_by_name = {}
+            for aircraft in queue:
+
+                aircraft_by_name[aircraft.name] = aircraft
+
+                # determine the ETA at the virtual hub
+                hub_eta = simulator.get_time() + aircraft.get_position().distance_to(hub) / aircraft.speed
+                candidates.append(Interval(aircraft.name, int(hub_eta - slack), int(hub_eta + slack)))
+
+            for interval_group in group(candidates):
+                aircraft_list = []
+                for interval in interval_group:
+                    aircraft_list.append(aircraft_by_name[interval.name])
+                formation = Formation(aircraft_list)
+                self.pending_formations.append(Formation(aircraft_list))
+                dispatcher.send(
+                    'formation-init',
+                    time = simulator.get_time(),
+                    sender = self,
+                    data = formation
+                )
 
     def lock_formations(self, signal, sender, data, time):
 

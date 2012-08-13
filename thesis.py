@@ -10,6 +10,9 @@ if __name__ == '__main__':
     handler = EventHandler()
     assigner = Assigner()
 
+    Waypoint('AMS')
+    Waypoint('EIN')
+
     planes = []
 
     route = Route([Waypoint('CDG'),
@@ -22,6 +25,14 @@ if __name__ == '__main__':
 
     route = Route([Waypoint('FRA'),
                    Waypoint('AMS'),
+                   Waypoint('LHR'),
+                   Waypoint('JFK')])
+    aircraft = Aircraft("FRA_1", route)
+    aircraft.departure_time = 0
+    planes.append(aircraft)
+
+    route = Route([Waypoint('FRA'),
+                   Waypoint('EIN'),
                    Waypoint('LHR'),
                    Waypoint('JFK')])
     aircraft = Aircraft("FRA_1", route)

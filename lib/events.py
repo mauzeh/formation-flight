@@ -35,7 +35,7 @@ class EventHandler:
         lines.append('+-----------------------------------------------------+')
 
         if type(data) == Aircraft:
-            d       = data.route.get_distance_into_current_segment(data.get_distance_flown())
+            d = data.route.get_distance_into_current_segment(data.get_distance_flown())
             lines.append('% 25s: %s' % ('Aircraft', data.name))
             lines.append('% 25s: %s' % ('Departure time', data.departure_time))
             lines.append('% 25s: %.1f' % ('Speed', data.speed))

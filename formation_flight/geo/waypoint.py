@@ -18,3 +18,11 @@ class Waypoint(Point):
     def __repr__(self):
         return '%s' % self.name
         #return '%s (%s, %s)' % (self.name, self.lat, self.lon)
+
+    def __hash__(self):
+        """Allows object to be used as a key in a dictionary"""
+        return hash((self.name, self.lat, self.lon))
+
+    def __eq__(self, other):
+        """Allows object to be used as a key in a dictionary"""
+        return (self.name, self.lat, self.lon) == (other.name, other.lat, other.lon)

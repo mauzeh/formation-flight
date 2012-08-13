@@ -96,6 +96,9 @@ class Aircraft(object):
 #        print 'aircraft eta = %.1f' % eta
         return eta
 
+    def get_current_waypoint(self):
+        return self.get_current_segment().end
+
     def has_reached_waypoint(self):
         """
         Fires an event each time an aircraft passes a new waypoint
