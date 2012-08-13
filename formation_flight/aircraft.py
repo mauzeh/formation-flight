@@ -45,7 +45,8 @@ class Aircraft(object):
 
         if not self.is_in_flight(): return False
 
-        self._current_position = self.route.get_current_position(self.get_distance_flown())
+        self._current_position = self.route.get_current_position(
+            self.get_distance_flown())
         self.has_reached_waypoint()
 
         if(self._waiting):
@@ -73,7 +74,8 @@ class Aircraft(object):
         previous_airtime = self._airtime
         self._airtime    = simulator.get_time() - self.departure_time
         self._time_delta = self._airtime - previous_airtime
-        self._distance_flown = self._distance_flown + self.speed * self._time_delta
+        self._distance_flown = self._distance_flown +\
+                               self.speed * self._time_delta
 
     def get_position(self):
         return self._current_position
@@ -85,7 +87,8 @@ class Aircraft(object):
 
         segment = self.route.get_current_segment(self.get_distance_flown())
         l       = segment.get_length()
-        d       = self.route.get_distance_into_current_segment(self.get_distance_flown())
+        d       = self.route.get_distance_into_current_segment(
+                    self.get_distance_flown())
         eta     = simulator.get_time() + (l - d) / self.speed
 #        print 'calling waypoint eta of aircraft at time = %d' % simulator.get_time()
 #        print 'l=%.1f' % l
@@ -131,7 +134,8 @@ class Aircraft(object):
                     'destination-reached',
                     sender = self,
                     time = simulator.get_time(),
-                    data = 'Destination "%s" reached' % self.route.get_destination()
+                    data = 'Destination "%s" reached' %
+                           self.route.get_destination()
                 )
             return False
 
