@@ -14,7 +14,6 @@ if __name__ == '__main__':
 
     route = Route([Waypoint('CDG'),
                    Waypoint('AMS'),
-                   Waypoint('LHR'),
                    Waypoint('MCO')])
     aircraft = Aircraft("CDG", route)
     aircraft.departure_time = 0
@@ -22,7 +21,6 @@ if __name__ == '__main__':
 
     route = Route([Waypoint('FRA'),
                    Waypoint('AMS'),
-                   Waypoint('LHR'),
                    Waypoint('JFK')])
     aircraft = Aircraft("FRA_1", route)
     aircraft.departure_time = 0
@@ -30,7 +28,6 @@ if __name__ == '__main__':
 
     route = Route([Waypoint('FRA'),
                    Waypoint('AMS'),
-                   Waypoint('LHR'),
                    Waypoint('JFK')])
     aircraft = Aircraft("FRA_2", route)
     aircraft.departure_time = 15
@@ -38,7 +35,6 @@ if __name__ == '__main__':
 
     route = Route([Waypoint('CDG'),
                    Waypoint('AMS'),
-                   Waypoint('LHR'),
                    Waypoint('JFK')])
     aircraft = Aircraft("CDG_2", route)
     aircraft.departure_time = 18
