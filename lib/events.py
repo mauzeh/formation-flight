@@ -13,7 +13,8 @@ class EventHandler:
         dispatcher.connect(self.handle)
 
         # Do not respond to these signals
-        self.ignore = ['fly', 'sim-init', 'formation-init']
+        self.ignore = ['fly', 'sim-init', 'formation-init',
+                       'formation-locked', 'takeoff', 'waypoint-reached']
 
     def handle(self, signal, sender, data = None, time = 0):
 

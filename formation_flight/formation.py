@@ -68,7 +68,6 @@ class Assigner(object):
 
         # List of locked formations. Nothing can be done to change these
         self.locked_formations = []
-
         dispatcher.connect(self.register_takeoff, 'takeoff')
         dispatcher.connect(self.try_to_lock_formations, 'fly')
         dispatcher.connect(self.synchronize, 'formation-lock')
