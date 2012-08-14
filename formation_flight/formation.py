@@ -81,38 +81,42 @@ class Assigner(object):
 
     def assign(self):
 
-        # @todo How to balance if we try to compose a new formation and/or add to existing?
-
         # how much time the arrival at the virtual hub can be delayed/expedited
-        # @todo Move this to a central location
         slack = config.virtual_hub_arrival_slack
-
-        hub = Waypoint('AMS')
-
-        # Create formations from the queuing aircraft
-        candidates = []
-        aircraft_by_name = {}
-        for aircraft in self.aircraft_queue:
-
-            aircraft_by_name[aircraft.name] = aircraft
-
-            # determine the ETA at the virtual hub
-            hub_eta = simulator.get_time() + aircraft.get_position().distance_to(hub) / aircraft.speed
-            candidates.append(Interval(aircraft.name, int(hub_eta - slack), int(hub_eta + slack)))
-
         self.pending_formations = []
-        for interval_group in group(candidates):
-            aircraft_list = []
-            for interval in interval_group:
-                aircraft_list.append(aircraft_by_name[interval.name])
-            formation = Formation(aircraft_list)
-            self.pending_formations.append(Formation(aircraft_list))
-            dispatcher.send(
-                'formation-init',
-                time = simulator.get_time(),
-                sender = self,
-                data = formation
-            )
+
+        for hub_name in config.virtual_hubs:
+
+            # Create formations from the queuing aircraft
+            hub = Waypoint('AMS')
+            candidates = []
+            aircraft_by_name = {}
+
+            for aircraft in self.aircraft_queue:
+
+                if aircraft.get_current_waypoint().name != hub_name:
+                    continue
+
+                aircraft_by_name[aircraft.name] = aircraft
+
+                hub_eta = aircraft.get_waypoint_eta()
+                candidates.append(
+                    Interval(aircraft.name,
+                             int(hub_eta - slack),
+                             int(hub_eta + slack)))
+
+            for interval_group in group(candidates):
+                aircraft_list = []
+                for interval in interval_group:
+                    aircraft_list.append(aircraft_by_name[interval.name])
+                formation = Formation(aircraft_list)
+                self.pending_formations.append(Formation(aircraft_list))
+                dispatcher.send(
+                    'formation-init',
+                    time = simulator.get_time(),
+                    sender = self,
+                    data = formation
+                )
 
     def try_to_lock_formations(self, signal, sender, data, time):
 
@@ -132,11 +136,9 @@ class Assigner(object):
         if not len(self.aircraft_queue) > 0: return
 
         for aircraft in formation.aircraft:
-            #@todo Remove by name is not efficient, but references didn't work?
             for q_a in self.aircraft_queue:
                 if q_a.name == aircraft.name:
                     self.aircraft_queue.remove(q_a)
-        # reinit the formations
         self.assign()
 
     def synchronize(self, signal, sender, data = None, time = 0):
