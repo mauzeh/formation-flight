@@ -3,12 +3,11 @@ from formation_flight.formation import Assigner, Formation
 from formation_flight.geo.route import Route
 from formation_flight.geo.waypoint import Waypoint
 from formation_flight import simulator
-from lib.events import EventHandler
+from lib.events import EventHandler, AnotherEventHandler
 
 if __name__ == '__main__':
 
     handler = EventHandler()
-    assigner = Assigner()
     assigner = Assigner()
 
     planes = []
@@ -16,29 +15,37 @@ if __name__ == '__main__':
     route = Route([Waypoint('CDG'),
                    Waypoint('AMS'),
                    Waypoint('MCO')])
-    aircraft = Aircraft("CDG", route)
+    aircraft = Aircraft("CDG-AMS-MCO", route)
     aircraft.departure_time = 5
     planes.append(aircraft)
 
     route = Route([Waypoint('FRA'),
                    Waypoint('AMS'),
                    Waypoint('JFK')])
-    aircraft = Aircraft("FRA_1", route)
+    aircraft = Aircraft("FRA-AMS-JFK", route)
     aircraft.departure_time = 12
     planes.append(aircraft)
 
     route = Route([Waypoint('FRA'),
                    Waypoint('AMS'),
+                   Waypoint('SFO')])
+    aircraft = Aircraft("FRA-AMS-SFO", route)
+    aircraft.departure_time = 8
+    aircraft.departure_time = 15
+    planes.append(aircraft)
+
+    route = Route([Waypoint('FRA'),
+                   Waypoint('EIN'),
                    Waypoint('JFK')])
-    aircraft = Aircraft("FRA_2", route)
+    aircraft = Aircraft("FRA-EIN-JFK", route)
     aircraft.departure_time = 8
     aircraft.departure_time = 15
     planes.append(aircraft)
 
     route = Route([Waypoint('CDG'),
-                   Waypoint('AMS'),
+                   Waypoint('EIN'),
                    Waypoint('JFK')])
-    aircraft = Aircraft("CDG_2", route)
+    aircraft = Aircraft("CDG-EIN-JFK", route)
     aircraft.departure_time = 18
     planes.append(aircraft)
 

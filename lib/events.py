@@ -16,10 +16,10 @@ class EventHandler:
         self.ignore = [
             'fly',
             'sim-init',
-#            'formation-init',
-            'formation-locked',
+            'formation-init',
+#            'formation-locked',
             'takeoff',
-#            'waypoint-reached'
+            'waypoint-reached'
         ]
 
     def handle(self, signal, sender, data = None, time = 0):
