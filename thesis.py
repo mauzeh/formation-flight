@@ -3,7 +3,7 @@ from formation_flight.formation import Assigner, Formation
 from formation_flight.geo.route import Route
 from formation_flight.geo.waypoint import Waypoint
 from formation_flight import simulator
-from lib.events import EventHandler, AnotherEventHandler
+from lib.events import EventHandler
 
 if __name__ == '__main__':
 

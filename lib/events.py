@@ -18,8 +18,8 @@ class EventHandler:
             'sim-init',
             'formation-init',
 #            'formation-locked',
-            'takeoff',
-            'waypoint-reached'
+#            'takeoff',
+#            'waypoint-reached'
         ]
 
     def handle(self, signal, sender, data = None, time = 0):
