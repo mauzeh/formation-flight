@@ -4,13 +4,13 @@ class Interval:
     """
     A time window that is used to group flights arriving at about the same time.
     """
-    def __init__(self, name, start, end):
-        self.name = name
+    def __init__(self, obj, start, end):
+        self.obj = obj
         self.start = start
         self.end = end
 
     def __repr__(self):
-        return '%s (%s ~ %s)' % (self.name, self.start, self.end)
+        return '%s (%s ~ %s)' % (self.obj, self.start, self.end)
         #return self.name
 
 def group(intervals):
@@ -30,7 +30,8 @@ def group(intervals):
     intervals = sorted(intervals, key = lambda interval: interval.start)
     if(len(intervals) == 0): return []
     solution = []
-    candidates = copy.deepcopy(intervals)
+    #candidates = copy.deepcopy(intervals)
+    candidates = intervals
     for i in range(0, len(candidates)):
         if candidates[i].start < candidates[0].end:
             solution.append(candidates[i])

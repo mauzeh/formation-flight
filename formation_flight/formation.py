@@ -35,8 +35,10 @@ class Formation(object):
         start_eta = self.get_start_eta()
         formation_time_to_hub = self.get_start_eta() - simulator.get_time()
         for aircraft in self.aircraft:
-            aircraft_time_to_hub  = aircraft.get_waypoint_eta() - simulator.get_time()
-            aircraft.speed = aircraft.speed * aircraft_time_to_hub / formation_time_to_hub
+            waypoint_eta = aircraft.get_waypoint_eta()
+            time_to_hub  = waypoint_eta - simulator.get_time()
+            speed = aircraft.speed
+            aircraft.speed = speed * time_to_hub / formation_time_to_hub
 
     def lock(self):
         self.status = 'locked'
@@ -55,7 +57,10 @@ class Formation(object):
         return '%s' % self.aircraft
 
 class Assigner(object):
-    """Perform aircraft formation assignment by hooking in to certain simulation events."""
+    """Hooks into the Event Dispatcher to assign aircraft into formations.
+
+    Listens to the following events: "takeoff", "fly", and "formation-lock".
+    """
 
     def __init__(self):
 
@@ -68,12 +73,14 @@ class Assigner(object):
 
         # List of locked formations. Nothing can be done to change these
         self.locked_formations = []
+
+        # Hooking in to the Event Dispatcher.
         dispatcher.connect(self.register_takeoff, 'takeoff')
         dispatcher.connect(self.try_to_lock_formations, 'fly')
         dispatcher.connect(self.synchronize, 'formation-lock')
 
     def register_takeoff(self, signal, sender, data = None, time = 0):
-        """Assign departing aircraft into pending or new formations."""
+        """Registers departing aircraft, and assigns into formations."""
 
         assert type(sender) == Aircraft
         self.aircraft_queue.append(sender)
@@ -87,28 +94,25 @@ class Assigner(object):
 
         for hub_name in config.virtual_hubs:
 
-            # Create formations from the queuing aircraft
-            hub = Waypoint('AMS')
+            # Create formations from the queuing aircraft.
             candidates = []
-            aircraft_by_name = {}
 
             for aircraft in self.aircraft_queue:
 
+                # Disregard if not flying to hub under consideration.
                 if aircraft.get_current_waypoint().name != hub_name:
                     continue
 
-                aircraft_by_name[aircraft.name] = aircraft
-
                 hub_eta = aircraft.get_waypoint_eta()
                 candidates.append(
-                    Interval(aircraft.name,
+                    Interval(aircraft,
                              int(hub_eta - slack),
                              int(hub_eta + slack)))
 
             for interval_group in group(candidates):
                 aircraft_list = []
                 for interval in interval_group:
-                    aircraft_list.append(aircraft_by_name[interval.name])
+                    aircraft_list.append(interval.obj)
                 formation = Formation(aircraft_list)
                 self.pending_formations.append(Formation(aircraft_list))
                 dispatcher.send(
@@ -125,11 +129,11 @@ class Assigner(object):
         for formation in self.pending_formations:
 
             # if formation ETA is less than 10 time units away, lock it
+            # @todo Make configurable, is actually a model input parameter!
             if formation.get_start_eta() - simulator.get_time() <= 10:
                 # remove participants from aircraft queue
                 self.remove_from_queue(formation)
                 formation.lock()
-
 
     def remove_from_queue(self, formation):
         assert type(formation) == Formation

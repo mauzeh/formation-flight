@@ -3,11 +3,11 @@ from formation_flight import simulator
 
 class Aircraft(object):
 
-    def __init__(self, name, route):
+    def __init__(self, name, route, departure_time):
 
         self.name = name
         self.route = route
-        self.departure_time = 0
+        self.departure_time = departure_time
 
         # km/second
         #self.speed = .257222222
@@ -49,6 +49,8 @@ class Aircraft(object):
             self.get_distance_flown())
         self.has_reached_waypoint()
 
+        # self._waiting is True by default and needs to be set to False once
+        # we switch to being 'in flight'.
         if(self._waiting):
             self._waiting = False
             dispatcher.send(
@@ -58,6 +60,7 @@ class Aircraft(object):
                 data = self
             )
         else:
+            # Nothing weird is happening, no take-off, no landing, just fly.
             dispatcher.send(
                 'fly',
                 time = simulator.get_time(),
@@ -94,10 +97,6 @@ class Aircraft(object):
         d       = self.route.get_distance_into_current_segment(
                     self.get_distance_flown())
         eta     = simulator.get_time() + (l - d) / self.speed
-#        print 'calling waypoint eta of aircraft at time = %d' % simulator.get_time()
-#        print 'l=%.1f' % l
-#        print 'd=%.1f' % d
-#        print 'aircraft eta = %.1f' % eta
         return eta
 
     def has_reached_waypoint(self):
@@ -110,7 +109,8 @@ class Aircraft(object):
         If several waypoints are reached at once (can happen with really big
         time intervals) then each waypoint is fired directly after the other.
         """
-        current_segment = self.route.get_current_segment(self.get_distance_flown())
+        distance_flown = self.get_distance_flown()
+        current_segment = self.route.get_current_segment(distance_flown)
         index = self.route.segments.index(current_segment)
 
         if(index > self._segment_index):

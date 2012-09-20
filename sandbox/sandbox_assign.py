@@ -1,10 +1,11 @@
 """
 Tests the assignment algorithm.
 
-Assignment algorithm: find all flights that arrive at the virtual hub within a certain time window of each other and
-group them by maximizing the available slack.
+Assignment algorithm: find all flights that arrive at the virtual hub within a 
+certain time window of each other and group them by maximizing the available 
+slack.
 """
-from lib.intervals import group
+from lib.intervals import Interval,group
 
 if __name__ == '__main__':
 
