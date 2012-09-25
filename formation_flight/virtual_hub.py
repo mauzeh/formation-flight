@@ -3,6 +3,9 @@ import random
 from pydispatch import dispatcher
 from geo.waypoint import Waypoint
 
+# Hubs that can be assigned to flights.
+hubs = [Waypoint('MAN')]#, Waypoint('EIN'), Waypoint('AMS')]
+
 def register():
     dispatcher.connect(handle)
 
@@ -20,9 +23,8 @@ class Assigner(object):
     def assign(self, flight):
 
         # find an appropriate hub for this flight
-        hubs = [Waypoint('MAN')]#, Waypoint('EIN'), Waypoint('AMS')]
         hub  = random.choice(hubs)
-        print 'flight %s is getting hub %s' % (flight, hub)
+        #print 'flight %s is getting hub %s' % (flight, hub)
 
         # replace the direct route with a route via the virtual hub
         waypoints = flight.route.waypoints

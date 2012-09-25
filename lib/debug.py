@@ -11,7 +11,7 @@ from formation_flight.formation import Formation
 signals = [
     #'fly',
     #'sim-init',
-    'formation-init',
+    #'formation-init',
     'formation-locked',
     #'takeoff',
     'waypoint-reached'
@@ -41,7 +41,7 @@ def handle(signal, sender, data = None, time = 0):
         lines.append('| % 25s: %s' % ('Departure time', data.departure_time))
         lines.append('| % 25s: %.1f' % ('Speed', data.speed))
         lines.append('| % 25s: %s' % ('Segment', segment))
-        lines.append('| % 25s: %.1f km' % ('Distance into segment', d))
+        lines.append('| % 25s: %.1f' % ('Distance into segment', d))
         lines.append('| % 25s: %.1f' % ('Waypoint ETA', data.get_waypoint_eta()))
 
     elif type(data) == Formation:

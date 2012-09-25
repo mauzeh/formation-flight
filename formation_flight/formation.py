@@ -2,7 +2,7 @@ from pydispatch import dispatcher
 from formation_flight.aircraft import Aircraft
 from formation_flight.geo.waypoint import Waypoint
 from lib.intervals import Interval, group
-from formation_flight import simulator, config
+from formation_flight import simulator, config, virtual_hub
 
 def register():
     dispatcher.connect(handle)
@@ -44,6 +44,12 @@ class Formation(object):
 
         # for now, delay all early participants
         # ETA equals eta of first participant
+
+        flight = self.aircraft[0]
+        hub = self.aircraft[0].get_current_waypoint()
+        pos = self.aircraft[0].get_position()
+        distance = pos.distance_to(hub)
+        #print 't = %d. distance for flight %s to hub %s = %d NM' % (simulator.get_time(), flight, hub, distance)
         return self.aircraft[0].get_waypoint_eta()
 
     def synchronize(self):
@@ -55,7 +61,11 @@ class Formation(object):
             waypoint_eta = aircraft.get_waypoint_eta()
             time_to_hub  = waypoint_eta - simulator.get_time()
             speed = aircraft.speed
+            #print 'simtime %s' % simulator.get_time()
+            #print 'the speed of %s is currently %s' % (aircraft, aircraft.speed)
+            #print 'time to hub %s' % time_to_hub
             aircraft.speed = speed * time_to_hub / formation_time_to_hub
+            #print 'setting the speed of %s to %s' % (aircraft, aircraft.speed)
 
     def lock(self):
         """Locks this formation. It can no longer accept aircraft"""
@@ -103,7 +113,7 @@ class Assigner(object):
         slack = config.virtual_hub_arrival_slack
         self.pending_formations = []
 
-        for hub_name in config.virtual_hubs:
+        for hub in virtual_hub.hubs:
 
             # Create formations from the queuing aircraft.
             candidates = []
@@ -111,7 +121,7 @@ class Assigner(object):
             for aircraft in self.aircraft_queue:
 
                 # Disregard if not flying to hub under consideration.
-                if aircraft.get_current_waypoint().name != hub_name:
+                if aircraft.get_current_waypoint() != hub:
                     continue
 
                 hub_eta = aircraft.get_waypoint_eta()
