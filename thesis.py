@@ -2,7 +2,6 @@
 import os
 import csv
 
-from pydispatch import dispatcher
 from formation_flight.aircraft import Aircraft
 from formation_flight.geo.route import Route
 from formation_flight.geo.waypoint import Waypoint

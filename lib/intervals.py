@@ -1,5 +1,3 @@
-import copy
-
 class Interval:
     """
     A time window that is used to group flights arriving at about the same time.
