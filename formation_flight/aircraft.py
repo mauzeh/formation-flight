@@ -71,9 +71,8 @@ class Aircraft(object):
         return True
 
     def set_time(self):
+        """Determines the time that this aircraft has been in flight"""
 
-        # the time that this aircraft has been in flight, from the scheduled
-        # moment of departure
         previous_airtime = self._airtime
         self._airtime    = simulator.get_time() - self.departure_time
         self._time_delta = self._airtime - previous_airtime
@@ -100,8 +99,7 @@ class Aircraft(object):
         return eta
 
     def has_reached_waypoint(self):
-        """
-        Fires an event each time an aircraft passes a new waypoint
+        """Fires an event each time an aircraft passes a new waypoint
 
         Assumes that aircraft do not fly past the same waypoint more than once.
         Not even if it is further down the flight.
@@ -126,21 +124,23 @@ class Aircraft(object):
 
     def is_in_flight(self):
 
-        # if negative, aircraft waits on ground
+        # if negative, flight departure time is still in the future
         if self._airtime < 0:
+            return False
+
+        if self._landed:
             return False
 
         # don't even bother if we have landed
         if self.get_distance_flown() > self.route.get_length():
-            if not self._landed:
-                self._landed = True
-                dispatcher.send(
-                    'destination-reached',
-                    sender = self,
-                    time = simulator.get_time(),
-                    data = 'Destination "%s" reached' %
-                           self.route.get_destination()
-                )
+            self._landed = True
+            dispatcher.send(
+                'destination-reached',
+                sender = self,
+                time = simulator.get_time(),
+                data = 'Destination "%s" reached' %
+                       self.route.get_destination()
+            )
             return False
 
         return True
