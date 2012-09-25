@@ -130,7 +130,9 @@ class Assigner(object):
 
             # if formation ETA is less than 10 time units away, lock it
             # @todo Make configurable, is actually a model input parameter!
-            if formation.get_start_eta() - simulator.get_time() <= 10:
+            time_remaining = formation.get_start_eta() - simulator.get_time()
+            lock_time = config.formation_lock_time
+            if time_remaining <= lock_time:
                 # remove participants from aircraft queue
                 self.remove_from_queue(formation)
                 formation.lock()

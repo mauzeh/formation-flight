@@ -18,3 +18,6 @@ hub_assignment = 'static'
 # @todo Currently, only 'point' is supported.
 hub_type = 'point'
 
+# Formation lock time. How much time before arriving at the hub must a
+# formation be locked?
+formation_lock_time = 10
