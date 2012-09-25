@@ -6,7 +6,7 @@ virtual_hub_arrival_slack = 15
 # Which virtual hubs we are employing
 # Note that these must be injected in the flight trajectory in advance!
 # @todo Should not be necessary to inject in advance.
-virtual_hubs = ['AMS', 'EIN']
+virtual_hubs = ['AMS', 'EIN', 'MAN']
 
 # Virtual hub assignment algorithm. Can be either "static", 
 # "dynamic", or "ad hoc".

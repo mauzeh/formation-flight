@@ -11,10 +11,10 @@ from formation_flight.formation import Formation
 signals = [
     #'fly',
     #'sim-init',
-    #'formation-init',
+    'formation-init',
     'formation-locked',
     #'takeoff',
-    #'waypoint-reached'
+    'waypoint-reached'
 ]
 
 def register():

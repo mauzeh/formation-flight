@@ -34,7 +34,7 @@ if __name__ == '__main__':
         aircraft       = Aircraft(row[0], route, departure_time)
         planes.append(aircraft)
 
-    simulator.execute(range(0, 60, 1), planes)
+    simulator.execute(range(0, 120, 1), planes)
 
     # Example syntax
     # route = Route([Waypoint('CDG'),

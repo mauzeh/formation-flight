@@ -19,7 +19,10 @@ class Aircraft(object):
         # self.speed = 500
 
         # KM/minute
-        self.speed = 10
+        #self.speed = 10
+
+        # NM/minute (corresponds to ~500kts)
+        self.speed = 8.33
 
         self._airtime = 0
         self._simtime = 0
