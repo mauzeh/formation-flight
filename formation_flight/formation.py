@@ -4,8 +4,23 @@ from formation_flight.geo.waypoint import Waypoint
 from lib.intervals import Interval, group
 from formation_flight import simulator, config
 
+def register():
+    dispatcher.connect(handle)
+
+def handle(signal, sender, data = None, time = 0):
+
+    if not hasattr(handle, "assigner"):
+        handle.assigner = Assigner()
+
+    if signal is 'fly':
+        handle.assigner.lock_formations(signal, sender, data, time)
+    if signal is 'takeoff':
+        handle.assigner.register_takeoff(signal, sender, data, time)
+    
 class Formation(object):
-    """Represents a group of aircraft flying together"""
+    """Represents a group of aircraft flying together.
+
+    Introduces and fires a new event: "formation-locked"."""
 
     def __init__(self, aircraft = []):
 
@@ -14,8 +29,8 @@ class Formation(object):
         self.aircraft = aircraft
 
         # Statuses:
-        # pending - Not flying yet, open to receive aircraft
-        # locked - Not flying yet, not open to receive aircraft
+        # pending - Not flying yet. Open to receive aircraft
+        # locked  - Not flying yet. Not open to receive aircraft
         # active  - Flying. Not open to receive aircraft
         self.status = 'pending'
 
@@ -41,6 +56,7 @@ class Formation(object):
             aircraft.speed = speed * time_to_hub / formation_time_to_hub
 
     def lock(self):
+        """Locks this formation. It can no longer accept aircraft"""
         self.status = 'locked'
 
         # Synchronize all aircraft to arrive at the same time
@@ -57,10 +73,7 @@ class Formation(object):
         return '%s' % self.aircraft
 
 class Assigner(object):
-    """Hooks into the Event Dispatcher to assign aircraft into formations.
-
-    Listens to the following events: "takeoff", "fly", and "formation-lock".
-    """
+    """Assigns aircraft into formations"""
 
     def __init__(self):
 
@@ -74,11 +87,6 @@ class Assigner(object):
         # List of locked formations. Nothing can be done to change these
         self.locked_formations = []
 
-        # Hooking in to the Event Dispatcher.
-        dispatcher.connect(self.register_takeoff, 'takeoff')
-        dispatcher.connect(self.try_to_lock_formations, 'fly')
-        dispatcher.connect(self.synchronize, 'formation-lock')
-
     def register_takeoff(self, signal, sender, data = None, time = 0):
         """Registers departing aircraft, and assigns into formations."""
 
@@ -87,6 +95,7 @@ class Assigner(object):
         self.assign()
 
     def assign(self):
+        """Groups airborne aircraft having an ETAH overlap"""
 
         # how much time the arrival at the virtual hub can be delayed/expedited
         slack = config.virtual_hub_arrival_slack
@@ -122,14 +131,13 @@ class Assigner(object):
                     data = formation
                 )
 
-    def try_to_lock_formations(self, signal, sender, data, time):
-
+    def lock_formations(self, signal, sender, data, time):
+        """Locks pending formations if they are within range of the hub"""
         if len(self.pending_formations) <= 0: return
 
         for formation in self.pending_formations:
 
             # if formation ETA is less than 10 time units away, lock it
-            # @todo Make configurable, is actually a model input parameter!
             time_remaining = formation.get_start_eta() - simulator.get_time()
             lock_time = config.formation_lock_time
             if time_remaining <= lock_time:
@@ -138,21 +146,15 @@ class Assigner(object):
                 formation.lock()
 
     def remove_from_queue(self, formation):
+        """Removes aircraft that are locked into formations from the queue"""
         assert type(formation) == Formation
         if not len(self.aircraft_queue) > 0: return
 
         for aircraft in formation.aircraft:
             for q_a in self.aircraft_queue:
                 if q_a.name == aircraft.name:
+                    print 'Removing %s from queue' % q_a
                     self.aircraft_queue.remove(q_a)
+        # @todo is this really necessary? wasn't this triggered by assign
+        # in the first place?
         self.assign()
-
-    def synchronize(self, signal, sender, data = None, time = 0):
-        """Makes sure that all aircraft in a formation arrive simultaneously"""
-        assert type(data) == Formation
-
-        # distance to virtual hub
-
-        # set speed so that arrival @ hub = 80 units
-        #time_to_hub = 79.9999 - time
-        #sender.speed = distance / time_to_hub

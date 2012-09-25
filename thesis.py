@@ -1,17 +1,19 @@
 import os
 import csv
 
+from pydispatch import dispatcher
 from formation_flight.aircraft import Aircraft
-from formation_flight.formation import Assigner, Formation
 from formation_flight.geo.route import Route
 from formation_flight.geo.waypoint import Waypoint
 from formation_flight import simulator
-from lib.events import EventHandler
+from lib import debug
+from formation_flight import formation
 
 if __name__ == '__main__':
 
-    handler = EventHandler()
-    assigner = Assigner()
+    # Initialize event listeners
+    formation.register()
+    debug.register()
 
     planes = []
 
