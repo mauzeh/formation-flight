@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import os
 import csv
 
@@ -7,30 +8,33 @@ from formation_flight.geo.route import Route
 from formation_flight.geo.waypoint import Waypoint
 from formation_flight import simulator
 from lib import debug
-from formation_flight import formation
+from formation_flight import formation, virtual_hub
 
 if __name__ == '__main__':
 
     # Initialize event listeners
+    virtual_hub.register()
     formation.register()
     debug.register()
-
-    planes = []
 
     # Read the data file containing a list of flights and set up the
     # planes list
     fn = os.path.join(os.path.dirname(__file__), 'data/flights.csv')
-    reader = csv.reader(open(fn))
-    for row in reader:
+    planes = []
+
+    for row in csv.reader(open(fn)):
+
         waypoints = []
-        for point in row[2].split('-'):
+
+        for point in row[3].split('-'):
             waypoints.append(Waypoint(point))
-        route = Route(waypoints)
-        departure_time = int(row[1])
-        aircraft = Aircraft(row[2], route, departure_time)
+            
+        route          = Route(waypoints)
+        departure_time = int(row[2])
+        aircraft       = Aircraft(row[0], route, departure_time)
         planes.append(aircraft)
 
-    simulator.execute(range(0, 60, 1), planes)
+    simulator.execute(range(0, 120, 1), planes)
 
     # Example syntax
     # route = Route([Waypoint('CDG'),
