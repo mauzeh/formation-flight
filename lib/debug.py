@@ -14,7 +14,7 @@ signals = [
     #'formation-init',
     'formation-locked',
     #'takeoff',
-    'waypoint-reached'
+    #'waypoint-reached'
 ]
 
 def register():
@@ -48,6 +48,7 @@ def handle(signal, sender, data = None, time = 0):
         lines.append('| %25s: %s' % ('Participants', data.aircraft))
         lines.append('| %25s: %.2f' % ('Start ETA', data.get_start_eta()))
         lines.append('| %25s: %s' % ('Status', data.status))
+        lines.append('| %25s: %s' % ('Hub', data.hub))
         pass
 
     else:

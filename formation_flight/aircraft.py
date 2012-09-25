@@ -3,9 +3,9 @@ from formation_flight import simulator
 
 class Aircraft(object):
 
-    def __init__(self, name, route, departure_time):
+    def __init__(self, code, route, departure_time):
 
-        self.name = name
+        self.name = code
         self.route = route
         self.departure_time = departure_time
 

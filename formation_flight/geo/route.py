@@ -4,9 +4,14 @@ from formation_flight.geo.segment import Segment
 class Route(object):
     """A collection of segments"""
     def __init__(self, waypoints = []):
+        self.waypoints = waypoints
+        self.init_segments()
+            
+    def init_segments(self):
+        """Uses the waypoint list to generate the segments in this route"""
         self.segments = []
         previous_waypoint = None
-        for waypoint in waypoints:
+        for waypoint in self.waypoints:
             if previous_waypoint is not None:
                 self.segments.append(Segment(previous_waypoint, waypoint))
             previous_waypoint = waypoint

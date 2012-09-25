@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import os
 import csv
 
@@ -16,19 +17,21 @@ if __name__ == '__main__':
     formation.register()
     debug.register()
 
-    planes = []
-
     # Read the data file containing a list of flights and set up the
     # planes list
     fn = os.path.join(os.path.dirname(__file__), 'data/flights.csv')
-    reader = csv.reader(open(fn))
-    for row in reader:
+    planes = []
+
+    for row in csv.reader(open(fn)):
+
         waypoints = []
-        for point in row[2].split('-'):
+
+        for point in row[3].split('-'):
             waypoints.append(Waypoint(point))
-        route = Route(waypoints)
-        departure_time = int(row[1])
-        aircraft = Aircraft(row[2], route, departure_time)
+            
+        route          = Route(waypoints)
+        departure_time = int(row[2])
+        aircraft       = Aircraft(row[0], route, departure_time)
         planes.append(aircraft)
 
     simulator.execute(range(0, 60, 1), planes)

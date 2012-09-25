@@ -37,6 +37,8 @@ class Formation(object):
         # The time at which the formation is set to start
         self.start_time = 0
 
+        self.hub = self.aircraft[0].get_current_waypoint()
+
     def get_start_eta(self):
         """Calculates when the formation is set to start"""
 
@@ -153,7 +155,6 @@ class Assigner(object):
         for aircraft in formation.aircraft:
             for q_a in self.aircraft_queue:
                 if q_a.name == aircraft.name:
-                    print 'Removing %s from queue' % q_a
                     self.aircraft_queue.remove(q_a)
         # @todo is this really necessary? wasn't this triggered by assign
         # in the first place?
