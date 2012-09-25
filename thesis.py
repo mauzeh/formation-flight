@@ -7,11 +7,12 @@ from formation_flight.geo.route import Route
 from formation_flight.geo.waypoint import Waypoint
 from formation_flight import simulator
 from lib import debug
-from formation_flight import formation
+from formation_flight import formation, virtual_hub
 
 if __name__ == '__main__':
 
     # Initialize event listeners
+    virtual_hub.register()
     formation.register()
     debug.register()
 

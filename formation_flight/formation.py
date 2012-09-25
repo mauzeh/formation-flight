@@ -13,9 +13,9 @@ def handle(signal, sender, data = None, time = 0):
         handle.assigner = Assigner()
 
     if signal is 'fly':
-        handle.assigner.lock_formations(signal, sender, data, time)
+        handle.assigner.lock_formations()
     if signal is 'takeoff':
-        handle.assigner.register_takeoff(signal, sender, data, time)
+        handle.assigner.register_takeoff(aircraft = sender)
     
 class Formation(object):
     """Represents a group of aircraft flying together.
@@ -87,11 +87,11 @@ class Assigner(object):
         # List of locked formations. Nothing can be done to change these
         self.locked_formations = []
 
-    def register_takeoff(self, signal, sender, data = None, time = 0):
+    def register_takeoff(self, aircraft):
         """Registers departing aircraft, and assigns into formations."""
 
-        assert type(sender) == Aircraft
-        self.aircraft_queue.append(sender)
+        assert type(aircraft) == Aircraft
+        self.aircraft_queue.append(aircraft)
         self.assign()
 
     def assign(self):
@@ -131,7 +131,7 @@ class Assigner(object):
                     data = formation
                 )
 
-    def lock_formations(self, signal, sender, data, time):
+    def lock_formations(self):
         """Locks pending formations if they are within range of the hub"""
         if len(self.pending_formations) <= 0: return
 
