@@ -21,7 +21,6 @@ class Route(object):
             segments_flown.append(segment)
         return segments_flown
 
-
     def get_current_segment(self, distance_flown):
         segments_flown = self.get_segments_flown(distance_flown)
         assert isinstance(segments_flown, list)
