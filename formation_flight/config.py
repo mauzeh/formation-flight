@@ -15,4 +15,4 @@ hub_type = 'point'
 
 # Formation lock time. How much time before arriving at the hub must a
 # formation be locked?
-formation_lock_time = 15
+formation_lock_time = 20

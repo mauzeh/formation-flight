@@ -39,33 +39,16 @@ class Formation(object):
 
         self.hub = self.aircraft[0].get_current_waypoint()
 
-    def get_start_eta(self):
-        """Calculates when the formation is set to start"""
-
-        # for now, delay all early participants
-        # ETA equals eta of first participant
-
-        flight = self.aircraft[0]
-        hub = self.aircraft[0].get_current_waypoint()
-        pos = self.aircraft[0].get_position()
-        distance = pos.distance_to(hub)
-        #print 't = %d. distance for flight %s to hub %s = %d NM' % (simulator.get_time(), flight, hub, distance)
-        return self.aircraft[0].get_waypoint_eta()
-
     def synchronize(self):
         """Aligns the arrival times of all aircraft into the hub."""
-
-        start_eta = self.get_start_eta()
-        formation_time_to_hub = self.get_start_eta() - simulator.get_time()
-        for aircraft in self.aircraft:
-            waypoint_eta = aircraft.get_waypoint_eta()
-            time_to_hub  = waypoint_eta - simulator.get_time()
-            speed = aircraft.speed
-            #print 'simtime %s' % simulator.get_time()
-            #print 'the speed of %s is currently %s' % (aircraft, aircraft.speed)
-            #print 'time to hub %s' % time_to_hub
-            aircraft.speed = speed * time_to_hub / formation_time_to_hub
-            #print 'setting the speed of %s to %s' % (aircraft, aircraft.speed)
+        synchronizer = Synchronizer(self)
+        synchronizer.synchronize()
+        
+    def get_start_eta(self):
+        """Start time of the formation portion. ETAH"""
+        synchronizer = Synchronizer(self)
+        return synchronizer.get_etah()
+        
 
     def lock(self):
         """Locks this formation. It can no longer accept aircraft"""
@@ -169,3 +152,45 @@ class Assigner(object):
         # @todo is this really necessary? wasn't this triggered by assign
         # in the first place?
         self.assign()
+        
+class Synchronizer(object):
+    """Aligns the arrival times of aircraft at the next waypoint"""
+
+    def __init__(self, formation):
+        self.formation = formation
+
+    def get_etah(self):
+        """Calculates when the formation is set to start"""
+
+        # for now, delay all early participants
+        # ETA equals eta of latest participant
+        def latest(winner, item): 
+            if item.get_waypoint_eta() > winner.get_waypoint_eta():
+                return item
+            else:
+                return winner
+
+        latest_aircraft = reduce(latest, self.formation.aircraft)
+        
+        return latest_aircraft.get_waypoint_eta()
+
+    def synchronize(self):
+        """Adjusts the speed of formation members to match the etah"""
+
+        formation_time_to_hub = self.get_etah() - simulator.get_time()
+        
+        for aircraft in self.formation.aircraft:
+            waypoint_eta = aircraft.get_waypoint_eta()
+            time_to_hub  = waypoint_eta - simulator.get_time()
+            hub = aircraft.get_current_waypoint()
+            distance_to_hub = aircraft.get_position().distance_to(hub)
+            speed = aircraft.speed
+            #print '-'*80
+            #print 'simtime %s' % simulator.get_time()
+            #print 'the speed of %s is currently %s' % (aircraft, aircraft.speed)
+            #print 'hub is %.2f time units and %.2f distance units away' % (time_to_hub, distance_to_hub)
+            #print 'hub should be %.2f time units away, so we have to adjust speed' % (formation_time_to_hub)
+            aircraft.speed = speed * time_to_hub / formation_time_to_hub
+            #print 'setting the speed of %s to %s' % (aircraft, aircraft.speed)
+            #print '-'*80
+    

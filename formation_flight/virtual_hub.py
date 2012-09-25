@@ -23,7 +23,7 @@ class Assigner(object):
     def assign(self, flight):
 
         # find an appropriate hub for this flight
-        hub  = random.choice(hubs)
+        hub = random.choice(hubs)
         #print 'flight %s is getting hub %s' % (flight, hub)
 
         # replace the direct route with a route via the virtual hub
