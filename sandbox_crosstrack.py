@@ -6,9 +6,7 @@ from formation_flight.geo.route import Route
 from formation_flight.aircraft import Aircraft
 from lib import combinatorics
 import random
-
-# Maximum deviation off the reference track (in distance units - NM/km/etc)
-max_deviation = 100
+from formation_flight import config
     
 def is_valid_formation(aircraft_list):
 
@@ -31,7 +29,7 @@ def is_valid_formation(aircraft_list):
         )
         deviation_sum = deviation_sum + abs(deviation)
 
-        if abs(deviation) > max_deviation:
+        if abs(deviation) > config.max_deviation:
             return False
 
         #print '%s (ref = %s) crosstrack distance: %.1f' %\

@@ -16,3 +16,6 @@ hub_type = 'point'
 # Formation lock time. How much time before arriving at the hub must a
 # formation be locked?
 formation_lock_time = 20
+
+# Maximum deviation off the reference track (in distance units - NM/km/etc)
+max_deviation = 100
