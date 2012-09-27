@@ -48,7 +48,6 @@ class Formation(object):
         """Start time of the formation portion. ETAH"""
         synchronizer = Synchronizer(self)
         return synchronizer.get_etah()
-        
 
     def lock(self):
         """Locks this formation. It can no longer accept aircraft"""

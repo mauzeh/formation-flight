@@ -1,4 +1,5 @@
 import math
+from point import Point
 
 def cross_track_distance(d_13, theta_13, theta_12):
     """Calculate distance from great circle path (1 -> 2) to point (3).
@@ -13,7 +14,20 @@ def cross_track_distance(d_13, theta_13, theta_12):
     theta_13: Initial bearing from origin to third point (degrees)
     theta_12: Initial bearing from origin to destination (degrees)
     """
-    return d_13 * math.sin( math.radians (theta_13 - theta_12))
+    R = 3440
+    return math.asin( math.sin (d_13 / R) *\
+                      math.sin (math.radians (theta_13 - theta_12))) * R
+
+def midpoint(points):
+    """Calculate an average destination based on a planar average (=bad)
+
+    @todo Replace with vectorized version (most accurate solution)
+    """
+    
+    lat_avg = sum(point.lat for point in points) / len(points)
+    lon_avg = sum(point.lon for point in points) / len(points)
+
+    return Point(lat_avg, lon_avg)
 
 if __name__ == "__main__":
 

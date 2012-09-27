@@ -74,8 +74,8 @@ class Point(object):
 
     def __repr__(self):
         #return "%s(%r)" % (self.__class__, self.__dict__)
-        #return '%s (%s, %s)' % (self.name, self.lat, self.lon)
-        return '%s' % self.name
+        return '%s (%s, %s)' % (self.name, self.lat, self.lon)
+        #return '%s' % self.name
 
 class Position(Point):
     """
