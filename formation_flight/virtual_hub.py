@@ -31,3 +31,6 @@ class Assigner(object):
         new_waypoints = waypoints[:1] + [hub] + waypoints[1:]
         flight.route.waypoints = new_waypoints
         flight.route.init_segments()
+
+    def get_hubs(self):
+        """Returns a list of hubs
