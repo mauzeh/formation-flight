@@ -74,7 +74,7 @@ class Point(object):
 
     def __repr__(self):
         #return "%s(%r)" % (self.__class__, self.__dict__)
-        return '%s (%s, %s)' % (self.name, self.lat, self.lon)
+        return '{%.2f, %.2f}' % (self.lat, self.lon)
         #return '%s' % self.name
 
 class Position(Point):
@@ -87,4 +87,5 @@ class Position(Point):
         self.bearing = bearing
 
     def __repr__(self):
-        return "%r" % (self.__dict__)
+        #return "%r" % (self.__dict__)
+        return '{%.2f, %.2f}' % (self.lat, self.lon)

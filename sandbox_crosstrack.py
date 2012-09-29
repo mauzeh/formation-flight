@@ -50,13 +50,33 @@ if __name__ == '__main__':
 
     length = 0
 
-    for n in range(2, len(planes) + 1):
+    # degrees
+    bearing_bandwith = 5
+    groups = []
+
+    for plane in planes:
+
+        brng_ref = plane.route.segments[0].initial_bearing
+        group = []
+
+        for plane_again in planes:
+
+            brng = plane_again.route.segments[0].initial_bearing
+
+            if abs(brng_ref - brng) < bearing_bandwith:
+                group.append (plane_again)
+                
+        print group
+        groups.append (group)
+
+
+    candidates = planes
+
+    for n in range(2, len(candidates) + 1):
 
         for subset in combinatorics.k_subsets(planes, n):
             length = length+1
             is_valid = is_valid_formation (subset)
-            #if planes[0] in subset:
-                #print 'yaaaaaay %s in within %s' % (planes[0], subset)
             if not is_valid: 
                 continue
             print '%s, formation: %s' %\

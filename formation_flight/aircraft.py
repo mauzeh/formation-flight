@@ -150,4 +150,5 @@ class Aircraft(object):
 
     def __repr__(self):
         #return "%s(%r)" % (self.__class__, self.__dict__)
-        return self.name
+        #return self.name
+        return self.route.__repr__()
