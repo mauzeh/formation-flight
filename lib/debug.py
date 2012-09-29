@@ -14,7 +14,8 @@ signals = [
     #'formation-init',
     'formation-locked',
     #'takeoff',
-    'waypoint-reached'
+    'waypoint-reached',
+    'destination-reached'
 ]
 
 def register():
@@ -26,11 +27,13 @@ def handle(signal, sender, data = None, time = 0):
         return 0
 
     lines = []
+    # output table width (in chars)
+    width = 80
 
-    lines.append('+-----------------------------------------------------+')
+    print '%s%s%s' % ('+','-'*(width-2),'+')
     lines.append('| Time: %d units' % time)
     lines.append('| %s: %s' % (sender.__class__.__name__, signal))
-    lines.append('+-----------------------------------------------------+')
+    print '%s%s%s' % ('+','-'*(width-2),'+')
 
     if type(data) == Aircraft:
 
@@ -53,11 +56,27 @@ def handle(signal, sender, data = None, time = 0):
 
     else:
         print '| Data: %s' % data
-
-    # output table width (in chars)
-    width = 55
+    
     for line in lines:
         line_len = len(line)
         end_line = '' if line_len >= width else "|"
         print line + ' ' * (width - line_len - 1) + end_line
-    print '+-----------------------------------------------------+'
+    print '%s%s%s' % ('+','-'*(width-2),'+')
+
+def print_table(data):
+
+    lines = []
+
+    for datum in data:
+
+        lines.append('| % 25s: %s' % (datum[0], datum[1]))
+
+    # output table width (in chars)
+    width = 80
+    print '%s%s%s' % ('+','-'*(width-2),'+')
+    for line in lines:
+        line_len = len(line)
+        end_line = '' if line_len >= width else "|"
+        print line + ' ' * (width - line_len - 1) + end_line
+    print '%s%s%s' % ('+','-'*(width-2),'+')
+    
