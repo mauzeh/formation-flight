@@ -10,11 +10,10 @@ class Point(object):
 
     """Represents a point on earth. Lat/lon in decimal degrees."""
 
-    def __init__(self, lat, lon, name = 'Point', is_virtual_hub = False):
+    def __init__(self, lat, lon, name = 'Point'):
         self.lat = lat
         self.lon = lon
         self.name = name
-        self.is_virtual_hub = is_virtual_hub
 
     def distance_to(self, point):
         R = Earth.R
