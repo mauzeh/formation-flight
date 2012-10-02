@@ -17,6 +17,7 @@ class Route(object):
             previous_waypoint = waypoint
 
     def get_segments_flown(self, distance_flown):
+        self.init_segments()
         segments_flown = []
         cumulative_distance = 0
         for segment in self.segments:
@@ -27,11 +28,13 @@ class Route(object):
         return segments_flown
 
     def get_current_segment(self, distance_flown):
+        self.init_segments()
         segments_flown = self.get_segments_flown(distance_flown)
         assert isinstance(segments_flown, list)
         return self.segments[len(segments_flown)]
 
     def get_distance_into_current_segment(self, distance_flown):
+        self.init_segments()
 
         segments_flown = self.get_segments_flown(distance_flown);
         distance_into_segment = distance_flown
@@ -44,15 +47,18 @@ class Route(object):
         return distance_into_segment
 
     def get_segments(self):
+        self.init_segments()
         return self.segments
 
     def get_length(self):
+        self.init_segments()
         length = 0
         for segment in self.segments:
             length = length + segment.get_length()
         return length
 
     def get_current_position(self, distance_flown):
+        self.init_segments()
 
         distance_flown_in_cur = self.get_distance_into_current_segment(distance_flown)
         current_segment = self.get_current_segment(distance_flown)
@@ -64,7 +70,9 @@ class Route(object):
         return current_segment.start.get_position(bearing, distance_flown_in_cur)
 
     def get_destination(self):
+        self.init_segments()
         return self.segments[len(self.segments)-1].end
 
     def __repr__(self):
+        self.init_segments()
         return '%s' % self.segments

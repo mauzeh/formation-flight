@@ -3,9 +3,9 @@ from formation_flight import simulator
 
 class Aircraft(object):
 
-    def __init__(self, code, route, departure_time):
+    def __init__(self, code = None, route = None, departure_time = 0):
 
-        self.name = code
+        self.name = code if code is not None else str(route)
         self.route = route
         self.departure_time = departure_time
 
@@ -150,4 +150,5 @@ class Aircraft(object):
 
     def __repr__(self):
         #return "%s(%r)" % (self.__class__, self.__dict__)
-        return self.name
+        #return self.name
+        return self.route.__repr__()

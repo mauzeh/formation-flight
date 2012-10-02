@@ -37,8 +37,6 @@ class Formation(object):
         # The time at which the formation is set to start
         self.start_time = 0
 
-        self.hub = self.aircraft[0].get_current_waypoint()
-
     def synchronize(self):
         """Aligns the arrival times of all aircraft into the hub."""
         synchronizer = Synchronizer(self)
@@ -48,11 +46,13 @@ class Formation(object):
         """Start time of the formation portion. ETAH"""
         synchronizer = Synchronizer(self)
         return synchronizer.get_etah()
-        
 
     def lock(self):
         """Locks this formation. It can no longer accept aircraft"""
         self.status = 'locked'
+
+        # Now we are certain that we can determine the hub.
+        self.hub = self.aircraft[0].get_current_waypoint()
 
         # Synchronize all aircraft to arrive at the same time
         self.synchronize()

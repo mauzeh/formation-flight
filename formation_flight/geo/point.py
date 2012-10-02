@@ -10,11 +10,10 @@ class Point(object):
 
     """Represents a point on earth. Lat/lon in decimal degrees."""
 
-    def __init__(self, lat, lon, name = 'Point', is_virtual_hub = False):
+    def __init__(self, lat, lon, name = 'Point'):
         self.lat = lat
         self.lon = lon
         self.name = name
-        self.is_virtual_hub = is_virtual_hub
 
     def distance_to(self, point):
         R = Earth.R
@@ -74,8 +73,8 @@ class Point(object):
 
     def __repr__(self):
         #return "%s(%r)" % (self.__class__, self.__dict__)
-        #return '%s (%s, %s)' % (self.name, self.lat, self.lon)
-        return '%s' % self.name
+        return '{%.2f, %.2f}' % (self.lat, self.lon)
+        #return '%s' % self.name
 
 class Position(Point):
     """
@@ -87,4 +86,5 @@ class Position(Point):
         self.bearing = bearing
 
     def __repr__(self):
-        return "%r" % (self.__dict__)
+        #return "%r" % (self.__dict__)
+        return '{%.2f, %.2f}' % (self.lat, self.lon)
