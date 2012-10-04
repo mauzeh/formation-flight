@@ -106,12 +106,7 @@ class Assigner(object):
             for aircraft in self.aircraft_queue:
 
                 # Disregard if not flying to hub under consideration.
-                try:
-                    if aircraft.get_current_waypoint() != hub:
-                        continue
-                except IndexError:
-                    #debug.print_table(diag.get_debug_info(aircraft))
-                    print 'hahahahahaha'
+                if aircraft.get_current_waypoint() is not hub:
                     continue
 
                 hub_eta = aircraft.get_waypoint_eta()

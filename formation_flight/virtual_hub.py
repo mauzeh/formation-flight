@@ -1,10 +1,13 @@
 import random
 
 from pydispatch import dispatcher
+from aircraft import Aircraft
 from geo.waypoint import Waypoint
+import simulator, config
 
-# Hubs that can be assigned to flights.
-hubs = [Waypoint('MAN')]#, Waypoint('EIN'), Waypoint('AMS')]
+hubs = []
+for hub_name in config.hubs:
+    hubs.append(Waypoint(hub_name))
 
 def register():
     dispatcher.connect(handle)
@@ -15,19 +18,22 @@ def handle(signal, sender, data = None, time = 0):
         handle.assigner = Assigner()
 
     if signal is 'takeoff':
-        handle.assigner.assign(flight = sender)
+        handle.assigner.assign(aircraft = sender)
         
 class Assigner(object):
     """Assigns flights to a virtual hub"""
 
-    def assign(self, flight):
+    def assign(self, aircraft):
+
+        assert type(aircraft) is Aircraft
 
         # find an appropriate hub for this flight
         hub = random.choice(hubs)
-        #print 'flight %s is getting hub %s' % (flight, hub)
+        print 'aircraft %s (dep: %d, starttime: %d) is getting hub %s' %\
+               (aircraft, aircraft.departure_time,simulator.starttime, hub)
 
         # replace the direct route with a route via the virtual hub
-        waypoints = flight.route.waypoints
+        waypoints = aircraft.route.waypoints
         new_waypoints = waypoints[:1] + [hub] + waypoints[1:]
-        flight.route.waypoints = new_waypoints
-        flight.route.init_segments()
+        aircraft.route.waypoints = new_waypoints
+        aircraft.route.init_segments()

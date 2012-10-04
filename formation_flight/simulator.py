@@ -1,8 +1,13 @@
 from pydispatch import dispatcher
 
+starttime = 0
 __time__ = 0
 
 def execute(time_range = [], aircraft = []):
+
+    global starttime
+    starttime = time_range[0]
+    print starttime
 
     dispatcher.send(
         'sim-init',

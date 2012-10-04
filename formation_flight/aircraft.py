@@ -59,6 +59,11 @@ class Aircraft(object):
         # we switch to being 'in flight'.
         if(self._waiting):
             self._waiting = False
+
+            # Skip if a/c was flying before sim started.
+            if self.departure_time < simulator.starttime:
+                return True
+            
             dispatcher.send(
                 'takeoff',
                 time = simulator.get_time(),

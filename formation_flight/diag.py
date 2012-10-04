@@ -9,7 +9,7 @@ signals = [
     #'sim-init',
     #'formation-init',
     'formation-locked',
-    'takeoff',
+    #'takeoff',
     #'waypoint-reached',
     #'destination-reached'
 ]
@@ -21,7 +21,7 @@ def get_debug_info(data):
 
     lines = []
 
-    if type(data) == Aircraft:
+    if type(data) is Aircraft:
 
         segment = data.route.get_current_segment(data.get_distance_flown())
         d       = data.route.get_distance_into_current_segment(data.get_distance_flown())
@@ -33,7 +33,7 @@ def get_debug_info(data):
         lines.append(('Distance into segment', '%.1f' % d))
         lines.append(('Waypoint ETA', '%.1f' % data.get_waypoint_eta()))
 
-    elif type(data) == Formation:
+    elif type(data) is Formation:
         lines.append(('Participants', data.aircraft))
         lines.append(('Start ETA', '%.2f' % data.get_start_eta()))
         lines.append(('Status', data.status))

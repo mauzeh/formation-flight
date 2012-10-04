@@ -59,14 +59,6 @@ def run():
 
     simulator.execute(range(starttime, starttime + duration, 1), planes)
 
-# Example syntax
-# route = Route([Waypoint('CDG'),
-#                Waypoint('AMS'),
-#                Waypoint('MCO')])
-# aircraft = Aircraft("CDG-AMS-MCO", route)
-# aircraft.departure_time = 5
-# planes.append(aircraft)
-
 # docs: http://docs.python.org/library/profile.html
 import cProfile, pstats
 profile_file = 'data/profile.txt'
