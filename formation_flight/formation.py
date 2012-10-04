@@ -110,6 +110,11 @@ class Assigner(object):
                     continue
 
                 hub_eta = aircraft.get_waypoint_eta()
+
+                # Disregard is hub is really far away still. A/c must wait.
+                if (hub_eta - simulator.get_time()) > 2 * slack:
+                    continue
+                
                 candidates.append(
                     Interval(aircraft,
                              int(hub_eta - slack),
@@ -164,35 +169,43 @@ class Synchronizer(object):
     def get_etah(self):
         """Calculates when the formation is set to start"""
 
+        # Bug: simtime may have increased, but not all aircraft have had
+        # their distance_flown updated yet. So we manually do that again here.
+        # @todo Find a more elegant solution...
+        for aircraft in self.formation.aircraft:
+            aircraft.set_time()
+
         # for now, delay all early participants
         # ETA equals eta of latest participant
-        def latest(winner, item): 
-            if item.get_waypoint_eta() > winner.get_waypoint_eta():
+        def latest(winner, item):
+            item_etah   = item.get_waypoint_eta()
+            winner_etah = winner.get_waypoint_eta()
+            if item_etah > winner_etah:
                 return item
             else:
                 return winner
 
         latest_aircraft = reduce(latest, self.formation.aircraft)
-        
         return latest_aircraft.get_waypoint_eta()
 
     def synchronize(self):
         """Adjusts the speed of formation members to match the etah"""
 
-        formation_time_to_hub = self.get_etah() - simulator.get_time()
+        etah = self.get_etah()
+        formation_time_to_hub = etah - simulator.get_time()
         
         for aircraft in self.formation.aircraft:
             waypoint_eta = aircraft.get_waypoint_eta()
             time_to_hub  = waypoint_eta - simulator.get_time()
             hub = aircraft.get_current_waypoint()
             distance_to_hub = aircraft.get_position().distance_to(hub)
-            speed = aircraft.speed
+            speed = aircraft.get_speed()
             #print '-'*80
             #print 'simtime %s' % simulator.get_time()
-            #print 'the speed of %s is currently %s' % (aircraft, aircraft.speed)
+            #print 'the speed of %s is currently %s' % (aircraft, aircraft._speed)
             #print 'hub is %.2f time units and %.2f distance units away' % (time_to_hub, distance_to_hub)
             #print 'hub should be %.2f time units away, so we have to adjust speed' % (formation_time_to_hub)
-            aircraft.speed = speed * time_to_hub / formation_time_to_hub
-            #print 'setting the speed of %s to %s' % (aircraft, aircraft.speed)
+            aircraft.set_speed(speed * time_to_hub / formation_time_to_hub)
+            #print 'setting the speed of %s to %s' % (aircraft, aircraft._speed)
             #print '-'*80
     

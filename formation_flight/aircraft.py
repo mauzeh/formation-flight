@@ -1,5 +1,6 @@
 from pydispatch import dispatcher
 from formation_flight import simulator
+import traceback
 
 class Aircraft(object):
 
@@ -10,22 +11,22 @@ class Aircraft(object):
         self.departure_time = departure_time
 
         # km/second
-        #self.speed = .257222222
+        #self._speed = .257222222
 
         # km/hour
-        #self.speed = 926
+        #self._speed = 926
 
         # kts (NM/h)
-        # self.speed = 500
+        # self._speed = 500
 
         # KM/minute
-        #self.speed = 10
+        #self._speed = 10
 
         # NM/minute (corresponds to ~500kts)
-        #self.speed = 8.33
+        #self._speed = 8.33
 
         # NM/minute (corresponds to ~250kts)
-        self.speed = 8.33/2
+        self._speed = 8.33/2
 
         self._airtime = 0
         self._simtime = 0
@@ -37,6 +38,8 @@ class Aircraft(object):
         # Which segment the aircraft is in. Used to trigger
         # "waypoint-reached" event
         self._segment_index = 0
+
+        self.init_waypoint_eta()
 
     def fly(self):
         """
@@ -88,7 +91,14 @@ class Aircraft(object):
         self._airtime    = simulator.get_time() - self.departure_time
         self._time_delta = self._airtime - previous_airtime
         self._distance_flown = self._distance_flown +\
-                               self.speed * self._time_delta
+                               self._speed * self._time_delta
+
+    def set_speed(self, speed):
+        self._speed = speed
+        self.init_waypoint_eta()
+
+    def get_speed(self):
+        return self._speed
 
     def get_position(self):
         return self._current_position
@@ -100,14 +110,24 @@ class Aircraft(object):
         segment = self.route.get_current_segment(self.get_distance_flown())
         return segment.end
 
-    def get_waypoint_eta(self):
-
+    def init_waypoint_eta(self):
         segment = self.route.get_current_segment(self.get_distance_flown())
         l       = segment.get_length()
         d       = self.route.get_distance_into_current_segment(
                     self.get_distance_flown())
-        eta     = simulator.get_time() + (l - d) / self.speed
-        return eta
+        self._waypoint_eta = simulator.get_time() + (l - d) / self._speed
+        #print '%s, %d + (%.4f - %.4f) / %.4f' % (self, simulator.get_time(), l, d, self._speed)
+
+    def get_waypoint_eta(self):
+        if not hasattr(self, '_waypoint_eta'):
+        #old_eta = self._waypoint_eta
+            self.init_waypoint_eta()
+        #if abs(old_eta - self._waypoint_eta) > 0.01:
+            #print 'wat raar! %s, wp=%s (simtime: %d) old: %.4f versus new: %.4f' %\
+            #(self, self.get_current_waypoint(),
+            #simulator.get_time(), old_eta, self._waypoint_eta)
+            #traceback.print_stack() 
+        return self._waypoint_eta
 
     def has_reached_waypoint(self):
         """Fires an event each time an aircraft passes a new waypoint
@@ -132,6 +152,7 @@ class Aircraft(object):
                     data = self
                 )
         self._segment_index = index
+        self.init_waypoint_eta()
 
     def is_in_flight(self):
 

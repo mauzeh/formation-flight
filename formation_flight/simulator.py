@@ -7,7 +7,6 @@ def execute(time_range = [], aircraft = []):
 
     global starttime
     starttime = time_range[0]
-    print starttime
 
     dispatcher.send(
         'sim-init',

@@ -36,7 +36,7 @@ def fuel_diff(aircraft, departure_hub, arrival_hub, required_etah,
     planned_etah = aircraft.get_waypoint_eta()
     t = simulator.get_time()
     v_factor = (planned_etah - t) / (required_etah - t)
-    v_old = aircraft.speed
+    v_old = aircraft._speed
     v_new = v_factor * v_old
     v_penalty = speed_penalty(v_new)
 

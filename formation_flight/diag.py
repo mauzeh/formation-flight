@@ -3,6 +3,8 @@ from formation_flight.aircraft import Aircraft
 from formation_flight.formation import Formation
 from lib import debug
 
+count = 0
+
 # Only respond to these signals
 signals = [
     #'fly',
@@ -28,7 +30,7 @@ def get_debug_info(data):
 
         lines.append(('Aircraft', data.name))
         lines.append(('Departure time', data.departure_time))
-        lines.append(('Speed', '%.1f' % data.speed))
+        lines.append(('Speed', '%.1f' % data._speed))
         lines.append(('Segment', segment))
         lines.append(('Distance into segment', '%.1f' % d))
         lines.append(('Waypoint ETA', '%.1f' % data.get_waypoint_eta()))
@@ -50,6 +52,11 @@ def handle(signal, sender, data = None, time = 0):
     if signal not in signals:
         return 0
 
+    global count
+    if signal == "formation-init":
+        count = count + 1
+        print count
+        
     lines = []
     headers = []
 

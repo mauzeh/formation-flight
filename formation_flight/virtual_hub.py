@@ -29,8 +29,8 @@ class Assigner(object):
 
         # find an appropriate hub for this flight
         hub = random.choice(hubs)
-        print 'aircraft %s (dep: %d, starttime: %d) is getting hub %s' %\
-               (aircraft, aircraft.departure_time,simulator.starttime, hub)
+        #print 'aircraft %s (dep: %d, starttime: %d) is getting hub %s' %\
+               #(aircraft, aircraft.departure_time,simulator.starttime, hub)
 
         # replace the direct route with a route via the virtual hub
         waypoints = aircraft.route.waypoints
