@@ -10,7 +10,7 @@ class Airport(object):
         self.__dict__.update(kwargs)
 
     def csv(self):
-        return self.code
+        return [self.code, self.lat, self.lon]
 
     def __repr__(self):
         return self.code

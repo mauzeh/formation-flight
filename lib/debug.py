@@ -4,79 +4,31 @@ purposes.
 """
 
 from pydispatch import dispatcher
-from formation_flight.aircraft import Aircraft
-from formation_flight.formation import Formation
 
-# Only respond to these signals
-signals = [
-    #'fly',
-    #'sim-init',
-    #'formation-init',
-    'formation-locked',
-    #'takeoff',
-    'waypoint-reached',
-    'destination-reached'
-]
+# output table width (in chars)
+width = 80
 
-def register():
-    dispatcher.connect(handle)
+def print_table(headers = [], messages = []):
 
-def handle(signal, sender, data = None, time = 0):
+    assert len(headers) > 0 or len(messages) > 0
 
-    if signal not in signals:
-        return 0
-
+    print '%s%s%s' % ('+','-'*(width-2),'+')
     lines = []
-    # output table width (in chars)
-    width = 80
-
-    print '%s%s%s' % ('+','-'*(width-2),'+')
-    lines.append('| Time: %d units' % time)
-    lines.append('| %s: %s' % (sender.__class__.__name__, signal))
-    print '%s%s%s' % ('+','-'*(width-2),'+')
-
-    if type(data) == Aircraft:
-
-        segment = data.route.get_current_segment(data.get_distance_flown())
-        d       = data.route.get_distance_into_current_segment(data.get_distance_flown())
-
-        lines.append('| % 25s: %s' % ('Aircraft', data.name))
-        lines.append('| % 25s: %s' % ('Departure time', data.departure_time))
-        lines.append('| % 25s: %.1f' % ('Speed', data.speed))
-        lines.append('| % 25s: %s' % ('Segment', segment))
-        lines.append('| % 25s: %.1f' % ('Distance into segment', d))
-        lines.append('| % 25s: %.1f' % ('Waypoint ETA', data.get_waypoint_eta()))
-
-    elif type(data) == Formation:
-        lines.append('| %25s: %s' % ('Participants', data.aircraft))
-        lines.append('| %25s: %.2f' % ('Start ETA', data.get_start_eta()))
-        lines.append('| %25s: %s' % ('Status', data.status))
-        lines.append('| %25s: %s' % ('Hub', data.hub if hasattr(data, 'hub') else None))
-        pass
-
-    else:
-        print '| Data: %s' % data
+    if len(headers) > 0:
+        for datum in headers:
+            lines.append('| % 25s: %s' % (datum[0], datum[1]))
+        for line in lines:
+            line_len = len(line)
+            end_line = '' if line_len >= width else "|"
+            print line + ' ' * (width - line_len - 1) + end_line
+        print '%s%s%s' % ('+','-'*(width-2),'+')
     
-    for line in lines:
-        line_len = len(line)
-        end_line = '' if line_len >= width else "|"
-        print line + ' ' * (width - line_len - 1) + end_line
-    print '%s%s%s' % ('+','-'*(width-2),'+')
-
-def print_table(data):
-
     lines = []
-
-    for datum in data:
-
-        lines.append('| % 25s: %s' % (datum[0], datum[1]))
-
-    # output table width (in chars)
-    width = 80
-    print '%s%s%s' % ('+','-'*(width-2),'+')
-    for line in lines:
-        line_len = len(line)
-        end_line = '' if line_len >= width else "|"
-        print line + ' ' * (width - line_len - 1) + end_line
-    print '%s%s%s' % ('+','-'*(width-2),'+')
-    
+    if len(messages) > 0:
+        for datum in messages:
+            lines.append('| % 25s: %s' % (datum[0], datum[1]))
+        for line in lines:
+            line_len = len(line)
+            end_line = '' if line_len >= width else "|"
+            print line + ' ' * (width - line_len - 1) + end_line
+        print '%s%s%s' % ('+','-'*(width-2),'+')

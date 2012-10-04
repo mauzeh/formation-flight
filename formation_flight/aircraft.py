@@ -22,7 +22,10 @@ class Aircraft(object):
         #self.speed = 10
 
         # NM/minute (corresponds to ~500kts)
-        self.speed = 8.33
+        #self.speed = 8.33
+
+        # NM/minute (corresponds to ~250kts)
+        self.speed = 8.33/2
 
         self._airtime = 0
         self._simtime = 0
@@ -150,5 +153,5 @@ class Aircraft(object):
 
     def __repr__(self):
         #return "%s(%r)" % (self.__class__, self.__dict__)
-        #return self.name
-        return self.route.__repr__()
+        return self.name
+        #return self.route.__repr__()

@@ -2,6 +2,8 @@ from pydispatch import dispatcher
 from formation_flight.aircraft import Aircraft
 from formation_flight.geo.waypoint import Waypoint
 from lib.intervals import Interval, group
+from lib import debug
+import diag
 from formation_flight import simulator, config, virtual_hub
 
 def register():
@@ -104,7 +106,12 @@ class Assigner(object):
             for aircraft in self.aircraft_queue:
 
                 # Disregard if not flying to hub under consideration.
-                if aircraft.get_current_waypoint() != hub:
+                try:
+                    if aircraft.get_current_waypoint() != hub:
+                        continue
+                except IndexError:
+                    #debug.print_table(diag.get_debug_info(aircraft))
+                    print 'hahahahahaha'
                     continue
 
                 hub_eta = aircraft.get_waypoint_eta()

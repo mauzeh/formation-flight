@@ -18,6 +18,7 @@ class Flight(object):
     def csv(self):
         return [
             self.departure_time,
+            '%s%s' % (self.airline,self.flight_number),
             '%s-%s' % (self.origin, self.destination),
             self.equipment
         ]
@@ -28,7 +29,7 @@ if __name__ == "__main__":
     
     fn = os.path.join(os.path.dirname(__file__), 'data/flights.tsv')
     reader = csv.reader(open(fn), delimiter = "\t")
-    fn = os.path.join(os.path.dirname(__file__), 'data/results.csv')
+    fn = os.path.join(os.path.dirname(__file__), '../data/flights.tsv')
     writer = csv.writer(open(fn, 'wb'), delimiter = '\t',
                         quotechar = '"')
     flights = []
@@ -41,6 +42,8 @@ if __name__ == "__main__":
         flight = Flight(
             origin         = row[3],
             destination    = row[4],
+            airline        = row[2],
+            flight_number  = row[6],
             equipment      = row[8],
             departure_time = row[12], # LT, to be converted to z
             operating_days = row[15]
@@ -60,7 +63,7 @@ if __name__ == "__main__":
         if flight.destination.continent != 'North America':
             continue
 
-        # Temp filter to verify filter
+        # Temp to verify filter
         #if flight.origin.code != 'AMS' or flight.destination.code != 'JFK':
             #continue
 
@@ -79,7 +82,7 @@ if __name__ == "__main__":
 
         writer.writerow(flight.csv())
 
-    fn = os.path.join(os.path.dirname(__file__), 'data/airports_used.csv')
+    fn = os.path.join(os.path.dirname(__file__), '../data/airports.tsv')
     writer = csv.writer(open(fn, 'wb'), delimiter = '\t',
                         quotechar = '"')
     for airport in airports_used:

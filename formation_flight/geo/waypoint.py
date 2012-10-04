@@ -9,8 +9,8 @@ class Waypoint(Point):
 
     def __init__(self, code):
 
-        fn = os.path.join(os.path.dirname(__file__), '../..', 'data/waypoints.csv')
-        reader = csv.reader(open(fn))
+        fn = os.path.join(os.path.dirname(__file__), '../..', 'data/airports.tsv')
+        reader = csv.reader(open(fn), delimiter = '\t')
         for row in reader:
             if(code == row[0]):
                 super(Waypoint, self).__init__(float(row[1]), float(row[2]), row[0])

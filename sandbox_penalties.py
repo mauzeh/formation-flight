@@ -51,6 +51,10 @@ def fuel_diff(aircraft, departure_hub, arrival_hub, required_etah,
     aircraft.route.waypoints = old_waypoints
 
     if verbose:
+
+        headers = []
+        headers.append(('Mijn header', 'uhuh'))
+        
         messages = []
         messages.append(('Flight', aircraft))
         messages.append(('Departure hub', departure_hub))
@@ -63,7 +67,7 @@ def fuel_diff(aircraft, departure_hub, arrival_hub, required_etah,
               (v_penalty * fuel_burn_per_nm * here_to_hub_length)))
         messages.append(('Fuel (solo flight)', '%.2f gallons' % direct_costs))
         messages.append(('Fuel (formation flight)', '%.2f gallons' % formation_costs))
-        debug.print_table(messages)
+        debug.print_table(messages = messages, headers = headers)
 
     return direct_costs - formation_costs 
 
@@ -82,6 +86,6 @@ if __name__ == '__main__':
     departure_hub = Waypoint('LHR')
     arrival_hub   = Waypoint('BOS')
 
-    p = fuel_diff(planes[0], departure_hub, arrival_hub, 20, verbose = False)
+    p = fuel_diff(planes[0], departure_hub, arrival_hub, 20, verbose = True)
 
     debug.print_table([('Net benefit', '%d gallons' % p)])
