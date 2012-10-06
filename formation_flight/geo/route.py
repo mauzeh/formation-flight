@@ -41,10 +41,7 @@ class Route(object):
         #self.init_segments()
 
         if distance_flown <= 0:
-            print 'not flying... why are we even asking then?'
             return self.segments[0]
-
-        print 'distance flown: %.5f' % distance_flown
 
         segments_flown = self.get_segments_flown(distance_flown)
         assert isinstance(segments_flown, list)
