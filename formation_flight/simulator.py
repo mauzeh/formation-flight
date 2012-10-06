@@ -21,6 +21,8 @@ def execute(time_range = [], aircraft = []):
         set_time(t)
         for plane in aircraft:
             plane.fly()
+        for plane in aircraft:
+            plane.process()
 
 def get_time():
     global __time__

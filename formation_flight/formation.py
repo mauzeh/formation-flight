@@ -111,7 +111,7 @@ class Assigner(object):
 
                 hub_eta = aircraft.get_waypoint_eta()
 
-                # Disregard is hub is really far away still. A/c must wait.
+                # Disregard if hub is really far away still. A/c must wait.
                 if (hub_eta - simulator.get_time()) > 2 * slack:
                     continue
                 
@@ -172,8 +172,8 @@ class Synchronizer(object):
         # Bug: simtime may have increased, but not all aircraft have had
         # their distance_flown updated yet. So we manually do that again here.
         # @todo Find a more elegant solution...
-        for aircraft in self.formation.aircraft:
-            aircraft.set_time()
+#        for aircraft in self.formation.aircraft:
+#            aircraft.set_time()
 
         # for now, delay all early participants
         # ETA equals eta of latest participant

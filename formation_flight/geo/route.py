@@ -17,6 +17,10 @@ class Route(object):
             previous_waypoint = waypoint
 
     def get_segments_flown(self, distance_flown):
+
+        if distance_flown == 0:
+            return []
+
         #self.init_segments()
         segments_flown = []
         cumulative_distance = 0
@@ -35,6 +39,13 @@ class Route(object):
         Anything else: return current segment.
         """
         #self.init_segments()
+
+        if distance_flown <= 0:
+            print 'not flying... why are we even asking then?'
+            return self.segments[0]
+
+        print 'distance flown: %.5f' % distance_flown
+
         segments_flown = self.get_segments_flown(distance_flown)
         assert isinstance(segments_flown, list)
 
@@ -42,9 +53,10 @@ class Route(object):
         if len(segments_flown) > 0:
             return segments_flown[-1]
 
-        # Or, if not in flight yet, return the first segment.
+        # If we are flying but haven't completed any segments:
         else:
             return self.segments[0]
+
 
     def get_distance_into_current_segment(self, distance_flown):
         #self.init_segments()

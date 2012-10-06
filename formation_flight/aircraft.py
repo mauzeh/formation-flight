@@ -52,11 +52,16 @@ class Aircraft(object):
         """
         self.set_time()
 
-        if not self.is_in_flight(): return False
+        if not self.is_in_flight(): return
 
         self._current_position = self.route.get_current_position(
             self.get_distance_flown())
+
+    def process(self):
+
         self.has_reached_waypoint()
+
+        if not self.is_in_flight(): return
 
         # self._waiting is True by default and needs to be set to False once
         # we switch to being 'in flight'.
@@ -65,7 +70,7 @@ class Aircraft(object):
 
             # Skip if a/c was flying before sim started.
             if self.departure_time < simulator.starttime:
-                return True
+                return
             
             dispatcher.send(
                 'takeoff',
@@ -81,8 +86,6 @@ class Aircraft(object):
                 sender = self,
                 data = self
             )
-
-        return True
 
     def set_time(self):
         """Determines the time that this aircraft has been in flight"""
@@ -119,14 +122,6 @@ class Aircraft(object):
         #print '%s, %d + (%.4f - %.4f) / %.4f' % (self, simulator.get_time(), l, d, self._speed)
 
     def get_waypoint_eta(self):
-        if not hasattr(self, '_waypoint_eta'):
-        #old_eta = self._waypoint_eta
-            self.init_waypoint_eta()
-        #if abs(old_eta - self._waypoint_eta) > 0.01:
-            #print 'wat raar! %s, wp=%s (simtime: %d) old: %.4f versus new: %.4f' %\
-            #(self, self.get_current_waypoint(),
-            #simulator.get_time(), old_eta, self._waypoint_eta)
-            #traceback.print_stack() 
         return self._waypoint_eta
 
     def has_reached_waypoint(self):
@@ -140,6 +135,10 @@ class Aircraft(object):
         """
         distance_flown = self.get_distance_flown()
         current_segment = self.route.get_current_segment(distance_flown)
+
+        if current_segment is None:
+            print '%s %s' % (self, self.route)
+
         index = self.route.segments.index(current_segment)
 
         if(index > self._segment_index):
@@ -156,14 +155,16 @@ class Aircraft(object):
 
     def is_in_flight(self):
 
-        # if negative, flight departure time is still in the future
+        # If negative, flight departure time is still in the future
         if self._airtime < 0:
             return False
 
+        # If we have landed previously
+        # @todo: Instead, remove this plane from memory
         if self._landed:
             return False
 
-        # don't even bother if we have landed
+        # If we have just landed
         if self.get_distance_flown() > self.route.get_length():
             self._landed = True
             dispatcher.send(
@@ -173,6 +174,7 @@ class Aircraft(object):
                 data = 'Destination "%s" reached' %
                        self.route.get_destination()
             )
+            # @todo: Instead, remove plane from memory
             return False
 
         return True
