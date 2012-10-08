@@ -10,7 +10,10 @@ class Aircraft(object):
         self.flight_time = 25
 
     def depart(self):
-        self.arrival_time = sim.time + self.flight_time 
+        pass
+
+    def at_waypoint(self):
+        pass
         
     def arrive(self):
         pass
@@ -22,18 +25,48 @@ class AircraftHandler(object):
 
     def __init__(self):
         sim.dispatcher.register('aircraft-depart', self.handle_departure)
+        sim.dispatcher.register('aircraft-at-waypoint', self.handle_waypoint)
         sim.dispatcher.register('aircraft-arrive', self.handle_arrival)
 
     def handle_departure(self, event):
         aircraft = event.sender
         aircraft.depart()
-        assert hasattr (aircraft, 'arrival_time')
-        sim.events.append(sim.Event(
-            'aircraft-arrive',
-            aircraft,
-            aircraft.arrival_time
-        ))
+        aircraft.controller = AircraftController(aircraft)
+        aircraft.controller.calibrate()
+
+    def handle_waypoint(self, event):
+        aircraft = event.sender
+        aircraft.at_waypoint()
+        aircraft.controller.calibrate()
 
     def handle_arrival(self, event):
         aircraft = event.sender
         aircraft.arrive()
+
+class AircraftController(object):
+
+    def __init__(self, aircraft):
+        
+        self.aircraft = aircraft
+        
+        # Keep our own list of all events to prevent lookups in the sim later
+        self.events = []
+
+    def calibrate(self):
+        """Removes all upcoming events for this aircraft and replans them"""
+        self.schedule_arrival()
+
+    def clear_events(self):
+        for event in self.events:
+            del self.events[event]
+            del sim.events[event]
+
+    def schedule_arrival(self):
+        self.aircraft.arrival_time = sim.time + self.aircraft.flight_time
+        event = sim.Event(
+            'aircraft-arrive',
+            self.aircraft,
+            self.aircraft.arrival_time
+        )
+        self.events.append(event)
+        sim.events.append(event)

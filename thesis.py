@@ -26,11 +26,11 @@ for i in range(0, 500):
         departure_time = random.choice(range(450, 600))))
 
 # Override auto-planes, useful when reproducing a bug...
-#planes = [
-    #Aircraft('FLT001', Route([Waypoint('LHR'), Waypoint('LAX')]), 18),
+planes = [
+    Aircraft('FLT001', Route([Waypoint('AMS'), Waypoint('MAN'), Waypoint('LAX')]), 18),
     #Aircraft('FLT002', Route([Waypoint('BRU'), Waypoint('SFO')]), 33),
     #Aircraft('FLT003', Route([Waypoint('AMS'), Waypoint('JFK')]), 35),
-#]
+]
         
 def run():
 
