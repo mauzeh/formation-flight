@@ -1,4 +1,3 @@
-from pydispatch import dispatcher
 from formation_flight.aircraft import Aircraft
 from lib.geo.waypoint import Waypoint
 from lib.intervals import Interval, group
@@ -7,7 +6,8 @@ import diag
 from formation_flight import simulator, config, virtual_hub
 
 def register():
-    dispatcher.connect(handle)
+    print 'still need to connect the formation assigner + syncer'
+    #dispatcher.connect(handle)
 
 def handle(signal, sender, data = None, time = 0):
 
@@ -58,13 +58,6 @@ class Formation(object):
 
         # Synchronize all aircraft to arrive at the same time
         self.synchronize()
-
-        dispatcher.send(
-            'formation-locked',
-            time = simulator.get_time(),
-            sender = self,
-            data = self
-        )
 
     def __repr__(self):
         return '%s' % self.aircraft
@@ -126,12 +119,6 @@ class Assigner(object):
                     aircraft_list.append(interval.obj)
                 formation = Formation(aircraft_list)
                 self.pending_formations.append(Formation(aircraft_list))
-                dispatcher.send(
-                    'formation-init',
-                    time = simulator.get_time(),
-                    sender = self,
-                    data = formation
-                )
 
     def lock_formations(self):
         """Locks pending formations if they are within range of the hub"""

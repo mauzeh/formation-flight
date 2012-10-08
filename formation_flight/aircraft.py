@@ -1,6 +1,4 @@
-from pydispatch import dispatcher
 from formation_flight import simulator
-import traceback
 
 class Aircraft(object):
 
@@ -63,30 +61,6 @@ class Aircraft(object):
 
         if not self.is_in_flight(): return
 
-        # self._waiting is True by default and needs to be set to False once
-        # we switch to being 'in flight'.
-        if(self._waiting):
-            self._waiting = False
-
-            # Skip if a/c was flying before sim started.
-            if self.departure_time < simulator.starttime:
-                return
-            
-            dispatcher.send(
-                'takeoff',
-                time = simulator.get_time(),
-                sender = self,
-                data = self
-            )
-        else:
-            # Nothing weird is happening, no take-off, no landing, just fly.
-            dispatcher.send(
-                'fly',
-                time = simulator.get_time(),
-                sender = self,
-                data = self
-            )
-
     def set_time(self):
         """Determines the time that this aircraft has been in flight"""
 
@@ -144,12 +118,6 @@ class Aircraft(object):
         if(index > self._segment_index):
             for i in range(self._segment_index, index):
                 segment = self.route.segments[i]
-                dispatcher.send(
-                    'waypoint-reached',
-                    sender = self,
-                    time = simulator.get_time(),
-                    data = self
-                )
         self._segment_index = index
         self.init_waypoint_eta()
 
@@ -167,14 +135,7 @@ class Aircraft(object):
         # If we have just landed
         if self.get_distance_flown() > self.route.get_length():
             self._landed = True
-            dispatcher.send(
-                'destination-reached',
-                sender = self,
-                time = simulator.get_time(),
-                data = 'Destination "%s" reached' %
-                       self.route.get_destination()
-            )
-            # @todo: Instead, remove plane from memory
+            # @todo: Instead, remove plane from memory?
             return False
 
         return True

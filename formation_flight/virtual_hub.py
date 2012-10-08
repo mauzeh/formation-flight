@@ -1,6 +1,5 @@
 import random
 
-from pydispatch import dispatcher
 from aircraft import Aircraft
 from lib.geo.waypoint import Waypoint
 import simulator, config
@@ -10,7 +9,8 @@ for hub_name in config.hubs:
     hubs.append(Waypoint(hub_name))
 
 def register():
-    dispatcher.connect(handle)
+    print 'still need to connect virtual_hub to events'
+    #dispatcher.connect(handle)
 
 def handle(signal, sender, data = None, time = 0):
 

@@ -1,4 +1,3 @@
-from pydispatch import dispatcher
 from formation_flight.aircraft import Aircraft
 from formation_flight.formation import Formation
 from lib import debug
@@ -17,7 +16,8 @@ signals = [
 ]
 
 def register():
-    dispatcher.connect(handle)
+    print 'still need to hook the events up to diag.py'
+    #dispatcher.connect(handle)
 
 def get_debug_info(data):
 
