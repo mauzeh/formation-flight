@@ -7,13 +7,12 @@ class Aircraft(object):
         self.label = label if label is not None else str(route)
         self.route = route
         self.departure_time = departure_time
-        self.flight_time = 25
 
     def depart(self):
         pass
 
     def at_waypoint(self):
-        pass
+        del self.route.segments[0]
         
     def arrive(self):
         pass
@@ -54,19 +53,38 @@ class AircraftController(object):
 
     def calibrate(self):
         """Removes all upcoming events for this aircraft and replans them"""
-        self.schedule_arrival()
+        self.clear_events()
+        if len(self.aircraft.route.segments) > 0:
+            self.schedule_waypoint()
+        else:
+            self.schedule_arrival()
+            
+    def add_event(self, event):
+        self.events.append(event)
+        sim.events.append(event)
 
     def clear_events(self):
         for event in self.events:
-            del self.events[event]
-            del sim.events[event]
+            # @todo, if the event has fired, it mustn't be here in anymore...
+            self.events.remove(event)
+            # If the event has fired, sim does not have it anymore.
+            try:
+                sim.events.remove(event)
+            except ValueError:
+                pass
+
+    def schedule_waypoint(self):
+        self.aircraft.waypoint_eta = sim.time + 25
+        self.add_event(sim.Event(
+            'aircraft-at-waypoint',
+            self.aircraft,
+            self.aircraft.waypoint_eta
+        ))
 
     def schedule_arrival(self):
-        self.aircraft.arrival_time = sim.time + self.aircraft.flight_time
-        event = sim.Event(
-            'aircraft-arrive',
+        self.aircraft.arrival_time = sim.time + 25
+        self.add_event(sim.Event(
+            'aircraft-arrival',
             self.aircraft,
             self.aircraft.arrival_time
-        )
-        self.events.append(event)
-        sim.events.append(event)
+        ))
