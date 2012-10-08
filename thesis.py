@@ -7,8 +7,8 @@ from optparse import OptionParser
 
 from formation_flight import diag
 from formation_flight.aircraft import Aircraft
-from formation_flight.geo.route import Route
-from formation_flight.geo.waypoint import Waypoint
+from lib.geo.route import Route
+from lib.geo.waypoint import Waypoint
 from formation_flight import simulator
 from formation_flight import formation, virtual_hub
 

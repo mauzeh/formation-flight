@@ -1,6 +1,6 @@
 import os
 import csv
-from formation_flight.geo.point import Point
+from lib.geo.point import Point
 
 class Waypoint(Point):
     """

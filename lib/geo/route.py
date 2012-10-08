@@ -1,5 +1,5 @@
-from formation_flight.geo.point import Position
-from formation_flight.geo.segment import Segment
+from lib.geo.point import Position
+from lib.geo.segment import Segment
 
 class Route(object):
     """A collection of segments"""

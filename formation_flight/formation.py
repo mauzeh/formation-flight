@@ -1,6 +1,6 @@
 from pydispatch import dispatcher
 from formation_flight.aircraft import Aircraft
-from formation_flight.geo.waypoint import Waypoint
+from lib.geo.waypoint import Waypoint
 from lib.intervals import Interval, group
 from lib import debug
 import diag

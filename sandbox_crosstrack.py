@@ -1,8 +1,8 @@
-from formation_flight.geo import util
-from formation_flight.geo.segment import Segment
-from formation_flight.geo.point import Point
-from formation_flight.geo.waypoint import Waypoint
-from formation_flight.geo.route import Route
+from lib.geo import util
+from lib.geo.segment import Segment
+from lib.geo.point import Point
+from lib.geo.waypoint import Waypoint
+from lib.geo.route import Route
 from formation_flight.aircraft import Aircraft
 from lib import combinatorics
 import random
@@ -45,7 +45,7 @@ if __name__ == '__main__':
         Aircraft(route = Route([Waypoint('DUS'), Waypoint('MEX')])),
         Aircraft(route = Route([Waypoint('IST'), Waypoint('MEX')])),
         Aircraft(route = Route([Waypoint('CDG'), Waypoint('LAX')])),
-        Aircraft(route = Route([Waypoint('TLS'), Waypoint('SFO')])),
+        Aircraft(route = Route([Waypoint('FRA'), Waypoint('SFO')])),
     ]
 
     length = 0

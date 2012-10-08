@@ -2,7 +2,7 @@ import random
 
 from pydispatch import dispatcher
 from aircraft import Aircraft
-from geo.waypoint import Waypoint
+from lib.geo.waypoint import Waypoint
 import simulator, config
 
 hubs = []
