@@ -1,3 +1,7 @@
+# IMPORTANT, call this module from /sandbox.py and run() it. This file cannot
+# be called directly.
+# @see http://stackoverflow.com/questions/4348452/
+
 from lib.geo import util
 from lib.geo.segment import Segment
 from lib.geo.point import Point
@@ -75,7 +79,7 @@ def speed_penalty(v):
 
     return 1 + abs(v - v_opt) / v_opt 
     
-if __name__ == '__main__':
+def run():
 
     planes = [
         Aircraft(route = Route([Waypoint('AMS'), Waypoint('JFK')]))
