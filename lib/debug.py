@@ -3,8 +3,6 @@ Keeps track of all events in the system and prints them for debugging
 purposes.
 """
 
-from pydispatch import dispatcher
-
 # output table width (in chars)
 width = 80
 
@@ -32,3 +30,15 @@ def print_table(headers = [], messages = []):
             end_line = '' if line_len >= width else "|"
             print line + ' ' * (width - line_len - 1) + end_line
         print '%s%s%s' % ('+','-'*(width-2),'+')
+
+def print_object(obj):
+
+    headers = []
+    lines = []
+
+    headers.append(('Object', obj.__class__.__name__))
+    
+    lines = []
+    for key in obj.__dict__:
+        lines.append((key, obj.__dict__[key]))
+    print_table(headers, lines)

@@ -6,13 +6,9 @@ count = 0
 
 # Only respond to these signals
 signals = [
-    #'fly',
-    #'sim-init',
-    #'formation-init',
-    'formation-locked',
-    #'takeoff',
-    #'waypoint-reached',
-    #'destination-reached'
+    'aircraft-depart',
+    'formation-lock',
+    'aircraft-arrive',
 ]
 
 def register():

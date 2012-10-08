@@ -96,7 +96,7 @@ class FormationAssigner(object):
         # Remove all scheduled 'formation-lock' events because we are re-
         # evaluating the entire set of departed aircraft.
         events.remove_by_label('formation-lock')
-        
+
         self.formations = []
         formation = Formation()
         for aircraft in self.aircraft_queue:

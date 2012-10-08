@@ -1,63 +1,47 @@
 #!/usr/bin/env python
-import os
-import sys
-import csv
 
-from optparse import OptionParser
+import random
 
-from formation_flight import diag
-from formation_flight.aircraft import Aircraft
+from formation_flight.formation import FormationHandler
+from formation_flight.aircraft import Aircraft, AircraftHandler
 from lib.geo.route import Route
 from lib.geo.waypoint import Waypoint
-from formation_flight import simulator
-from formation_flight import formation, virtual_hub
+from lib import sim
 
-def parse_options():
+aircraft_handler   = AircraftHandler()
+formation_assigner = FormationHandler()
 
-    parser = OptionParser()
-    parser.add_option("-t", dest="starttime", default = 0,
-                      help="The simulation start time (UTC, minutes from midnight).")
-    parser.add_option("-d", dest="duration", default = 60,
-                      help="The simulation duration (in minutes).")
-    parser.add_option("-q", "--quiet",
-                      action="store_false", dest="verbose", default=True,
-                      help="don't print status messages to stdout")
+# Generate a big list of random flights
+origins      = ['AMS', 'CDG', 'LHR', 'FRA', 'DUS', 'BRU']
+destinations = ['EWR', 'JFK', 'ORD', 'LAX', 'SFO']
+planes       = []
 
-    return parser.parse_args()
+for i in range(0, 500):
+    planes.append(Aircraft(
+        label = 'FLT%03d' % i,
+        route = Route([
+            Waypoint(random.choice(origins)), 
+            Waypoint(random.choice(destinations))
+        ]),
+        departure_time = random.choice(range(450, 600))))
 
+# Override auto-planes, useful when reproducing a bug...
+#planes = [
+    #Aircraft('FLT001', Route([Waypoint('LHR'), Waypoint('LAX')]), 18),
+    #Aircraft('FLT002', Route([Waypoint('BRU'), Waypoint('SFO')]), 33),
+    #Aircraft('FLT003', Route([Waypoint('AMS'), Waypoint('JFK')]), 35),
+#]
+        
 def run():
 
-    # Initialize settings from command line options
-    (options, args) = parse_options ()
-    starttime = int(options.starttime)
-    duration  = int(options.duration)
-        
-    # Initialize event listeners
-    virtual_hub.register()
-    formation.register()
-    diag.register()
+    for aircraft in planes:
+        sim.events.append(sim.Event(
+            'aircraft-depart', 
+            aircraft, 
+            aircraft.departure_time
+        ))
 
-    # Set up the planes list, assume tab-separated columns via stdin. 
-    # Can be piped, example "$ cat flights.tsv | ./thesis.py"
-    planes = []
-    for row in csv.reader(sys.stdin, delimiter = '\t'):
-
-        departure_time = row[0]
-        label          = row[1]
-        od_pair        = row[2]
-        aircraft_type  = row[3]
-
-        waypoints = []
-
-        for point in od_pair.split('-'):
-            waypoints.append(Waypoint(point))
-            
-        route          = Route(waypoints)
-        departure_time = int(departure_time)
-        aircraft       = Aircraft(label, route, departure_time)
-        planes.append(aircraft)
-
-    simulator.execute(range(starttime, starttime + duration, 1), planes)
+    sim.run()
 
 # docs: http://docs.python.org/library/profile.html
 import cProfile, pstats
@@ -66,5 +50,5 @@ cProfile.run('run()', profile_file)
 p = pstats.Stats(profile_file)
 p.strip_dirs()
 #p.sort_stats('cumulative')
-p.sort_stats('calls')
+p.sort_stats('time')
 p.print_stats(30)
