@@ -2,5 +2,5 @@
 *~
 *.anjuta*
 .rope*
-.idea
-.swp
+*.idea
+*.swp

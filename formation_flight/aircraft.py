@@ -6,16 +6,28 @@ class Aircraft(object):
 
         self.label = label if label is not None else str(route)
         self.route = route
+        self.description = '%s' % route
         self.departure_time = departure_time
+        # Distance units per time unit (500 kts)
+        self.speed = 500/60
 
     def depart(self):
+        self.position = self.route.waypoints[0]
+        del self.route.waypoints[0]
         pass
 
     def at_waypoint(self):
+        self.position = self.route.waypoints[0]
+        del self.route.waypoints[0]
         del self.route.segments[0]
         
     def arrive(self):
         pass
+
+    def time_to_waypoint(self):
+        waypoint = self.route.waypoints[0]
+        distance = self.position.distance_to(waypoint)
+        return distance / self.speed
 
     def __repr__(self):
         return self.label
@@ -54,7 +66,7 @@ class AircraftController(object):
     def calibrate(self):
         """Removes all upcoming events for this aircraft and replans them"""
         self.clear_events()
-        if len(self.aircraft.route.segments) > 0:
+        if len(self.aircraft.route.segments) > 1:
             self.schedule_waypoint()
         else:
             self.schedule_arrival()
@@ -74,7 +86,7 @@ class AircraftController(object):
                 pass
 
     def schedule_waypoint(self):
-        self.aircraft.waypoint_eta = sim.time + 25
+        self.aircraft.waypoint_eta = sim.time + self.aircraft.time_to_waypoint()
         self.add_event(sim.Event(
             'aircraft-at-waypoint',
             self.aircraft,
@@ -82,9 +94,9 @@ class AircraftController(object):
         ))
 
     def schedule_arrival(self):
-        self.aircraft.arrival_time = sim.time + 25
+        self.aircraft.arrival_time = sim.time + self.aircraft.time_to_waypoint()
         self.add_event(sim.Event(
-            'aircraft-arrival',
+            'aircraft-arrive',
             self.aircraft,
             self.aircraft.arrival_time
         ))

@@ -14,6 +14,7 @@ formation_assigner = FormationHandler()
 # Generate a big list of random flights
 origins      = ['AMS', 'CDG', 'LHR', 'FRA', 'DUS', 'BRU']
 destinations = ['EWR', 'JFK', 'ORD', 'LAX', 'SFO']
+hubs         = ['MAN', 'LHR']
 planes       = []
 
 for i in range(0, 500):
@@ -26,11 +27,11 @@ for i in range(0, 500):
         departure_time = random.choice(range(450, 600))))
 
 # Override auto-planes, useful when reproducing a bug...
-planes = [
-    Aircraft('FLT001', Route([Waypoint('AMS'), Waypoint('MAN'), Waypoint('LAX')]), 18),
-    #Aircraft('FLT002', Route([Waypoint('BRU'), Waypoint('SFO')]), 33),
-    #Aircraft('FLT003', Route([Waypoint('AMS'), Waypoint('JFK')]), 35),
-]
+#planes = [
+#    Aircraft('FLT001', Route([Waypoint('AMS'), Waypoint('MAN'), Waypoint('LAX')]), 18),
+#    Aircraft('FLT001', Route([Waypoint('BRU'), Waypoint('MAN'), Waypoint('SFO')]), 18),
+#    Aircraft('FLT001', Route([Waypoint('CDG'), Waypoint('MAN'), Waypoint('ORD')]), 18),
+#]
         
 def run():
 
