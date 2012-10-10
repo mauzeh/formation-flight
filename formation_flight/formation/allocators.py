@@ -1,5 +1,6 @@
 from lib.intervals import Interval, group
 from lib import sim, debug
+from lib.debug import print_line as p
 from models import Formation
 import config
 
@@ -29,7 +30,10 @@ class FormationAllocatorEtah(FormationAllocator):
         self.formations = []
         intervals = []
         for aircraft in self.aircraft_queue:
+            # Quick and dirty: recalc position. Instead, pull eta from var.
+            aircraft.controller.update_position()
             hub_eta = sim.time + aircraft.time_to_waypoint()
+            p('hub eta %s for aircraft %s' % (hub_eta, aircraft))
             intervals.append(Interval(
                 aircraft,
                 hub_eta - config.etah_slack,

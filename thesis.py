@@ -18,13 +18,13 @@ formation_handler  = FormationHandler(
     synchronizer = FormationSynchronizer
 )
 
-# Generate a big list of random flights
+# Generate a list of random flights
 origins      = ['AMS', 'CDG', 'LHR', 'FRA', 'DUS', 'BRU']
 destinations = ['EWR', 'JFK', 'ORD', 'LAX', 'SFO']
 hubs         = ['MAN']#, 'LHR']
 planes       = []
 
-for i in range(0, 5):
+for i in range(0, 500):
     planes.append(Aircraft(
         label = 'FLT%03d' % i,
         route = Route([
@@ -32,16 +32,20 @@ for i in range(0, 5):
             Waypoint(random.choice(hubs)), 
             Waypoint(random.choice(destinations))
         ]),
-        departure_time = random.choice(range(0, 4))))
+        departure_time = random.choice(range(0, 440))))
 
 # Override auto-planes, useful when reproducing a bug...
 #planes = [
-#    Aircraft('FLT001', Route([Waypoint('AMS'), Waypoint('LHR'),
-#        Waypoint('EWR')]), 33),
-#    Aircraft('FLT002', Route([Waypoint('BRU'), Waypoint('LHR'),
+#    Aircraft('FLT001', Route([Waypoint('DUS'), Waypoint('MAN'),
 #        Waypoint('JFK')]), 0),
-#    Aircraft('FLT002', Route([Waypoint('FRA'), Waypoint('ORD')]), 398),
-#    Aircraft('FLT005', Route([Waypoint('CDG'), Waypoint('SFO')]), 405),
+#    Aircraft('FLT002', Route([Waypoint('FRA'), Waypoint('MAN'),
+#        Waypoint('JFK')]), 0),
+#    Aircraft('FLT003', Route([Waypoint('BRU'), Waypoint('MAN'),
+#        Waypoint('LAX')]), 1),
+#    Aircraft('FLT004', Route([Waypoint('BRU'), Waypoint('MAN'),
+#        Waypoint('ORD')]), 2),
+#    Aircraft('FLT005', Route([Waypoint('DUS'), Waypoint('MAN'),
+#        Waypoint('JFK')]), 3),
 #]
   
 def run():
