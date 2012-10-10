@@ -13,8 +13,18 @@ class Interval:
 
 def group(intervals):
     """
-    Groups intervals according to their overlap. Does not yield an optimum yet,
-    try it out with:
+    Groups intervals according to their overlap. Does not yield an optimum yet.
+    """
+    intervals = sorted(intervals, key = lambda interval: interval.start)
+    if(len(intervals) == 0): return []
+    solution = []
+    candidates = intervals
+    for i in range(0, len(candidates)):
+        if candidates[i].start < candidates[0].end:
+            solution.append(candidates[i])
+    return [solution] + group(list(set(candidates) - set(solution)))
+
+if __name__ == "__main__":
     print group([
         Interval('G', 0, 2),
         Interval('B', 2, 4),
@@ -24,13 +34,3 @@ def group(intervals):
         Interval('E', 4, 6),
         Interval('F', 2, 4),
     ])
-    """
-    intervals = sorted(intervals, key = lambda interval: interval.start)
-    if(len(intervals) == 0): return []
-    solution = []
-    #candidates = copy.deepcopy(intervals)
-    candidates = intervals
-    for i in range(0, len(candidates)):
-        if candidates[i].start < candidates[0].end:
-            solution.append(candidates[i])
-    return [solution] + group(list(set(candidates) - set(solution)))

@@ -1,14 +1,6 @@
 import debug
+from operator import attrgetter
 import config
-
-class EventList(list):
-
-    def remove_by_label(self, label):
-        # It's tempting to just loop and use self.remove(event), but it has 
-        # unexpected results so we use enumerate() and remove by index.
-        for i, event in enumerate(self):
-            if event.label == label:
-                del self[i]
 
 class Event(object):
     
@@ -21,12 +13,8 @@ class Event(object):
         self.time = bubble_time
 
     def __repr__(self):
-        return self.label
+        return '%s (t = %d, s = %s)' % (self.label, self.time, self.sender)
         
-    def __cmp__(self, other):
-        """Allows for easy retrieval of earliest elements (having min(time))"""
-        return cmp(self.time, other.time)
-
 class Dispatcher(object):
 
     def __init__(self):
@@ -50,23 +38,18 @@ def log_event(event):
         return
 
     headers = []
-    lines = []
-
     headers.append(('Time', '%d' % time))
     headers.append((event.sender.__class__.__name__, event.label))
 
-    for key in event.sender.__dict__:
-        lines.append((key, event.sender.__dict__[key]))
-
-    debug.print_table(headers, lines)
+    debug.print_object(event.sender, headers = headers)
 
 time = 0
-events = EventList()
+events = []
 dispatcher = Dispatcher()
     
 def run():
     while len(events) > 0:
-        event = min(events)
+        event = min(events, key = attrgetter('time'))
         global time
         assert event.time >= time
 

@@ -31,14 +31,23 @@ def print_table(headers = [], messages = []):
             print line + ' ' * (width - line_len - 1) + end_line
         print '%s%s%s' % ('+','-'*(width-2),'+')
 
-def print_object(obj):
+def print_object(obj, headers = []):
 
-    headers = []
     lines = []
 
-    headers.append(('Object', obj.__class__.__name__))
+    if len(headers) == 0:
+        headers.append(('Object', obj.__class__.__name__))
     
-    lines = []
-    for key in obj.__dict__:
-        lines.append((key, obj.__dict__[key]))
+    try:
+        # Define this method if you want to customize the debug output
+        lines = obj.get_debug_lines()
+    except AttributeError:
+        # Otherwise the dict will be printed
+        lines = []
+        for key in obj.__dict__:
+            lines.append((key, obj.__dict__[key]))
     print_table(headers, lines)
+
+def print_line(message):
+#print message
+    pass
