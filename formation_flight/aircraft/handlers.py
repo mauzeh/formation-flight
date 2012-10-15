@@ -1,3 +1,5 @@
+"""Handlers listen and react to events."""
+
 from controllers import AircraftController
 from lib import sim
 

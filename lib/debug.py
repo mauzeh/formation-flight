@@ -1,7 +1,4 @@
-"""
-Keeps track of all events in the system and prints them for debugging
-purposes.
-"""
+"""Contains functions to easily verbosely print variables.""" 
 
 # output table width (in chars)
 width = 80

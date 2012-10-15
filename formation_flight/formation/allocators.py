@@ -1,3 +1,5 @@
+"""Allocators determine which flights should be bundled in a formation."""
+
 from lib.intervals import Interval, group
 from lib import sim, debug
 from lib.debug import print_line as p
@@ -11,12 +13,12 @@ class FormationAllocator(object):
         self.aircraft_queue = []
         self.formations = []
 
-    def assign(self, aircraft):
+    def allocate(self, aircraft):
         # No filtering, put all aircraft in one big formation.
         self.formations = [self.aircraft_queue]
 
     def find_formation(self, aircraft):
-        self.assign(aircraft)
+        self.allocate(aircraft)
         """Finds the formation having the aircraft requested"""
         for formation in self.formations:
             if aircraft in formation:
@@ -31,7 +33,7 @@ class FormationAllocator(object):
 class FormationAllocatorEtah(FormationAllocator):
     """Uses interval overlapping to group aircraft into formations"""
     
-    def assign(self, aircraft):
+    def allocate(self, aircraft):
 
         self.formations = []
         intervals       = []

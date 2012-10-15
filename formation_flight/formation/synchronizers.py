@@ -1,11 +1,15 @@
+"""Synchronizers schedule formation hook-ups by changing the aircraft speed.
+
+Makes sure that each participant arrives at the right time."""
+
 from lib import sim, debug
 from lib.debug import print_line as p
 import random
 import config
 
 class FormationSynchronizer(object):
+    
     def synchronize(self, formation):
-        """Makes sure that each participant arrives at the right time."""
 
         # @todo Rationalize and remodel.
         leader = formation[0]

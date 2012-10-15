@@ -1,3 +1,5 @@
+"""Handlers listen and react to events."""
+
 from lib import sim
 from allocators import * 
 from synchronizers import * 
@@ -5,6 +7,7 @@ from lib.debug import print_line as p
 import config
 
 class FormationHandler(object):
+    """Uses the aircraft-depart event to initiate formation allocation"""
 
     def __init__(self, allocator, synchronizer):
         sim.dispatcher.register('aircraft-depart', self.handle_departure)
@@ -33,7 +36,7 @@ class FormationHandler(object):
         # Find the formation having self.
         formation = allocator.find_formation(aircraft)
 
-        # Never try to assign again, even if no formation was found
+        # Never try to allocate again, even if no formation was found
         allocator.remove_aircraft(aircraft)
 
         # If no formation is possible
@@ -47,7 +50,7 @@ class FormationHandler(object):
         sim.events = filter(lambda e: e.label != 'enter-lock-area' or
                                       e.sender not in formation, sim.events)
 
-        # Prevent buddies from being assigned somewhere else.
+        # Prevent buddies from being allocateed somewhere else.
         for buddy in formation:
             # Self was already removed
             if buddy is not aircraft:

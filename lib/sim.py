@@ -1,9 +1,10 @@
-import debug
-from operator import attrgetter
-import config
+"""A discrete event simulation framework."""
+
+import debug, config
 
 class Event(object):
-    
+    """An occurrence initiated from within the simulation."""
+
     def __init__(self, label, sender, bubble_time = 0):
 
         assert bubble_time >= time
@@ -16,16 +17,19 @@ class Event(object):
         return '%s (t = %d, s = %s)' % (self.label, self.time, self.sender)
         
 class Dispatcher(object):
+    """Allows functions to be called when an event occurs."""
 
     def __init__(self):
         self.listeners = {}
 
     def register(self, event_label, listener):
+        """Register a function to be called when an event occurs."""
         if event_label not in self.listeners:
             self.listeners[event_label] = []
         self.listeners[event_label].append(listener)
 
     def bubble(self, event):
+        """Execute registered listeners. Do not call from outside."""
         log_event(event)
         if event.label not in self.listeners:
             return
@@ -33,7 +37,7 @@ class Dispatcher(object):
             listener(event)
 
 def log_event(event):
-
+    """Print a log message to standard output when events occur."""
     if event.label not in config.events_printed:
         return
 
@@ -48,8 +52,13 @@ events = []
 dispatcher = Dispatcher()
     
 def run():
+    """Enumerate events and bubble each until no more events exist.
+
+    Events live in the events list (sim.events), which can be altered at
+    will, including while the simulation is running.
+    """
     while len(events) > 0:
-        event = min(events, key = attrgetter('time'))
+        event = min(events, key = lambda e: e.time)
         global time
         assert event.time >= time
 

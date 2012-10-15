@@ -1,6 +1,9 @@
+"""Controllers augment models by changing model data and events."""
+
 from lib import sim
 
 class AircraftController(object):
+    """Able to reposition an aircraft and schedule arrival events."""
 
     def __init__(self, aircraft):
         
@@ -32,9 +35,11 @@ class AircraftController(object):
         sim.events.append(event)
 
     def clear_events(self):
+
         for event in self.aircraft.events:
 
             # Ignore events not pertaining to current aircraft
+            # @todo Should not be necessary, right?
             if event.sender is not self.aircraft:
                 continue
 

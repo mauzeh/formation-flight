@@ -1,3 +1,5 @@
+"""Contains functions that yield combination lists from a list of items."""
+
 def k_subsets_i(n, k):
     '''
     Yield each subset of size k from the set of integers 0 .. n - 1

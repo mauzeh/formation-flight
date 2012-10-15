@@ -5,5 +5,5 @@ events_printed = ['formation-alive']
 # How much the arrival at the virtual hub can be delayed/expedited (mins)
 etah_slack = 3
 
-# How long before hub arrival can we assign into formations? (mins)
+# How long before hub arrival can we allocate into formations? (mins)
 lock_time = 20

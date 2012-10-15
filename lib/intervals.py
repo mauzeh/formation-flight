@@ -1,3 +1,5 @@
+"""Contains mechanisms to group intervals if they overlap."""
+
 class Interval:
     """
     A time window that is used to group flights arriving at about the same time.

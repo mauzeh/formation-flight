@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+"""Simulation bootstrapper"""
 
 import random
 import os
