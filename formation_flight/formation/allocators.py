@@ -18,6 +18,12 @@ class FormationAllocator(object):
             formation.append(aircraft)
         self.formations.append(formation)
 
+    def find_formation(self, aircraft):
+        """Finds the formation having the aircraft requested"""
+        for formation in self.formations:
+            if aircraft in formation:
+                return formation
+
     def add_aircraft(self, aircraft):
         self.aircraft_queue.append(aircraft)
 
@@ -26,7 +32,7 @@ class FormationAllocator(object):
 
 class FormationAllocatorEtah(FormationAllocator):
     
-    def assign(self, aircraft):
+    def assign(self):
         self.formations = []
         intervals = []
         for aircraft in self.aircraft_queue:
