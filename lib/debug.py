@@ -48,6 +48,11 @@ def print_object(obj, headers = []):
             lines.append((key, obj.__dict__[key]))
     print_table(headers, lines)
 
-def print_line(message):
-#    print message
+def print_line(severity, message = None):
+
+    if message is None:
+        message = severity
+        severity = 'notice'
+    
+    print message
     pass

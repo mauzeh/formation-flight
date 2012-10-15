@@ -24,25 +24,9 @@ formation_handler  = FormationHandler(
    synchronizer = FormationSynchronizer
 )
 
-# Generate a list of random flights
-origins = [
-    Waypoint('AMS'),
-    Waypoint('CDG'),
-    Waypoint('LHR'),
-    Waypoint('FRA'),
-    Waypoint('DUS'),
-    Waypoint('BRU')
-]
-destinations = [
-    Waypoint('EWR'), 
-    Waypoint('JFK'), 
-    Waypoint('ORD'),
-    Waypoint('LAX'), 
-    Waypoint('SFO')
-]
 hubs = [
     Waypoint('MAN'),
-    #Waypoint('LHR')
+    Waypoint('LHR')
 ]
 planes = []
 

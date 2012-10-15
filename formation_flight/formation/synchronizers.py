@@ -1,5 +1,7 @@
 from lib import sim, debug
+from lib.debug import print_line as p
 import random
+import config
 
 class FormationSynchronizer(object):
     def synchronize(self, formation):
@@ -9,6 +11,12 @@ class FormationSynchronizer(object):
         leader = formation[0]
         leader.controller.update_position()
         time_to_hub = leader.time_to_waypoint()
+
+        # Happens when origin is very close to hub
+        if time_to_hub < config.etah_slack:
+            p('Ignore: hub is too close to formation leader origin.')
+            return
+        
         for aircraft in formation:
 
             # Make sure the position of the aircraft is current
