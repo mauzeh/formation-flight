@@ -6,4 +6,7 @@ events_printed = ['formation-alive']
 etah_slack = 5
 
 # How long before hub arrival can we assign into formations? (mins)
-lock_time = 20
+lock_time = 10
+
+# Avoid aircraft speed to become unrealistic when synchronizing
+assert lock_time >= 2 * etah_slack

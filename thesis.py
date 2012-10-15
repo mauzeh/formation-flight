@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 
 import random
+import os
+import sys
+import csv
+
+from optparse import OptionParser
 
 from formation_flight.formation.handlers import FormationHandler
 from formation_flight.formation.allocators import *
@@ -15,26 +20,70 @@ from lib.debug import print_line as p
 
 aircraft_handler   = AircraftHandler()
 formation_handler  = FormationHandler(
-    allocator    = FormationAllocatorEtah,
-    synchronizer = FormationSynchronizer
+   allocator    = FormationAllocatorEtah,
+   synchronizer = FormationSynchronizer
 )
 
 # Generate a list of random flights
-origins      = ['AMS', 'CDG', 'LHR', 'FRA', 'DUS', 'BRU']
-destinations = ['EWR', 'JFK', 'ORD', 'LAX', 'SFO']
-hubs         = ['MAN', 'LHR']
-planes       = []
+origins = [
+    Waypoint('AMS'),
+    Waypoint('CDG'),
+    Waypoint('LHR'),
+    Waypoint('FRA'),
+    Waypoint('DUS'),
+    Waypoint('BRU')
+]
+destinations = [
+    Waypoint('EWR'), 
+    Waypoint('JFK'), 
+    Waypoint('ORD'),
+    Waypoint('LAX'), 
+    Waypoint('SFO')
+]
+hubs = [
+    Waypoint('MAN'),
+    #Waypoint('LHR')
+]
+planes = []
 
-for i in range(0, 1500):
-    planes.append(Aircraft(
-        label = 'FLT%03d' % i,
-        route = Route([
-            Waypoint(random.choice(origins)), 
-            Waypoint(random.choice(hubs)), 
-            Waypoint(random.choice(destinations))
-        ]),
-        departure_time = random.choice(range(0, 100))))
+def parse_options():
 
+    parser = OptionParser()
+    parser.add_option("-t", dest="starttime", default = 0,
+                      help="The simulation start time (UTC, minutes from midnight).")
+    parser.add_option("-d", dest="duration", default = 60,
+                      help="The simulation duration (in minutes).")
+    parser.add_option("-q", "--quiet",
+                      action="store_false", dest="verbose", default=True,
+                      help="don't print status messages to stdout")
+
+    return parser.parse_args()
+
+def init():
+
+    # Initialize settings from command line options
+    (options, args) = parse_options()
+    starttime = int(options.starttime)
+    duration  = int(options.duration)
+
+    # Set up the planes list, assume tab-separated columns via stdin. 
+    # Can be piped, example "$ cat data/flights.tsv | ./thesis.py"
+    for row in csv.reader(sys.stdin, delimiter = '\t'):
+
+        departure_time = int(row[0])
+        label          = row[1]
+        waypoints      = row[2].split('-')
+        aircraft_type  = row[3]
+
+        planes.append(Aircraft(
+            label = label,
+            route = Route([
+                Waypoint(waypoints[0]), 
+                random.choice(hubs), 
+                Waypoint(waypoints[1])
+            ]),
+            departure_time = departure_time))
+        
 # Override auto-planes, useful when reproducing a bug...
 #planes = [
 #    Aircraft('FLT001', Route([Waypoint('DUS'), Waypoint('MAN'),
@@ -54,10 +103,9 @@ for i in range(0, 1500):
 #    Aircraft('FLT008', Route([Waypoint('CDG'), Waypoint('MAN'),
 #        Waypoint('JFK')]), 100),
 #]
-
-p(planes)
   
 def run():
+    init()
     for aircraft in planes:
         sim.events.append(sim.Event(
             'aircraft-depart', 

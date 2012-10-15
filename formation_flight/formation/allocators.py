@@ -5,20 +5,18 @@ from models import Formation
 import config
 
 class FormationAllocator(object):
+    """Generic allocation: no filter."""
     
     def __init__(self):
         self.aircraft_queue = []
         self.formations = []
 
-    def assign(self):
-        # Put all aircraft in one big formation for now.
-        self.formations = []
-        formation = Formation()
-        for aircraft in self.aircraft_queue:
-            formation.append(aircraft)
-        self.formations.append(formation)
+    def assign(self, aircraft):
+        # No filtering, put all aircraft in one big formation.
+        self.formations = [self.aircraft_queue]
 
     def find_formation(self, aircraft):
+        self.assign(aircraft)
         """Finds the formation having the aircraft requested"""
         for formation in self.formations:
             if aircraft in formation:
@@ -31,17 +29,28 @@ class FormationAllocator(object):
         self.aircraft_queue.remove(aircraft)
 
 class FormationAllocatorEtah(FormationAllocator):
+    """Uses interval overlapping to group aircraft into formations"""
     
-    def assign(self):
+    def assign(self, aircraft):
+
         self.formations = []
-        intervals = []
-        for aircraft in self.aircraft_queue:
+        intervals       = []
+        candidates      = self.aircraft_queue
+        hub             = aircraft.route.waypoints[0]
+
+        # This is bad. We don't want to filter anything. 
+        # @todo: pre-process at a higher level.
+        candidates = filter(lambda a: a.route.waypoints[0] is hub, 
+                            self.aircraft_queue)
+
+        for candidate in candidates:
+
             # Quick and dirty: recalc position. Instead, pull eta from var.
-            aircraft.controller.update_position()
-            hub_eta = sim.time + aircraft.time_to_waypoint()
-            p('hub eta %s for aircraft %s' % (hub_eta, aircraft))
+            candidate.controller.update_position()
+            hub_eta = sim.time + candidate.time_to_waypoint()
+            p('Hub eta %s for candidate %s' % (hub_eta, candidate))
             intervals.append(Interval(
-                aircraft,
+                candidate,
                 hub_eta - config.etah_slack,
                 hub_eta + config.etah_slack
             ))
