@@ -26,7 +26,7 @@ class FormationAllocator(object):
 
 class FormationAllocatorEtah(FormationAllocator):
     
-    def assign(self):
+    def assign(self, aircraft):
         self.formations = []
         intervals = []
         for aircraft in self.aircraft_queue:
