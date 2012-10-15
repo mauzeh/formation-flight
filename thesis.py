@@ -24,7 +24,7 @@ destinations = ['EWR', 'JFK', 'ORD', 'LAX', 'SFO']
 hubs         = ['MAN']#, 'LHR']
 planes       = []
 
-for i in range(0, 500):
+for i in range(0, 10):
     planes.append(Aircraft(
         label = 'FLT%03d' % i,
         route = Route([
@@ -32,21 +32,21 @@ for i in range(0, 500):
             Waypoint(random.choice(hubs)), 
             Waypoint(random.choice(destinations))
         ]),
-        departure_time = random.choice(range(0, 440))))
+        departure_time = random.choice(range(0, 10))))
 
 # Override auto-planes, useful when reproducing a bug...
-#planes = [
-#    Aircraft('FLT001', Route([Waypoint('DUS'), Waypoint('MAN'),
-#        Waypoint('JFK')]), 0),
-#    Aircraft('FLT002', Route([Waypoint('FRA'), Waypoint('MAN'),
-#        Waypoint('JFK')]), 0),
-#    Aircraft('FLT003', Route([Waypoint('BRU'), Waypoint('MAN'),
-#        Waypoint('LAX')]), 1),
-#    Aircraft('FLT004', Route([Waypoint('BRU'), Waypoint('MAN'),
-#        Waypoint('ORD')]), 2),
-#    Aircraft('FLT005', Route([Waypoint('DUS'), Waypoint('MAN'),
-#        Waypoint('JFK')]), 3),
-#]
+planes = [
+    Aircraft('FLT001', Route([Waypoint('DUS'), Waypoint('MAN'),
+        Waypoint('JFK')]), 0),
+    Aircraft('FLT002', Route([Waypoint('FRA'), Waypoint('MAN'),
+        Waypoint('JFK')]), 0),
+    Aircraft('FLT003', Route([Waypoint('BRU'), Waypoint('MAN'),
+        Waypoint('LAX')]), 1),
+    Aircraft('FLT004', Route([Waypoint('BRU'), Waypoint('MAN'),
+        Waypoint('ORD')]), 2),
+    Aircraft('FLT005', Route([Waypoint('DUS'), Waypoint('MAN'),
+        Waypoint('JFK')]), 3),
+]
   
 def run():
     for aircraft in planes:

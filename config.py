@@ -3,4 +3,4 @@
 events_printed = ['aircraft-depart','formation-lock']
 
 # How much time the arrival at the virtual hub can be delayed/expedited
-etah_slack = 1 
+etah_slack = 1

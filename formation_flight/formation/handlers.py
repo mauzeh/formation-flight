@@ -17,19 +17,7 @@ class FormationHandler(object):
 
         # Remove all scheduled 'formation-lock' events because we are re-
         # evaluating the entire set of departed aircraft.
-        p('Trying to remove formation-locks from %s' % sim.events)
-#       for e in sim.events:
-#           p('Just a loop: %s' % e)
-#           if e.label == 'formation-lock':
-#               p('Removing %s' % e)
-#               sim.events.remove(e)
-#           else:
-#               pass
-#               p('Not removing %s' % e)
-
         sim.events = filter(lambda e: e.label != 'formation-lock', sim.events)
-        
-        p('Removed formation-locks from %s' % sim.events)
         self.allocator.assign()
 
         # Schedule lock events (may be cancelled later)
@@ -41,13 +29,9 @@ class FormationHandler(object):
                 sim.time + 10
             )
             sim.events.append(event)
-            p('Appending %s' % event)
 
     def handle_lock(self, event):
         formation = event.sender
-        p('handling lock for formation: %s' % formation)
         for aircraft in formation:
-            p('trying to remove aircraft %s from %s' %\
-            (aircraft, self.allocator.aircraft_queue))
             self.allocator.remove_aircraft(aircraft)
         self.synchronizer.synchronize(formation)

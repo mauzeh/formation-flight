@@ -49,5 +49,5 @@ def print_object(obj, headers = []):
     print_table(headers, lines)
 
 def print_line(message):
-#print message
+    print message
     pass
