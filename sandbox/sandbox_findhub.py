@@ -8,7 +8,6 @@ Assumptions:
 """
 
 import math
-from sympy import Symbol
 
 if __name__ == "__main__":
     a       = 1
@@ -18,9 +17,7 @@ if __name__ == "__main__":
 
     alpha   = math.radians(alpha)
 
-    def tiny(x): return float(x)/100
-
-    for Q in map(tiny, range(0, 101)):
+    for Q in map(lambda x: float(x)/100, range(0, 101)):
 
         h       = a * math.sqrt(1 + pow(Q / math.cos(alpha),2) - 2*Q)
         f       = Q * a / math.cos(alpha)
