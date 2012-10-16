@@ -63,6 +63,10 @@ def init():
         waypoints      = row[2].split('-')
         aircraft_type  = row[3]
 
+        # Departure times are randomly distributed
+        departure_time = random.uniform(departure_time - 10,
+                                        departure_time + 10)
+
         planes.append(Aircraft(
             label = label,
             route = Route([
