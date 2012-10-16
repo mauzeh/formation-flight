@@ -50,7 +50,7 @@ def log_event(event):
 time = 0
 events = []
 dispatcher = Dispatcher()
-    
+
 def run():
     """Enumerate events and bubble each until no more events exist.
 
