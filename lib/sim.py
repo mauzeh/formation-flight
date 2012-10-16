@@ -57,6 +57,11 @@ def run():
     Events live in the events list (sim.events), which can be altered at
     will, including while the simulation is running.
     """
+
+    # First fire a 'start sim' event just before the first actual event
+    event = min(events, key = lambda e: e.time)
+    dispatcher.bubble(Event('sim-start', None, event.time))
+    
     while len(events) > 0:
         event = min(events, key = lambda e: e.time)
         global time
@@ -65,3 +70,6 @@ def run():
         time = event.time
         events.remove(event)
         dispatcher.bubble(event)
+
+    # Fire a 'sim-finish' event for any post processors (statistics etc).
+    dispatcher.bubble(Event('sim-finish', None, time))

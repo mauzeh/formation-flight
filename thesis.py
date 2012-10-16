@@ -20,12 +20,15 @@ from lib.geo.point import Point
 from lib import sim, debug, sink
 from lib.debug import print_line as p
 
+from formation_flight import  statistics
+
 aircraft_handler   = AircraftHandler()
 formation_handler  = FormationHandler(
    allocator    = FormationAllocatorEtah,
    synchronizer = FormationSynchronizer
 )
 sink.init()
+statistics.init()
 
 # Generate a hub
 hubs = [

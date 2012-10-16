@@ -28,6 +28,15 @@ def print_table(headers = [], messages = []):
             print line + ' ' * (width - line_len - 1) + end_line
         print '%s%s%s' % ('+','-'*(width-2),'+')
 
+def print_dictionary(dictionary):
+
+    lines = []
+    for key in sorted(dictionary.iterkeys()):
+        lines.append((key, dictionary[key]))
+
+    headers = [('Dictionary', '%d element(s)' % len(dictionary))]
+    print_table(headers, lines)
+
 def print_object(obj, headers = []):
 
     lines = []
