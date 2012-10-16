@@ -16,6 +16,7 @@ from formation_flight.aircraft.models import Aircraft
 from formation_flight.formation.models import Formation
 from lib.geo.route import Route
 from lib.geo.waypoint import Waypoint
+from lib.geo.point import Point
 from lib import sim, debug
 from lib.debug import print_line as p
 
@@ -25,9 +26,10 @@ formation_handler  = FormationHandler(
    synchronizer = FormationSynchronizer
 )
 
+# Generate a hub
 hubs = [
-    Waypoint('MAN'),
-    Waypoint('LHR')
+    Point(54.71, -16.29, 'HUB1'),
+    Point(53.22, -17.21, 'HUB2'),
 ]
 planes = []
 
@@ -67,7 +69,8 @@ def init():
                 random.choice(hubs), 
                 Waypoint(waypoints[1])
             ]),
-            departure_time = departure_time))
+            departure_time = departure_time,
+            aircraft_type = aircraft_type))
         
 # Override auto-planes, useful when reproducing a bug...
 #planes = [
