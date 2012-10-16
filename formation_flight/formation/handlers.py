@@ -12,10 +12,12 @@ class FormationHandler(object):
     def __init__(self, allocator, synchronizer):
         sim.dispatcher.register('aircraft-depart', self.handle_departure)
         sim.dispatcher.register('enter-lock-area', self.handle_lock)
+        sim.dispatcher.register('formation-alive', self.handle_alive)
         self.allocator = allocator()
         self.synchronizer = synchronizer()
 
     def handle_departure(self, event):
+        """Adds the aircraft to the candidate stack and schedules lock event."""
 
         aircraft  = event.sender
         allocator = self.allocator
@@ -29,6 +31,7 @@ class FormationHandler(object):
         ))
 
     def handle_lock(self, event):
+        """Upon lock, find a formation (if exists) for current aircraft."""
         
         aircraft  = event.sender
         allocator = self.allocator
@@ -44,16 +47,31 @@ class FormationHandler(object):
             p('No formation was possible: %s' % formation)
             return
 
+        # Register which hub this formation belongs to
+        formation.hub = formation[0].route.waypoints[0]
+
         p('Formation init: %s' % formation)
 
         # Remove 'enter-lock-area' events for all buddies
         sim.events = filter(lambda e: e.label != 'enter-lock-area' or
                                       e.sender not in formation, sim.events)
 
-        # Prevent buddies from being allocateed somewhere else.
+        # Prevent buddies from being allocated somewhere else.
         for buddy in formation:
             # Self was already removed
             if buddy is not aircraft:
                 allocator.remove_aircraft(buddy)
 
         self.synchronizer.synchronize(formation)
+        
+    def handle_alive(self, event):
+        """Upon alive, tell aircraft in which formation it is flying."""
+        if not hasattr(self, 'formation_count'):
+            self.formation_count = 0
+        self.formation_count = self.formation_count + 1
+        formation = event.sender
+        formation.id = self.formation_count
+        
+        for aircraft in formation:
+            aircraft.formation = formation
+        

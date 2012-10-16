@@ -17,20 +17,16 @@ class Route(object):
             previous_waypoint = waypoint
 
     def get_segments(self):
-        #self.init_segments()
         return self.segments
 
     def get_length(self):
-        #self.init_segments()
         length = 0
         for segment in self.segments:
             length = length + segment.get_length()
         return length
 
     def get_destination(self):
-        #self.init_segments()
         return self.segments[len(self.segments)-1].end
 
     def __repr__(self):
-        #self.init_segments()
         return '%s' % self.segments

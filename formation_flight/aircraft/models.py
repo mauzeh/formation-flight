@@ -8,7 +8,7 @@ class Aircraft(object):
 
         self.label = label if label is not None else str(route)
         self.route = route
-        self.description = '%s' % route
+        self.description = str(route)
         self.departure_time = departure_time
         self.aircraft_type = aircraft_type
         # Distance units per time unit (500 kts)
@@ -38,3 +38,4 @@ class Aircraft(object):
 
     def __repr__(self):
         return '%s (%s, t=%d)' % (self.label, self.aircraft_type, self.departure_time)
+    

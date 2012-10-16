@@ -17,7 +17,7 @@ from formation_flight.formation.models import Formation
 from lib.geo.route import Route
 from lib.geo.waypoint import Waypoint
 from lib.geo.point import Point
-from lib import sim, debug
+from lib import sim, debug, sink
 from lib.debug import print_line as p
 
 aircraft_handler   = AircraftHandler()
@@ -25,6 +25,7 @@ formation_handler  = FormationHandler(
    allocator    = FormationAllocatorEtah,
    synchronizer = FormationSynchronizer
 )
+sink.init()
 
 # Generate a hub
 hubs = [
