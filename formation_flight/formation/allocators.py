@@ -42,8 +42,19 @@ class FormationAllocatorEtah(FormationAllocator):
 
         # This is bad. We don't want to filter anything. 
         # @todo: pre-process at a higher level.
+        # Only consider other aircraft flying to the same hub
         candidates = filter(lambda a: a.route.waypoints[0] is hub, 
                             self.aircraft_queue)
+
+        # Other interesting filters
+        if config.restrictions == 'same-airline':
+            airline = aircraft.label[0:2]
+            candidates = filter(lambda a: a.label[0:2] == airline,
+                                candidates)
+        elif config.restrictions == 'same-aircraft-type':
+            aircraft_type = aircraft.aircraft_type
+            candidates = filter(lambda a: a.aircraft_type == aircraft_type,
+                                candidates)
 
         for candidate in candidates:
 

@@ -30,11 +30,6 @@ formation_handler  = FormationHandler(
 sink.init()
 statistics.init()
 
-# Generate a hub
-hubs = [
-    Point(54.71, -16.29, 'HUB1'),
-    Point(53.22, -17.21, 'HUB2'),
-]
 planes = []
 
 def parse_options():
@@ -67,14 +62,16 @@ def init():
         aircraft_type  = row[3]
 
         # Departure times are randomly distributed
-        departure_time = random.uniform(departure_time - 10,
-                                        departure_time + 10)
+        departure_time = departure_time +\
+            random.uniform(
+                config.departure_distribution['lower_bound'],
+                config.departure_distribution['upper_bound'])
 
         planes.append(Aircraft(
             label = label,
             route = Route([
                 Waypoint(waypoints[0]), 
-                random.choice(hubs), 
+                random.choice(config.hubs), 
                 Waypoint(waypoints[1])
             ]),
             departure_time = departure_time,
