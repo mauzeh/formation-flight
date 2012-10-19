@@ -3,7 +3,7 @@
 #   'aircraft-at-waypoint'
 #   'formation-alive'
 #   'aircraft-arrive'
-events_printed = ['formation-alive']
+events_printed = []#'formation-alive']
 
 # Discount factor
 alpha = .13
@@ -21,13 +21,17 @@ etah_slack = lock_time / 10
 restrictions = None
 
 # Generate hubs
+# Visualization:
+# http://www.gcmap.com/mapui?P=63N+10W%0D%0A58N+11W%0D%0A53N+12.3W%0D%0A48N+13.6W%0D%0A43N+15W%0D%0Alhr-bos%0D%0Aams-atl%0D%0Ahel-jfk%0D%0Amad-dca&MS=wls&DU=mi
 from lib.geo.point import Point
 hubs = [
     #Point(54.71, -16.29, 'HUB1'),
     #Point(53.22, -17.21, 'HUB2'),
-    Point(55.45, -7.9, 'HUB1'),
-    Point(52.29, -10.35, 'HUB2'),
-    Point(42.46, -5.13, 'HUB3'),
+    Point(63, -10, 'HUB1'),
+    Point(58, -11, 'HUB2'),
+    Point(53, -12.3, 'HUB3'),
+    #Point(48, -13.6, 'HUB4'),
+    #Point(43, -15, 'HUB5'),
 ]
 
 # Departure time distribution
