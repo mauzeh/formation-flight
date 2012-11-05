@@ -11,6 +11,7 @@ class Statistics(object):
     def __init__(self):
         sim.dispatcher.register('sim-start', self.handle_start)
         sim.dispatcher.register('aircraft-depart', self.handle_depart)
+        sim.dispatcher.register('aircraft-at-waypoint', self.handle_at_waypoint)
         sim.dispatcher.register('formation-alive', self.handle_alive)
         sim.dispatcher.register('sim-finish', self.handle_finish)
         self.vars = {}
@@ -18,12 +19,22 @@ class Statistics(object):
 
     def handle_start(self, event):
         self.vars['sim_start'] = int(event.time)
+        
+    def handle_at_waypoint(self, event):
+        #print event.sender.route
+        pass
 
     def handle_depart(self, event):
+
         if 'aircraft_count' not in self.vars:
             self.vars['aircraft_count'] = 0
-        self.vars['aircraft_count'] = self.vars['aircraft_count'] + 1 
-        
+        self.vars['aircraft_count'] = self.vars['aircraft_count'] + 1
+
+        if 'distance_solo' not in self.vars:
+            self.vars['distance_solo'] = 0
+        self.vars['distance_solo'] =\
+            self.vars['distance_solo'] + event.sender.route.get_length()
+
     def handle_alive(self, event):
 
         formation = event.sender
@@ -40,6 +51,20 @@ class Statistics(object):
         if 'formation_dispersity' not in self.vars:
             self.vars['formation_dispersity'] = 0
         
+        # Keep track of how many NMs were flown in formation
+        # @todo disregard the solo distance from hook-off to destination
+        if 'distance_formation' not in self.vars:
+            self.vars['distance_formation'] = 0
+        self.vars['distance_formation'] =\
+            self.vars['distance_formation'] +\
+            len(formation) * formation[0].route.segments[0].get_length()
+        
+        # Any NM that was flown in formation is not flown solo (of course)
+        # @todo also subtract solo distance from hook-off to destination
+        assert 'distance_solo' in self.vars
+        self.vars['distance_solo'] =\
+            self.vars['distance_solo'] -\
+            len(formation) * formation[0].route.segments[0].get_length()
 
         if formation.hub not in self.hubs:
             self.hubs.append(formation.hub)
@@ -50,19 +75,20 @@ class Statistics(object):
         self.vars[hub_key] = self.vars[hub_key] + 1
 
     def handle_finish(self, event):
-        
+
         self.vars['sim_finish'] = int(event.time)
         self.vars['Q_avg'] = min(.99, .8 + .2 *\
             (2 * config.alpha + random.uniform(-.01, .01)))
-        self.vars['formation_success_rate'] = \
-            self.vars['formation_aircraft_count'] /\
-            float(self.vars['aircraft_count'])
-        self.vars['avg_formation_size'] = \
-            self.vars['formation_aircraft_count'] /\
-            float(self.vars['formation_count'])
-        self.vars['fuel_saved'] = \
-            self.vars['formation_success_rate'] *\
-            config.alpha
+        if 'formation_aircraft_count' in self.vars:
+            self.vars['formation_success_rate'] = \
+                self.vars['formation_aircraft_count'] /\
+                float(self.vars['aircraft_count'])
+            self.vars['avg_formation_size'] = \
+                self.vars['formation_aircraft_count'] /\
+                float(self.vars['formation_count'])
+            self.vars['fuel_saved'] = \
+                self.vars['formation_success_rate'] *\
+                config.alpha
 
         duration = self.vars['sim_finish'] - self.vars['sim_start']
 

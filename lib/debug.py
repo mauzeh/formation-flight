@@ -61,4 +61,4 @@ def print_line(severity, message = None):
         severity = 'notice'
     
     #print message
-    pass
+    #pass

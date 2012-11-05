@@ -5,3 +5,6 @@
 *.idea
 *.swp
 *.pyo
+
+# Ignore output data
+data/output*

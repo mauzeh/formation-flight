@@ -78,27 +78,32 @@ def init():
             aircraft_type = aircraft_type))
         
 # Override auto-planes, useful when reproducing a bug...
-#planes = [
-#    Aircraft('FLT001', Route([Waypoint('DUS'), Waypoint('MAN'),
-#        Waypoint('JFK')]), 10),
-#    Aircraft('FLT002', Route([Waypoint('FRA'), Waypoint('MAN'),
-#        Waypoint('JFK')]), 0),
-#    Aircraft('FLT003', Route([Waypoint('BRU'), Waypoint('MAN'),
-#        Waypoint('LAX')]), 11),
-#    Aircraft('FLT004', Route([Waypoint('BRU'), Waypoint('MAN'),
-#        Waypoint('ORD')]), 5),
-#    Aircraft('FLT005', Route([Waypoint('DUS'), Waypoint('MAN'),
-#        Waypoint('JFK')]), 12),
-#    Aircraft('FLT006', Route([Waypoint('AMS'), Waypoint('MAN'),
-#        Waypoint('LAX')]), 100),
-#    Aircraft('FLT007', Route([Waypoint('BRU'), Waypoint('MAN'),
-#        Waypoint('ORD')]), 100),
-#    Aircraft('FLT008', Route([Waypoint('CDG'), Waypoint('MAN'),
-#        Waypoint('JFK')]), 100),
-#]
-  
+# Important: use the same object for the hub (don't instantiate it again),
+# because aircraft are grouped by their hubs which is tested using "is".
+hub = Waypoint('MAN')
+planes = [
+    Aircraft('FLT001', Route([Waypoint('DUS'), hub,
+        Waypoint('JFK')]), 10),
+    Aircraft('FLT002', Route([Waypoint('DUS'), hub,
+        Waypoint('EWR')]), 9),
+    #Aircraft('FLT002', Route([Waypoint('FRA'), hub,
+    #    Waypoint('JFK')]), 0),
+    #Aircraft('FLT003', Route([Waypoint('BRU'), hub,
+    #    Waypoint('LAX')]), 11),
+    #Aircraft('FLT004', Route([Waypoint('BRU'), hub,
+    #    Waypoint('ORD')]), 5),
+    #Aircraft('FLT005', Route([Waypoint('DUS'), hub,
+    #    Waypoint('JFK')]), 12),
+    #Aircraft('FLT006', Route([Waypoint('AMS'), hub,
+    #    Waypoint('LAX')]), 100),
+    #Aircraft('FLT007', Route([Waypoint('BRU'), hub,
+    #    Waypoint('ORD')]), 100),
+    #Aircraft('FLT008', Route([Waypoint('CDG'), hub,
+    #    Waypoint('JFK')]), 100),
+]
+
 def run():
-    init()
+    #init()
     for aircraft in planes:
         sim.events.append(sim.Event(
             'aircraft-depart', 

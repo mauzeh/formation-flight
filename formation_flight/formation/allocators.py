@@ -55,18 +55,19 @@ class FormationAllocatorEtah(FormationAllocator):
             aircraft_type = aircraft.aircraft_type
             candidates = filter(lambda a: a.aircraft_type == aircraft_type,
                                 candidates)
-
+            
         for candidate in candidates:
 
             # Quick and dirty: recalc position. Instead, pull eta from var.
             candidate.controller.update_position()
             hub_eta = sim.time + candidate.time_to_waypoint()
-            p('Hub eta %s for candidate %s' % (hub_eta, candidate))
+            p('Hub (= %s) eta %s for candidate %s' % (hub, hub_eta, candidate))
             intervals.append(Interval(
                 candidate,
                 hub_eta - config.etah_slack,
                 hub_eta + config.etah_slack
             ))
+            
         for interval_group in group(intervals):
             formation = Formation()
             for interval in interval_group:
