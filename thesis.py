@@ -20,7 +20,8 @@ from lib.geo.point import Point
 from lib import sim, debug, sink
 from lib.debug import print_line as p
 
-from formation_flight import  statistics
+from formation_flight import visualization
+from formation_flight import statistics
 
 aircraft_handler   = AircraftHandler()
 formation_handler  = FormationHandler(
@@ -29,6 +30,7 @@ formation_handler  = FormationHandler(
 )
 sink.init()
 statistics.init()
+visualization.init()
 
 planes = []
 
@@ -80,30 +82,30 @@ def init():
 # Override auto-planes, useful when reproducing a bug...
 # Important: use the same object for the hub (don't instantiate it again),
 # because aircraft are grouped by their hubs which is tested using "is".
-#hub = Waypoint('MAN')
-#planes = [
-#    Aircraft('FLT001', Route([Waypoint('DUS'), hub,
-#        Waypoint('JFK')]), 12),
-#    Aircraft('FLT002', Route([Waypoint('DUS'), hub,
-#        Waypoint('ORD')]), 12),
-#    Aircraft('FLT003', Route([Waypoint('FRA'), hub,
-#        Waypoint('SFO')]), 0),
-    #Aircraft('FLT003', Route([Waypoint('BRU'), hub,
-    #    Waypoint('LAX')]), 11),
-    #Aircraft('FLT004', Route([Waypoint('BRU'), hub,
-    #    Waypoint('ORD')]), 5),
-    #Aircraft('FLT005', Route([Waypoint('DUS'), hub,
-    #    Waypoint('JFK')]), 12),
-    #Aircraft('FLT006', Route([Waypoint('AMS'), hub,
-    #    Waypoint('LAX')]), 100),
-    #Aircraft('FLT007', Route([Waypoint('BRU'), hub,
-    #    Waypoint('ORD')]), 100),
-    #Aircraft('FLT008', Route([Waypoint('CDG'), hub,
-    #    Waypoint('JFK')]), 100),
-#]
+hub = Waypoint('MAN')
+planes = [
+    Aircraft('FLT001', Route([Waypoint('DUS'), hub,
+        Waypoint('JFK')]), 12),
+    Aircraft('FLT002', Route([Waypoint('DUS'), hub,
+        Waypoint('ORD')]), 12),
+    Aircraft('FLT003', Route([Waypoint('FRA'), hub,
+        Waypoint('SFO')]), 0),
+    Aircraft('FLT003', Route([Waypoint('BRU'), hub,
+        Waypoint('LAX')]), 11),
+    Aircraft('FLT004', Route([Waypoint('BRU'), hub,
+        Waypoint('ORD')]), 5),
+    Aircraft('FLT005', Route([Waypoint('DUS'), hub,
+        Waypoint('JFK')]), 12),
+    Aircraft('FLT006', Route([Waypoint('AMS'), hub,
+        Waypoint('LAX')]), 100),
+    Aircraft('FLT007', Route([Waypoint('BRU'), hub,
+        Waypoint('ORD')]), 100),
+    Aircraft('FLT008', Route([Waypoint('CDG'), hub,
+        Waypoint('JFK')]), 100),
+]
 
 def run():
-    init()
+    #init()
     for aircraft in planes:
         sim.events.append(sim.Event(
             'aircraft-depart', 
