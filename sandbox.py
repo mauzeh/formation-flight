@@ -1,3 +1,5 @@
-from sandbox import penalties
+from sandbox import hookoff as sb
 
-penalties.run()
+#for i in range(0, 500):
+sb.run()
+print 'done'
