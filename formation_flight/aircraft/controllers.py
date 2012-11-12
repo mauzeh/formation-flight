@@ -1,6 +1,7 @@
 """Controllers augment models by changing model data and events."""
 
 from lib import sim
+from lib.debug import print_line as p
 
 class AircraftController(object):
     """Able to reposition an aircraft and schedule arrival events."""
@@ -25,7 +26,7 @@ class AircraftController(object):
     def calibrate(self):
         """Removes all upcoming events for this aircraft and replans them"""
         self.clear_events()
-        if len(self.aircraft.route.segments) > 1:
+        if len(self.aircraft.route.waypoints) > 1:
             self.schedule_waypoint()
         else:
             self.schedule_arrival()

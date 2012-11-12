@@ -27,7 +27,7 @@ formation_handler  = FormationHandler(
    allocator    = FormationAllocatorEtah,
    synchronizer = FormationSynchronizer
 )
-sink.init()
+#sink.init()
 statistics.init()
 
 planes = []
@@ -83,9 +83,9 @@ def init():
 hub = Waypoint('MAN')
 planes = [
     Aircraft('FLT001', Route([Waypoint('DUS'), hub,
-        Waypoint('JFK')]), 10),
+        Waypoint('JFK'), Waypoint('SFO')]), 10),
     Aircraft('FLT002', Route([Waypoint('DUS'), hub,
-        Waypoint('EWR')]), 9),
+        Waypoint('EWR'), Waypoint('LAX')]), 9),
     #Aircraft('FLT002', Route([Waypoint('FRA'), hub,
     #    Waypoint('JFK')]), 0),
     #Aircraft('FLT003', Route([Waypoint('BRU'), hub,
@@ -110,7 +110,6 @@ def run():
             aircraft, 
             aircraft.departure_time
         ))
-
     sim.run()
 
 # docs: http://docs.python.org/library/profile.html

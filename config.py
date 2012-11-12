@@ -1,12 +1,13 @@
 # The events we wish to print to the terminal when they occur. Options:
 #   'aircraft-depart'
 #   'aircraft-at-waypoint'
+#   'enter-lock-area'
 #   'formation-alive'
 #   'aircraft-arrive'
-events_printed = ['aircraft-at-waypoint', 'formation-alive']
+events_printed = ['aircraft-depart','enter-lock-area','aircraft-at-waypoint', 'formation-alive', 'aircraft-arrive']
 
 # Discount factor
-alpha = .50
+alpha = .13
 
 # How long before hub arrival can we allocate into formations? (mins)
 lock_time = 30

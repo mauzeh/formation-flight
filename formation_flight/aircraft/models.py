@@ -1,4 +1,5 @@
 """Models contain information and do not initiate actions or commands."""
+from lib.debug import print_line as p
 
 class Aircraft(object):
     """An individual flight."""
@@ -23,6 +24,7 @@ class Aircraft(object):
     def at_waypoint(self):
         """Sets the current position and increments to the next segment."""
         self.position = self.route.waypoints[0]
+        p('arrived at waypoint %s' % self.position)
         del self.route.waypoints[0]
         del self.route.segments[0]
         

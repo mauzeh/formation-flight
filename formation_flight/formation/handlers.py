@@ -32,7 +32,7 @@ class FormationHandler(object):
 
     def handle_lock(self, event):
         """Upon lock, find a formation (if exists) for current aircraft."""
-        
+
         aircraft  = event.sender
         allocator = self.allocator
         
@@ -63,15 +63,49 @@ class FormationHandler(object):
                 allocator.remove_aircraft(buddy)
 
         self.synchronizer.synchronize(formation)
-        
+
     def handle_alive(self, event):
-        """Upon alive, tell aircraft in which formation it is flying."""
+        """Initialize the formation and determine hookoff points."""
+
+        # @todo do we need this? maybe remove?
+        # @todo move to class similar to statistics.py?
+        # Create a formation id to be used in the data sink.
         if not hasattr(self, 'formation_count'):
             self.formation_count = 0
         self.formation_count = self.formation_count + 1
         formation = event.sender
         formation.id = self.formation_count
-        
+
+        # Tell aircraft in which formation it is flying.
+        # @todo move to class similar to statistics.py?
         for aircraft in formation:
             aircraft.formation = formation
-        
+
+        # Determine formation trunk route
+        # @todo make midpoint dynamic.
+        from lib.geo.waypoint import Waypoint
+        from lib.geo.segment import Segment
+        from lib.geo.util import project_segment, get_hookoff_quotient
+        arrival_midpoint = Waypoint('BOS')
+        trunk_segment = Segment(formation.hub, arrival_midpoint)
+
+        # Determine hookoff point for each aircraft
+        for aircraft in formation:
+            
+            hub_to_destination = aircraft.route.segments[0]
+            
+            theta = abs(hub_to_destination.get_initial_bearing() -
+                        trunk_segment.get_initial_bearing())
+            (a, b) = project_segment(theta, hub_to_destination.get_length())
+            Q = get_hookoff_quotient(a, b, config.alpha)
+            
+            hookoff_point = formation.hub.get_position(
+                trunk_segment.get_initial_bearing(),
+                a * Q
+            )
+            
+            aircraft.route.waypoints = [hookoff_point] +\
+                                        aircraft.route.waypoints
+
+            aircraft.route.init_segments()
+            aircraft.controller.calibrate()

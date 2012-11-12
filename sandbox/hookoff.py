@@ -1,5 +1,26 @@
 import math
 
+def project_segment(theta, c):
+    """Given the angle between lines AB and AC, and given a distance c of AC,
+    return the distance a of AB and b of BC.
+    
+      A
+      |\
+    a | \ c
+      |  \
+      B---C
+        b
+
+    This implementation does not produce a great-circle distance but a mere
+    straight-line (through the earth) distance. We don't need anything more
+    complicated for our purposes of comparison.
+
+    float theta: Angle between AB and AC (in degrees)
+    float c:     Distance AC.
+    """
+    theta = math.radians(theta)
+    return c * math.cos(theta), c * math.sin(theta)
+
 def get_costs(a, b, alpha, beta):
     """Given a triangle ABC (with B being rectangular), return the cost to
        fly in formation from A to B', and solo from B' to C, where B' is a
@@ -29,7 +50,7 @@ def get_costs(a, b, alpha, beta):
     
     return a - (1-beta)*b*math.tan(alpha) + b/math.cos(alpha)
 
-def get_hookoff_alpha(a, b, beta):
+def get_hookoff_quotient(a, b, beta):
     """Given a triangle AB'C (with B being rectangular), where AB' is a
        formation trajectory, and B'C is a solo trajectory. Find the hookoff
        point that minimizes fuel burn (using the discount factor beta), and
@@ -72,9 +93,27 @@ def get_hookoff_alpha(a, b, beta):
 
 def run():
 
-    print get_hookoff_alpha(1000, 100, .13)
+    #print get_hookoff_quotient(1000, 100, .13)
     
-    from lib.geo.point import Point
-
+    from lib.geo.waypoint import Waypoint
+    from lib.geo.segment import Segment
+    hub              = Waypoint('MAN')
+    destination      = Waypoint('JFK')
+    midpoint         = Waypoint('ORD')
+    
+    origin_to_destination = Segment(hub, destination)
+    origin_to_midpoint    = Segment(hub, midpoint)
+    
+    theta = abs(origin_to_destination.get_initial_bearing()-
+                origin_to_midpoint.get_initial_bearing())
+    (a, b) = cross_track_distance(theta, origin_to_destination.get_length())
+    print get_hookoff_quotient(a, b, theta)
+    
+    hookoff_point = hub.get_position(
+        origin_to_midpoint.get_initial_bearing(),
+        a
+    )
+    
+    print hookoff_point
     
     
