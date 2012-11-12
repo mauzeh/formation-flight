@@ -14,6 +14,7 @@ class AircraftSink(Sink):
         sim.dispatcher.register('aircraft-arrive', self.handle_arrival)
 
     def handle_arrival(self, event):
+        
         aircraft = event.sender
 
         try:
@@ -36,9 +37,25 @@ class FormationSink(Sink):
 
     def __init__(self):
         self.writer = csv.writer(open('data/output_formation.tsv', 'w'), delimiter = '\t')
+        self.attrs = {}
         sim.dispatcher.register('formation-alive', self.handle_alive)
 
     def handle_alive(self, event):
+        
+        # @todo do we need this? maybe remove?
+        # @todo move to class similar to statistics.py?
+        # Create a formation id to be used in the data sink.
+        if not 'formation_count' in self.attrs:
+            self.attrs['formation_count'] = 0
+        self.attrs['formation_count'] = self.attrs['formation_count'] + 1
+        formation = event.sender
+        formation.id = self.attrs['formation_count']
+
+        # Tell aircraft in which formation it is flying.
+        # @todo move to class similar to statistics.py?
+        for aircraft in formation:
+            aircraft.formation = formation
+        
         formation = event.sender
 
         self.put([

@@ -22,7 +22,15 @@ class Statistics(object):
         
     def handle_at_waypoint(self, event):
         #print event.sender.route
-        pass
+        aircraft = event.sender
+        if not hasattr(aircraft, 'Q'):
+            return
+        
+        if 'Q_sum' not in self.vars:
+            self.vars['Q_sum'] = 0
+            self.vars['Q_count'] = 0
+        self.vars['Q_sum']   = self.vars['Q_sum'] + aircraft.Q
+        self.vars['Q_count'] = self.vars['Q_count'] + 1
 
     def handle_depart(self, event):
 
@@ -77,8 +85,7 @@ class Statistics(object):
     def handle_finish(self, event):
 
         self.vars['sim_finish'] = int(event.time)
-        self.vars['Q_avg'] = min(.99, .8 + .2 *\
-            (2 * config.alpha + random.uniform(-.01, .01)))
+        self.vars['Q_avg'] = self.vars['Q_sum'] / self.vars['Q_count']
         if 'formation_aircraft_count' in self.vars:
             self.vars['formation_success_rate'] = \
                 self.vars['formation_aircraft_count'] /\

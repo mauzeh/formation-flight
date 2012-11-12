@@ -36,9 +36,11 @@ class FormationSynchronizer(object):
 
             # Replan all events.
             aircraft.controller.calibrate()
-
+            
         sim.events.append(sim.Event(
             'formation-alive',
             formation,
-            sim.time + time_to_hub
+            # Add a tiny delay to make sure that all aircraft-at-waypoint
+            # events are fired before the formation-alive event.
+            sim.time + time_to_hub + 0.0001
         ))

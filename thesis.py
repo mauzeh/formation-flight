@@ -27,7 +27,7 @@ formation_handler  = FormationHandler(
    allocator    = FormationAllocatorEtah,
    synchronizer = FormationSynchronizer
 )
-#sink.init()
+sink.init()
 statistics.init()
 
 planes = []
@@ -80,14 +80,14 @@ def init():
 # Override auto-planes, useful when reproducing a bug...
 # Important: use the same object for the hub (don't instantiate it again),
 # because aircraft are grouped by their hubs which is tested using "is".
-hub = Waypoint('MAN')
-planes = [
-    Aircraft('FLT001', Route([Waypoint('DUS'), hub,
-        Waypoint('JFK'), Waypoint('SFO')]), 10),
-    Aircraft('FLT002', Route([Waypoint('DUS'), hub,
-        Waypoint('EWR'), Waypoint('LAX')]), 9),
-    #Aircraft('FLT002', Route([Waypoint('FRA'), hub,
-    #    Waypoint('JFK')]), 0),
+#hub = Waypoint('MAN')
+#planes = [
+#    Aircraft('FLT001', Route([Waypoint('DUS'), hub,
+#        Waypoint('JFK')]), 12),
+#    Aircraft('FLT002', Route([Waypoint('DUS'), hub,
+#        Waypoint('ORD')]), 12),
+#    Aircraft('FLT003', Route([Waypoint('FRA'), hub,
+#        Waypoint('SFO')]), 0),
     #Aircraft('FLT003', Route([Waypoint('BRU'), hub,
     #    Waypoint('LAX')]), 11),
     #Aircraft('FLT004', Route([Waypoint('BRU'), hub,
@@ -100,10 +100,10 @@ planes = [
     #    Waypoint('ORD')]), 100),
     #Aircraft('FLT008', Route([Waypoint('CDG'), hub,
     #    Waypoint('JFK')]), 100),
-]
+#]
 
 def run():
-    #init()
+    init()
     for aircraft in planes:
         sim.events.append(sim.Event(
             'aircraft-depart', 

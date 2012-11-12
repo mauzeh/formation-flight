@@ -24,7 +24,6 @@ class Aircraft(object):
     def at_waypoint(self):
         """Sets the current position and increments to the next segment."""
         self.position = self.route.waypoints[0]
-        p('arrived at waypoint %s' % self.position)
         del self.route.waypoints[0]
         del self.route.segments[0]
         

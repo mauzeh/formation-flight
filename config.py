@@ -4,7 +4,7 @@
 #   'enter-lock-area'
 #   'formation-alive'
 #   'aircraft-arrive'
-events_printed = ['aircraft-depart','enter-lock-area','aircraft-at-waypoint', 'formation-alive', 'aircraft-arrive']
+events_printed = []#'aircraft-depart','enter-lock-area','aircraft-at-waypoint', 'formation-alive', 'aircraft-arrive']
 
 # Discount factor
 alpha = .13
@@ -27,9 +27,9 @@ restrictions = None
 from lib.geo.point import Point
 from lib.geo.waypoint import Waypoint
 hubs = [
-    Waypoint('MAN')
-    #Point(63, -10, 'HUB1'),
-    #Point(58, -11, 'HUB2'),
+    #Waypoint('MAN')
+    Point(63, -10, 'HUB1'),
+    Point(58, -11, 'HUB2'),
     #Point(53, -12.3, 'HUB3'),
     #Point(48, -13.6, 'HUB4'),
     #Point(43, -15, 'HUB5'),

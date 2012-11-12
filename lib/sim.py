@@ -14,7 +14,7 @@ class Event(object):
         self.time = bubble_time
 
     def __repr__(self):
-        return '%s (t = %d, s = %s)' % (self.label, self.time, self.sender)
+        return '%s (t = %.5f, s = %s)' % (self.label, self.time, self.sender)
         
 class Dispatcher(object):
     """Allows functions to be called when an event occurs."""
