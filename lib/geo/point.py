@@ -1,4 +1,5 @@
 import math
+from lib.debug import print_line as p
 
 class Earth(object):
 
@@ -36,6 +37,18 @@ class Point(object):
                                             math.cos(lat2)*\
                                             math.cos(dLon)
         return math.degrees(math.atan2(y, x)) % 360
+    
+    def coincides(self, point):
+        if point is self:
+            p('Point %s coincides with self %s because same instance' %\
+              (point, self))
+            return True
+        if self.lat == point.lat and self.lon == point.lon:
+            p('Point %s coincides with self %s because same latlons' %\
+              (point, self))
+            return True
+        p('Point %s does not coincide with self %s.' % (point, self))
+        return False
 
     def get_position(self, bearing, distance):
         """

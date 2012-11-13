@@ -7,7 +7,7 @@ from models import Formation
 import config
 
 class FormationAllocator(object):
-    """Generic allocation: no filter."""
+    """Abstract Allocator. Creates one giant formation."""
     
     def __init__(self):
         self.aircraft_queue = []
@@ -34,6 +34,10 @@ class FormationAllocatorEtah(FormationAllocator):
     """Uses interval overlapping to group aircraft into formations"""
     
     def allocate(self, aircraft):
+        
+        # Do not perform allocation if no hub exists in the flight route.
+        if len(aircraft.route.segments) == 0:
+            return
 
         self.formations = []
         intervals       = []

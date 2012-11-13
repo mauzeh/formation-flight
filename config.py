@@ -1,17 +1,24 @@
 # The events we wish to print to the terminal when they occur. Options:
-#   'aircraft-init'
-#   'aircraft-depart'
-#   'aircraft-at-waypoint'
-#   'enter-lock-area'
-#   'formation-alive'
-#   'aircraft-arrive'
-events_printed = []#'aircraft-arrive']
+#   'aircraft-init',
+#   'aircraft-depart',
+#   'aircraft-at-waypoint',
+#   'enter-lock-area',
+#   'formation-alive',
+#   'aircraft-arrive',
+events_printed = [
+   #'aircraft-init',
+   #'aircraft-depart',
+   #'aircraft-at-waypoint',
+   #'enter-lock-area',
+   #'formation-alive',
+   #'aircraft-arrive',    
+]
 
 # Discount factor
-alpha = .5
+alpha = .13
 
 # How long before hub arrival can we allocate into formations? (mins)
-lock_time = 30
+lock_time = 15
 
 # How much the arrival at the virtual hub can be delayed/expedited (mins)
 etah_slack = lock_time / 5
@@ -28,9 +35,9 @@ restrictions = None
 from lib.geo.point import Point
 from lib.geo.waypoint import Waypoint
 hubs = [
-    #Waypoint('MAN')
-    Point(63, -10, 'HUB1'),
-    Point(58, -11, 'HUB2'),
+    Waypoint('MAN')
+    #Point(63, -10, 'HUB1'),
+    #Point(58, -11, 'HUB2'),
     #Point(53, -12.3, 'HUB3'),
     #Point(48, -13.6, 'HUB4'),
     #Point(43, -15, 'HUB5'),

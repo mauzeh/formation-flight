@@ -63,16 +63,19 @@ class Statistics(object):
         # @todo disregard the solo distance from hook-off to destination
         if 'distance_formation' not in self.vars:
             self.vars['distance_formation'] = 0
-        self.vars['distance_formation'] =\
-            self.vars['distance_formation'] +\
-            len(formation) * formation[0].route.segments[0].get_length()
+        
+        # @todo calculate the distance flown in formation
+        
+        #self.vars['distance_formation'] =\
+        #    self.vars['distance_formation'] +\
+        #    len(formation) * formation[0].route.segments[0].get_length()
         
         # Any NM that was flown in formation is not flown solo (of course)
         # @todo also subtract solo distance from hook-off to destination
         assert 'distance_solo' in self.vars
-        self.vars['distance_solo'] =\
-            self.vars['distance_solo'] -\
-            len(formation) * formation[0].route.segments[0].get_length()
+        #self.vars['distance_solo'] =\
+        #    self.vars['distance_solo'] -\
+        #    len(formation) * formation[0].route.segments[0].get_length()
 
         if formation.hub not in self.hubs:
             self.hubs.append(formation.hub)
@@ -85,7 +88,8 @@ class Statistics(object):
     def handle_finish(self, event):
 
         self.vars['sim_finish'] = int(event.time)
-        self.vars['Q_avg'] = self.vars['Q_sum'] / self.vars['Q_count']
+        if 'Q_sum' in self.vars:
+            self.vars['Q_avg'] = self.vars['Q_sum'] / self.vars['Q_count']
         if 'formation_aircraft_count' in self.vars:
             self.vars['formation_success_rate'] = \
                 self.vars['formation_aircraft_count'] /\

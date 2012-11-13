@@ -25,6 +25,9 @@ class FormationHandler(object):
         aircraft  = event.sender
         allocator = self.allocator
         
+        # Register which hub this aircraft will fly to
+        aircraft.hub = aircraft.route.waypoints[0]
+        
         allocator.add_aircraft(aircraft)        
         sim.events.append(sim.Event(
             'enter-lock-area',
@@ -46,12 +49,12 @@ class FormationHandler(object):
         allocator.remove_aircraft(aircraft)
 
         # If no formation is possible
-        if not len(formation) > 1:
+        if formation is None or not len(formation) > 1:
             p('No formation was possible: %s' % formation)
             return
 
         # Register which hub this formation belongs to
-        formation.hub = formation[0].route.waypoints[0]
+        formation.hub = formation[0].hub
 
         p('Formation init: %s' % formation)
 
@@ -75,16 +78,16 @@ class FormationHandler(object):
         # Determine formation trunk route
         destinations = []
         for aircraft in formation:
-            destinations.append(aircraft.route.waypoints[-1])
+            destinations.append(aircraft.destination)
         arrival_midpoint = midpoint(destinations)
         p('destinations: %s' % destinations)
         p('midpoint = %s' % arrival_midpoint)
-        hub_to_midpoint = Segment(formation.hub, arrival_midpoint)
+        hub_to_midpoint = Segment(aircraft.hub, arrival_midpoint)
 
         # Determine hookoff point for each aircraft, except the last
         for aircraft in formation:
             
-            hub_to_destination = aircraft.route.segments[0]
+            hub_to_destination = Segment(aircraft.hub, aircraft.destination)
             
             theta = abs(hub_to_destination.get_initial_bearing() -
                         hub_to_midpoint.get_initial_bearing())
@@ -96,30 +99,46 @@ class FormationHandler(object):
                 a * aircraft.Q
             )
             
-            hub_to_hookoff = Segment(formation.hub, aircraft.hookoff_point)
+            hub_to_hookoff = Segment(aircraft.hub, aircraft.hookoff_point)
             aircraft.P = hub_to_hookoff.get_length() / hub_to_midpoint.get_length()
 
         # Place aircraft in order, ascending with Q, to fulfill LIFO condition.
         formation = sorted(formation, key = lambda item: item.P)
         
-        # The last aircraft: same hookoff point as its remaining buddy.
-        formation[-1].Q = formation[-2].Q
-        formation[-1].P = formation[-2].P
-        formation[-1].hookoff_point = formation[-2].hookoff_point
+        # All aircraft at the front of the formation having the same destination
+        # should hook off where the previous buddy (having a different
+        # destination) hooked off.
+        
+        # Example: formation AMS-SFO, BRU-SFO, LHR-ATL.
+        # AMS-SFO and BRU-SFO should hook off where LHR-ATL hooked off.
+        
+        # First find the leading set of aircraft having the same destination
+        formation.reverse()
+        leading_destination = formation[0].route.waypoints[-1]
+        leaders = []
+        for aircraft in formation:
+            if not aircraft.route.waypoints[-1].coincides(leading_destination):
+                break
+            leaders.append(aircraft)
+        
+        # Then find the buddy just before the set of leading aircraft, if
+        # it exists.
+        try:
+            last_buddy = formation[len(leaders)]
+        except IndexError:
+            return
+
+        # Change reversed formation back to normal
+        formation.reverse()
+        
+        # The leaders: same hookoff point as last buddy.
+        for aircraft in leaders:
+            aircraft.Q = last_buddy.Q
+            aircraft.P = last_buddy.P
+            aircraft.hookoff_point = last_buddy.hookoff_point
 
         for aircraft in formation:
-            debug.print_object(aircraft)
             aircraft.route.waypoints = [aircraft.hookoff_point] +\
                                         aircraft.route.waypoints
             aircraft.route.init_segments()
             aircraft.controller.calibrate()
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
