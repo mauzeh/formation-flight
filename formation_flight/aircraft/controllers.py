@@ -15,6 +15,8 @@ class AircraftController(object):
 
     def update_position(self):
         """Calculates the position of the aircraft according to the simtime"""
+        # Assume that the flight has been properly set up with a hub.
+        assert len(self.aircraft.route.segments) > 0
         flight_time    = sim.time - self.aircraft.departure_time
         distance_flown = flight_time * self.aircraft.speed
         segment        = self.aircraft.route.segments[0]

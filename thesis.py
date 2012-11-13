@@ -47,17 +47,43 @@ def parse_options():
 
     return parser.parse_args()
 
+# Override auto-planes, useful when reproducing a bug...
+# Important: use the same object for the hub (don't instantiate it again),
+# because aircraft are grouped by their hubs which is tested using "is".
+#hub = Waypoint('MAN')
+#planes = [
+#    Aircraft('FLT001', Route([Waypoint('DUS'), hub,
+#        Waypoint('JFK')]), 12),
+#    Aircraft('FLT002', Route([Waypoint('DUS'), hub,
+#        Waypoint('BOS')]), 12),
+#    Aircraft('FLT003', Route([Waypoint('FRA'), hub,
+#        Waypoint('EWR')]), 0),
+#    Aircraft('FLT004', Route([Waypoint('BRU'), hub,
+#        Waypoint('LAX')]), 11),
+#    Aircraft('FLT005', Route([Waypoint('AMS'), hub,
+#        Waypoint('SFO')]), 7),
+#    Aircraft('FLT007', Route([Waypoint('AMS'), hub,
+#        Waypoint('LAX')]), 100),
+#    Aircraft('FLT008', Route([Waypoint('BRU'), hub,
+#        Waypoint('SFO')]), 100),
+#    Aircraft('FLT009', Route([Waypoint('CDG'), hub,
+#        Waypoint('LAX')]), 100),
+#]
+
 def init():
+    
+    # Remove planes that were initialized for debugging purposes
+    del(planes[:])
 
     # Initialize settings from command line options
     (options, args) = parse_options()
     starttime = int(options.starttime)
     duration  = int(options.duration)
-
+    
     # Set up the planes list, assume tab-separated columns via stdin. 
     # Can be piped, example "$ cat data/flights.tsv | ./thesis.py"
     for row in csv.reader(sys.stdin, delimiter = '\t'):
-
+        
         departure_time = int(row[0])
         label          = row[1]
         waypoints      = row[2].split('-')
@@ -68,42 +94,38 @@ def init():
             random.uniform(
                 config.departure_distribution['lower_bound'],
                 config.departure_distribution['upper_bound'])
-
-        planes.append(Aircraft(
+        
+        # First construct the direct flight (solo, point-to-point)
+        aircraft = Aircraft(
             label = label,
             route = Route([
                 Waypoint(waypoints[0]), 
-                random.choice(config.hubs), 
+                #random.choice(config.hubs), 
                 Waypoint(waypoints[1])
             ]),
             departure_time = departure_time,
-            aircraft_type = aircraft_type))
+            aircraft_type = aircraft_type)
         
-# Override auto-planes, useful when reproducing a bug...
-# Important: use the same object for the hub (don't instantiate it again),
-# because aircraft are grouped by their hubs which is tested using "is".
-hub = Waypoint('MAN')
-planes = [
-    Aircraft('FLT001', Route([Waypoint('DUS'), hub,
-        Waypoint('JFK')]), 12),
-    #Aircraft('FLT002', Route([Waypoint('DUS'), hub,
-    #    Waypoint('BOS')]), 12),
-    #Aircraft('FLT003', Route([Waypoint('FRA'), hub,
-    #    Waypoint('EWR')]), 0),
-    Aircraft('FLT004', Route([Waypoint('BRU'), hub,
-        Waypoint('LAX')]), 11),
-    #Aircraft('FLT005', Route([Waypoint('AMS'), hub,
-    #    Waypoint('SFO')]), 7),
-    #Aircraft('FLT007', Route([Waypoint('AMS'), hub,
-    #    Waypoint('LAX')]), 100),
-    #Aircraft('FLT008', Route([Waypoint('BRU'), hub,
-    #    Waypoint('SFO')]), 100),
-    #Aircraft('FLT009', Route([Waypoint('CDG'), hub,
-    #    Waypoint('LAX')]), 100),
-]
+        # Find the closest hub
+        closest_hub = config.hubs[0]
+        closest_hub_distance = closest_hub.distance_to(aircraft.origin)
+        for hub in config.hubs[1:]:
+            distance = hub.distance_to(aircraft.origin)
+            if distance < closest_hub_distance:
+                closest_hub = hub
+
+        # Modify the previously created point-to-point route by adding the hub
+        aircraft.route.waypoints = [
+            aircraft.route.waypoints[0],
+            closest_hub,
+            aircraft.route.waypoints[-1]
+        ]
+        aircraft.route.init_segments()
+        
+        planes.append(aircraft)
 
 def run():
-    #init()
+    init()
     for aircraft in planes:
         sim.events.append(sim.Event('aircraft-init', aircraft, 0))
     sim.run()
