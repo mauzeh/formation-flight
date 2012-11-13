@@ -86,32 +86,26 @@ hub = Waypoint('MAN')
 planes = [
     Aircraft('FLT001', Route([Waypoint('DUS'), hub,
         Waypoint('JFK')]), 12),
-    Aircraft('FLT002', Route([Waypoint('DUS'), hub,
-        Waypoint('ORD')]), 12),
-    Aircraft('FLT003', Route([Waypoint('FRA'), hub,
-        Waypoint('SFO')]), 0),
-    Aircraft('FLT003', Route([Waypoint('BRU'), hub,
-        Waypoint('LAX')]), 11),
+    #Aircraft('FLT002', Route([Waypoint('DUS'), hub,
+    #    Waypoint('BOS')]), 12),
+    #Aircraft('FLT003', Route([Waypoint('FRA'), hub,
+    #    Waypoint('EWR')]), 0),
     Aircraft('FLT004', Route([Waypoint('BRU'), hub,
-        Waypoint('ORD')]), 5),
-    Aircraft('FLT005', Route([Waypoint('DUS'), hub,
-        Waypoint('JFK')]), 12),
-    Aircraft('FLT006', Route([Waypoint('AMS'), hub,
-        Waypoint('LAX')]), 100),
-    Aircraft('FLT007', Route([Waypoint('BRU'), hub,
-        Waypoint('ORD')]), 100),
-    Aircraft('FLT008', Route([Waypoint('CDG'), hub,
-        Waypoint('JFK')]), 100),
+        Waypoint('LAX')]), 11),
+    #Aircraft('FLT005', Route([Waypoint('AMS'), hub,
+    #    Waypoint('SFO')]), 7),
+    #Aircraft('FLT007', Route([Waypoint('AMS'), hub,
+    #    Waypoint('LAX')]), 100),
+    #Aircraft('FLT008', Route([Waypoint('BRU'), hub,
+    #    Waypoint('SFO')]), 100),
+    #Aircraft('FLT009', Route([Waypoint('CDG'), hub,
+    #    Waypoint('LAX')]), 100),
 ]
 
 def run():
     #init()
     for aircraft in planes:
-        sim.events.append(sim.Event(
-            'aircraft-depart', 
-            aircraft, 
-            aircraft.departure_time
-        ))
+        sim.events.append(sim.Event('aircraft-init', aircraft, 0))
     sim.run()
 
 # docs: http://docs.python.org/library/profile.html

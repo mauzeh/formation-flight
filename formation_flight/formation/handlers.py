@@ -77,26 +77,49 @@ class FormationHandler(object):
         for aircraft in formation:
             destinations.append(aircraft.route.waypoints[-1])
         arrival_midpoint = midpoint(destinations)
+        p('destinations: %s' % destinations)
         p('midpoint = %s' % arrival_midpoint)
-        trunk_segment = Segment(formation.hub, arrival_midpoint)
+        hub_to_midpoint = Segment(formation.hub, arrival_midpoint)
 
-        # Determine hookoff point for each aircraft
+        # Determine hookoff point for each aircraft, except the last
         for aircraft in formation:
             
             hub_to_destination = aircraft.route.segments[0]
             
             theta = abs(hub_to_destination.get_initial_bearing() -
-                        trunk_segment.get_initial_bearing())
+                        hub_to_midpoint.get_initial_bearing())
             (a, b) = project_segment(theta, hub_to_destination.get_length())
             aircraft.Q = get_hookoff_quotient(a, b, config.alpha)
             
-            hookoff_point = formation.hub.get_position(
-                trunk_segment.get_initial_bearing(),
+            aircraft.hookoff_point = formation.hub.get_position(
+                hub_to_midpoint.get_initial_bearing(),
                 a * aircraft.Q
             )
             
-            aircraft.route.waypoints = [hookoff_point] +\
-                                        aircraft.route.waypoints
+            hub_to_hookoff = Segment(formation.hub, aircraft.hookoff_point)
+            aircraft.P = hub_to_hookoff.get_length() / hub_to_midpoint.get_length()
 
+        # Place aircraft in order, ascending with Q, to fulfill LIFO condition.
+        formation = sorted(formation, key = lambda item: item.P)
+        
+        # The last aircraft: same hookoff point as its remaining buddy.
+        formation[-1].Q = formation[-2].Q
+        formation[-1].P = formation[-2].P
+        formation[-1].hookoff_point = formation[-2].hookoff_point
+
+        for aircraft in formation:
+            debug.print_object(aircraft)
+            aircraft.route.waypoints = [aircraft.hookoff_point] +\
+                                        aircraft.route.waypoints
             aircraft.route.init_segments()
             aircraft.controller.calibrate()
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            

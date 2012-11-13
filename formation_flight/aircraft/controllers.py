@@ -36,9 +36,7 @@ class AircraftController(object):
         sim.events.append(event)
 
     def clear_events(self):
-
         for event in self.aircraft.events:
-
             # Ignore events not pertaining to current aircraft
             # @todo Should not be necessary, right?
             if event.sender is not self.aircraft:
@@ -51,6 +49,13 @@ class AircraftController(object):
                 sim.events.remove(event)
             except ValueError:
                 pass
+    
+    def schedule_departure(self):
+        self.add_event(sim.Event(
+            'aircraft-depart',
+            self.aircraft,
+            self.aircraft.departure_time
+        ))
 
     def schedule_waypoint(self):
         self.aircraft.waypoint_eta = sim.time + self.aircraft.time_to_waypoint()
