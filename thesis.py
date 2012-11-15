@@ -107,18 +107,11 @@ def init():
             aircraft_type = aircraft_type)
         
         # Find the closest hub
-        closest_hub = config.hubs[0]
-        closest_hub_distance = closest_hub.distance_to(aircraft.origin)
-        for hub in config.hubs[1:]:
-            distance = hub.distance_to(aircraft.origin)
-            if distance < closest_hub_distance:
-                closest_hub = hub
+        hub = min(config.hubs, key = lambda x: x.distance_to(aircraft.origin))
 
         # Modify the previously created point-to-point route by adding the hub
         aircraft.route.waypoints = [
-            aircraft.route.waypoints[0],
-            closest_hub,
-            aircraft.route.waypoints[-1]
+            aircraft.route.waypoints[0], hub, aircraft.route.waypoints[-1]
         ]
         aircraft.route.init_segments()
         
