@@ -13,7 +13,6 @@ from formation_flight.formation.allocators import *
 from formation_flight.formation.synchronizers import *
 from formation_flight.aircraft.handlers import AircraftHandler
 from formation_flight.aircraft.models import Aircraft
-from formation_flight.formation.models import Formation
 from lib.geo.route import Route
 from lib.geo.waypoint import Waypoint
 from lib.geo.point import Point
@@ -30,7 +29,7 @@ formation_handler  = FormationHandler(
 )
 sink.init()
 statistics.init()
-visualization.init()
+#visualization.init()
 
 planes = []
 

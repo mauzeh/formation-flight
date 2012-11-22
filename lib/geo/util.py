@@ -23,11 +23,8 @@ def midpoint(points):
 
     @todo Replace with vectorized version (most accurate solution)
     """
-    
-    lat_avg = sum(point.lat for point in points) / len(points)
-    lon_avg = sum(point.lon for point in points) / len(points)
-
-    return Point(lat_avg, lon_avg)
+    return Point(sum(point.lat for point in points) / len(points),
+                 sum(point.lon for point in points) / len(points))
 
 def project_segment(theta, c):
     """Given the angle between lines AB and AC, and given a distance c of AC,

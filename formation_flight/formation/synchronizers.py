@@ -30,13 +30,17 @@ class FormationSynchronizer(object):
             ratio = aircraft.time_to_waypoint() / float(time_to_hub)
 
             # Unrealistic speeds = modeling error!
-            assert ratio < 2 and ratio > 0.5
-            
+            if not (ratio < 2 and ratio > 0.5):
+                debug.print_object(formation)
+                debug.print_object(aircraft)
+                continue
+                #raise Exception('haha')
+
             aircraft.speed = aircraft.speed * ratio
 
             # Replan all events.
             aircraft.controller.calibrate()
-            
+
         sim.events.append(sim.Event(
             'formation-alive',
             formation,

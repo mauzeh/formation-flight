@@ -1,27 +1,30 @@
-# The events we wish to print to the terminal when they occur. Options:
-#   'aircraft-init',
-#   'aircraft-depart',
-#   'aircraft-at-waypoint',
-#   'enter-lock-area',
-#   'formation-alive',
-#   'aircraft-arrive',
+# The events we wish to print to the terminal when they occur.
 events_printed = [
-   #'aircraft-init',
-   #'aircraft-depart',
-   #'aircraft-at-waypoint',
-   #'enter-lock-area',
-   #'formation-alive',
-   #'aircraft-arrive',    
+    #'aircraft-init',
+    #'aircraft-depart',
+    #'aircraft-at-waypoint',
+    #'enter-lock-area',
+    'formation-alive',
+    #'aircraft-arrive',
 ]
 
-# Discount factor
+# The maximum difference in heading upon hub departure (in degrees)
+phi_max = 3
+
+# The slack ramp (in time units per distance unit away from the hub)
+psi = .132
+
+# Discount factor (@todo rename to beta as in research paper)
 alpha = .13
 
 # How long before hub arrival can we allocate into formations? (mins)
-lock_time = 15
+lock_time = 30
 
 # How much the arrival at the virtual hub can be delayed/expedited (mins)
-etah_slack = lock_time / 5
+etah_slack = 5
+
+# How large is a formation allowed to be
+S_max = 100
 
 # Restrictions on formations. Options: 
 #   'same-airline',
