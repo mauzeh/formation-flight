@@ -140,7 +140,7 @@ def run():
     for point in destinations:
         viz.plot_point(point)
 
-    for Z in [.2]:
+    for Z in [.2,.3,.4,.5]:
         for origins in origin_chunks:
             hub = construct_hub(origins, destinations, Z)
             viz.plot_point(hub, formatting = 'bo')
