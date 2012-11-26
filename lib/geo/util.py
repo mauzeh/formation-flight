@@ -23,8 +23,44 @@ def midpoint(points):
 
     @todo Replace with vectorized version (most accurate solution)
     """
-    return Point(sum(point.lat for point in points) / len(points),
-                 sum(point.lon for point in points) / len(points))
+
+    sum_lat = sum((point.weight if hasattr(point, 'weight') else 1) * point.lat for point in points)
+    sum_lon = sum((point.weight if hasattr(point, 'weight') else 1) * point.lon for point in points)
+    count = sum((point.weight if hasattr(point, 'weight') else 1) for point in points)
+    
+    return Point(sum_lat / count, sum_lon / count)
+
+def reduce_points(points):
+    """Reduces the input list of points to unique points.
+    
+    Points are given "weights" for each time they appear in the input list."""
+    
+    # Reset the points from any previous calls
+    for point in points:
+        try:
+            del point.weight
+        except AttributeError:
+            pass
+    
+    ret = []
+    for point in points:
+        for point_other in ret:
+            # If the point is already in our return list
+            if point_other.coincides(point):
+                point_other.weight = point_other.weight + 1
+                
+        # Only add our point if no weight was set
+        if not hasattr(point, 'weight'):
+            point.weight = 1
+            ret.append(point)
+    return ret
+
+def point_in_points(point, points):
+    """Returns True if the point exists/coincides with any point in the list."""
+    for p in points:
+        if p.coincides(point):
+            return True
+    return False
 
 def project_segment(theta, c):
     """Given the angle between lines AB and AC, and given a distance c of AC,

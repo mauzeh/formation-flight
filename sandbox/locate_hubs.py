@@ -1,62 +1,33 @@
-from mpl_toolkits.basemap import Basemap
-import numpy as np
-import matplotlib.pyplot as plt
+from formation_flight.aircraft.models import Aircraft
 
-import math
+from lib.geo.util import midpoint
+from lib.geo.util import project_segment
+from lib.geo.util import reduce_points
+from lib.geo.util import point_in_points
 
-from lib.geo.util import midpoint, project_segment
+from lib.util import list_chop
+
 from lib.geo.point import Point
 from lib.geo.waypoint import Waypoint
 from lib.geo.segment import Segment
+from lib.geo.route import Route
+from lib.geo.visualization import GCMapper
 
-from lib.debug import print_object
-
-class Viz:
-    
-    def __init__(self):
-        # create new figure, axes instances.
-        self.fig = plt.figure()
-        self.ax  = self.fig.add_axes([0.1,0.1,0.8,0.8], axisbg = '#a5bfdd')
-        
-        # setup mercator map projection.
-        self.map = Basemap(llcrnrlon = -130., llcrnrlat = 1.,
-                    urcrnrlon = 40.,   urcrnrlat = 70.,
-                    rsphere = (6378137.00,6356752.3142),
-                    resolution = 'c',
-                    projection = 'merc',
-                    lat_0 = 40.,lon_0 = -20.,lat_ts = 20.)
-    
-    def plot_point(self, point, formatting = 'go'):
-        x, y = self.map(point.lon, point.lat)
-        self.map.plot(x, y, formatting, ms = 8)
-        
-    def plot_great_circle(self, segment, color = 'b'):
-        point1 = segment.start
-        point2 = segment.end
-        self.map.drawgreatcircle(
-            point1.lon, point1.lat,
-            point2.lon, point2.lat,
-            linewidth = 1.5, color=color)
-
-    def render(self):
-        self.map.drawcoastlines(color='#8f8457')
-        self.map.fillcontinents(color='#f5f0db')
-        self.map.drawcountries(color='#a9a06d')
-        self.map.drawparallels(np.arange(10,90,20), labels = [1,1,0,1])
-        self.map.drawmeridians(np.arange(-180,180,30), labels = [1,1,0,1])
-        self.ax.set_title('Flights')
-        plt.show()
-        
 def construct_hub(origins, destinations, Z):
 
-    midpoint_origins = midpoint(origins)
+    midpoint_origins      = midpoint(origins)
     midpoint_destinations = midpoint(destinations)
-
-    hub_route = Segment(midpoint_origins, midpoint_destinations)
     
-    return hub_route.start.get_position(
+    hub_route = Segment(midpoint_origins, midpoint_destinations)
+    hub = hub_route.start.get_position(
         hub_route.get_initial_bearing(),
-        hub_route.get_length() * Z)
+        hub_route.get_length() * Z
+    )
+    
+    hub.origins      = origins
+    hub.destinations = destinations
+    
+    return hub
 
 def rank_origins(origins, destinations):
 
@@ -91,61 +62,92 @@ def rank_origins(origins, destinations):
         
     return sorted(origins, key = lambda point: point.distance_to_midpoint)
 
-def run():
-    
-    origins = [
-        Waypoint('CPH'),
-        Waypoint('TXL'),
-        Waypoint('OSL'),
-        Waypoint('HEL'),
-        Waypoint('ARN'),
-        Waypoint('MUC'),
-        Waypoint('MAD'),
-        Waypoint('AMS'),
-        Waypoint('DUB'),
-        Waypoint('BRU'),
-        Waypoint('CDG'),
-        Waypoint('DUS'),
-        Waypoint('FRA'),
-        Waypoint('ATH'),
-        Waypoint('MAN'),
-        Waypoint('FCO'),
-        Waypoint('LHR')
-    ]
-    
-    destinations = [
-        Waypoint('JFK'),
-        Waypoint('SFO'),
-        Waypoint('EWR'),
-        Waypoint('BOS'),
-        Waypoint('PHL'),
-        Waypoint('ATL'),
-        Waypoint('MIA'),
-        Waypoint('MCO'),
-        Waypoint('LAX'),
-        Waypoint('SFO'),
-        Waypoint('ORD'),
-        Waypoint('SEA'),
-        Waypoint('YVR'),
-        Waypoint('IAD'),
-    ]
-    
-    origins_ranked = rank_origins(origins, destinations)
-    
-    n = 3
-    origin_set_size = len(origins) / n
-    origin_chunks = [list(t) for t in zip(*[iter(origins_ranked)]*origin_set_size)]
-    
-    viz = Viz()
-    for point in destinations:
-        viz.plot_point(point)
+def get_hub_by_flight(hubs, flight):
+    for hub in hubs:
+        for hub_origin in hub.origins:
+            if hub_origin.coincides(flight.route.waypoints[0]):
+                return hub
+    raise Exception('Hub not found for flight %s' % flight)
 
-    for Z in [.2,.3,.4,.5]:
-        for origins in origin_chunks:
-            hub = construct_hub(origins, destinations, Z)
-            viz.plot_point(hub, formatting = 'bo')
-            for point in origins:
-                viz.plot_great_circle(Segment(point, hub))
-                viz.plot_point(point)
+def build_hubs(flights, count_hubs, Z):
     
+    origins      = []
+    destinations = []
+
+    for flight in flights:
+        origins.append(flight.route.waypoints[0])
+        destinations.append(flight.route.waypoints[1])
+
+    origins      = reduce_points(origins)
+    destinations = reduce_points(destinations)
+
+    origins_ranked = rank_origins(origins, destinations)
+    origin_chunks  = list_chop(origins_ranked, count_hubs)
+    
+    od_chunks = []
+    for origin_chunk in origin_chunks:
+
+        # Construct weighted list of destinations belonging to origin chunk
+        destination_chunk = []
+        for flight in flights:
+            if not point_in_points(flight.route.waypoints[0], origin_chunk):
+                continue
+            destination_chunk.append(flight.route.waypoints[1])
+        destination_chunk = reduce_points(destination_chunk)
+        od_chunks.append((origin_chunk, destination_chunk))
+
+    hubs = []
+    for od_chunk in od_chunks:
+
+        #hub_segment = Segment(
+        #    construct_hub(origin_chunk, destination_chunk, Z = 0),
+        #    construct_hub(origin_chunk, destination_chunk, Z = 1))
+
+        hub = construct_hub(
+            origins = od_chunk[0],
+            destinations = od_chunk[1],
+            Z = Z)
+        
+        hubs.append(hub)
+
+    return hubs
+
+def run():
+
+    count_hubs = 2
+    Z = .3
+    planes = [
+        Aircraft('FLT001', Route([Waypoint('AMS'), Waypoint('JFK')]), 12),
+        Aircraft('FLT001', Route([Waypoint('AMS'), Waypoint('ORD')]), 12),
+        Aircraft('FLT001', Route([Waypoint('AMS'), Waypoint('EWR')]), 12),
+        Aircraft('FLT002', Route([Waypoint('DUS'), Waypoint('BOS')]), 12),
+        Aircraft('FLT003', Route([Waypoint('FRA'), Waypoint('EWR')]), 0),
+        Aircraft('FLT004', Route([Waypoint('BRU'), Waypoint('LAX')]), 11),
+        Aircraft('FLT005', Route([Waypoint('AMS'), Waypoint('SFO')]), 7),
+        Aircraft('FLT007', Route([Waypoint('AMS'), Waypoint('LAX')]), 100),
+        Aircraft('FLT008', Route([Waypoint('BRU'), Waypoint('SFO')]), 100),
+        Aircraft('FLT009', Route([Waypoint('CDG'), Waypoint('LAX')]), 100),
+    ]
+
+    hubs = build_hubs(planes, count_hubs, .1)
+    
+    for plane in planes:
+        
+        # Find the hub belonging to this flight
+        hub = get_hub_by_flight(hubs, plane)
+        
+        # Assign hub by injecting into route
+        plane.route.waypoints = [plane.route.waypoints[0],
+                                 hub,
+                                 plane.route.waypoints[1]]
+
+    viz = GCMapper()
+    for plane in planes:
+        viz.plot_route(plane.route)
+        viz.plot_point(plane.route.waypoints[0])
+        viz.plot_point(plane.route.waypoints[-1])
+
+    for hub in hubs:
+        viz.plot_point(hub, formatting = 'bo')
+
     viz.render()
