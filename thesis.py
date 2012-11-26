@@ -13,6 +13,8 @@ from formation_flight.formation.allocators import *
 from formation_flight.formation.synchronizers import *
 from formation_flight.aircraft.handlers import AircraftHandler
 from formation_flight.aircraft.models import Aircraft
+from formation_flight.hub.builders import Builder
+
 from lib.geo.route import Route
 from lib.geo.waypoint import Waypoint
 from lib.geo.point import Point
@@ -29,7 +31,7 @@ formation_handler  = FormationHandler(
 )
 sink.init()
 statistics.init()
-#visualization.init()
+visualization.init()
 
 planes = []
 
@@ -105,16 +107,36 @@ def init():
             departure_time = departure_time,
             aircraft_type = aircraft_type)
         
-        # Find the closest hub
-        hub = min(config.hubs, key = lambda x: x.distance_to(aircraft.origin))
-
-        # Modify the previously created point-to-point route by adding the hub
-        aircraft.route.waypoints = [
-            aircraft.route.waypoints[0], hub, aircraft.route.waypoints[-1]
-        ]
-        aircraft.route.init_segments()
+        ## Find the closest hub
+        #hub = min(config.hubs, key = lambda x: x.distance_to(aircraft.origin))
+        #
+        ## Modify the previously created point-to-point route by adding the hub
+        #aircraft.route.waypoints = [
+        #    aircraft.route.waypoints[0], hub, aircraft.route.waypoints[-1]
+        #]
+        #aircraft.route.init_segments()
         
         planes.append(aircraft)
+        
+    routes = []
+    for flight in planes:
+        routes.append(flight.route)
+
+    # Find hubs
+    builder = Builder(routes)
+    builder.build_hubs(config.count_hubs, config.Z)
+    
+    # Assign hubs to flights
+    for flight in planes:
+        
+        # Find the hub belonging to this route
+        hub = builder.get_hub_by_route(flight.route)
+        
+        # Assign hub by injecting into route
+        flight.route.waypoints = [flight.route.waypoints[0],
+                                  hub,
+                                  flight.route.waypoints[1]]
+        flight.route.init_segments()
 
 def run():
     init()
