@@ -73,7 +73,11 @@ class AircraftHandler(object):
         aircraft = event.sender
         aircraft.depart()
         assert hasattr (aircraft, 'arrival_time')
-        events.append(Event('aircraft-arrive', aircraft, aircraft.arrival_time))
+        events.append(Event(
+            'aircraft-arrive',
+            aircraft,
+            aircraft.arrival_time
+        ))
 
     def handle_arrival(self, event):
         aircraft = event.sender

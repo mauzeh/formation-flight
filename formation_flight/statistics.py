@@ -83,6 +83,7 @@ class Statistics(object):
         for aircraft in formation:
             assert aircraft.hookoff_point
             # The remaining segment should be hookoff-destination
+            #debug.print_object(aircraft)
             assert len(aircraft.route.segments) > 0
             
             #assert aircraft.route.segments[0].end.coincides(
@@ -113,13 +114,13 @@ class Statistics(object):
     def handle_arrive(self, event):
         
         aircraft = event.sender
-        hub = aircraft.waypoints_passed[1]
+        hub = aircraft.hub
         
         # In some cases, the aircraft flies directly from origin to destination
         
-        if not hub in self.hubs:
+        #if not hub in self.hubs:
             #debug.print_object(aircraft)
-            assert 1==0
+            #assert 1==0
         
         #assert hub.is_hub
         assert hub in self.hubs

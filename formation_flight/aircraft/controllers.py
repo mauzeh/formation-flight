@@ -20,10 +20,18 @@ class AircraftController(object):
         flight_time    = sim.time - self.aircraft.departure_time
         distance_flown = flight_time * self.aircraft.speed
         segment        = self.aircraft.route.segments[0]
-        self.aircraft.position = segment.start.get_position(
+        new_pos        = segment.start.get_position(
             bearing  = segment.initial_bearing,
             distance = distance_flown
         )
+        p('Updating position of %s from %s to %s (d_flown=%d, flt_time=%d)' % (
+            '%s (%s)' % (self.aircraft, self.aircraft.route.segments),
+            self.aircraft.position,
+            new_pos,
+            distance_flown,
+            flight_time
+        ))
+        self.aircraft.position = new_pos
 
     def calibrate(self):
         """Removes all upcoming events for this aircraft and replans them"""
@@ -53,12 +61,17 @@ class AircraftController(object):
                 pass
             
     def delay_events(self, delta_t):
+        p('Delaying all events for aircraft %s by delta_t %s.' % (
+            self.aircraft, delta_t
+        ))
+        p('Event list before delayal: %s' % self.aircraft.events)
         if hasattr(self.aircraft, 'waypoint_eta'):
             self.aircraft.waypoint_eta = self.aircraft.waypoint_eta + delta_t
         if hasattr(self.aircraft, 'arrival_time'):
             self.aircraft.arrival_time = self.aircraft.arrival_time + delta_t
         for event in self.aircraft.events:
             event.time = event.time + delta_t
+        p('Event list after delayal: %s' % self.aircraft.events)
     
     def schedule_departure(self):
         self.add_event(sim.Event(
@@ -77,6 +90,13 @@ class AircraftController(object):
 
     def schedule_arrival(self):
         self.aircraft.arrival_time = sim.time + self.aircraft.time_to_waypoint()
+        p('Scheduling arrival of aircraft %s at destination %s at time %s' %\
+          (
+            self.aircraft,
+            self.aircraft.destination,
+            self.aircraft.arrival_time,
+        ))
+        
         self.add_event(sim.Event(
             'aircraft-arrive',
             self.aircraft,

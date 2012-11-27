@@ -6,8 +6,8 @@ def list_chop(elements, n):
     n = min(n, len(elements))
     chunk_size = len(elements) / n
     
-    p('list_size=%s,chunk_count=%s, chunk_size=%s' %\
-      (len(elements), n, chunk_size))
+    #p('list_size=%s,chunk_count=%s, chunk_size=%s' %\
+    #  (len(elements), n, chunk_size))
     
     chunks = []
     while len(elements) > 0:
@@ -15,6 +15,5 @@ def list_chop(elements, n):
         while len(chunk) < chunk_size and len(elements) > 0:
             chunk.append(elements.pop())
         chunks.append(chunk)
-    p(chunks)
 
     return chunks

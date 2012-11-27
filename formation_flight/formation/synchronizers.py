@@ -27,26 +27,27 @@ class FormationSynchronizer(object):
             aircraft.controller.update_position()
 
             # Adjust the speed of the aircraft
-            ratio = aircraft.time_to_waypoint() / float(time_to_hub)
+            #ratio = aircraft.time_to_waypoint() / float(time_to_hub)
 
             # Unrealistic speeds = modeling error!
-            #if ratio > 2 or ratio < 0.5:
-                #debug.print_object(formation)
-                #debug.print_object(aircraft)
-                #continue
-                #raise Exception('Aircraft %s is too close to hub right now' %\
-                                #aircraft)
-
+            #assert ratio < 2 and ratio > 0.5
             #aircraft.speed = aircraft.speed * ratio
 
             # Replan all events.
-            delta_t = aircraft.time_to_waypoint() - float(time_to_hub)
+            delta_t = time_to_hub - aircraft.time_to_waypoint()
             aircraft.controller.delay_events(delta_t)
 
+        # Add a tiny delay to make sure that all aircraft-at-waypoint
+        # events are fired before the formation-alive event.
+        formation_alive_time = sim.time + time_to_hub + 0.0001
+        p('Set formation-alive time at %d + %d = %d for formation %s' % (
+            sim.time,
+            time_to_hub,
+            formation_alive_time,
+            formation
+        ))
         sim.events.append(sim.Event(
             'formation-alive',
             formation,
-            # Add a tiny delay to make sure that all aircraft-at-waypoint
-            # events are fired before the formation-alive event.
-            sim.time + time_to_hub + 0.0001
+            formation_alive_time
         ))

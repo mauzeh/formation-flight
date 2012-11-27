@@ -2,6 +2,10 @@ from mpl_toolkits.basemap import Basemap
 import numpy as np
 import matplotlib.pyplot as plt
 
+from lib.geo.point import Point
+from lib.geo.segment import Segment
+from lib.geo.route import Route
+
 class GCMapper:
     def __init__(self):
         # create new figure, axes instances.
@@ -15,6 +19,15 @@ class GCMapper:
                     resolution = 'c',
                     projection = 'merc',
                     lat_0 = 40.,lon_0 = -20.,lat_ts = 20.)
+        
+    def plot(self, element):
+        if isinstance(element, Segment):
+            self.plot_segment(element)
+        if isinstance(element, Route):
+            self.plot_route(element)
+        if isinstance(element, Point):
+            self.plot_point(element)
+        raise Exception('Incompatible type %s of element to plot' % type(element))
         
     def plot_route(self, route, color = 'b', linestyle = '-'):
         #just to be suer

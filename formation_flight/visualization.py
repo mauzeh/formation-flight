@@ -31,6 +31,9 @@ def handle_alive(event):
 def handle_arrive(event):
     aircraft = event.sender
     route = Route(aircraft.waypoints_passed)
+    p('After arrival, the aircraft has passed the following waypoints: %s' % (
+        aircraft.waypoints_passed
+    ))
     if hasattr(aircraft, 'formation'):
         for segment in route.segments:
             segments['formation'].append(segment)

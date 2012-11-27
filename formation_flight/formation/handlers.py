@@ -9,6 +9,8 @@ from lib.geo.segment import Segment
 from lib.geo.util import project_segment, get_hookoff_quotient, midpoint
 import config
 
+from lib.geo.visualization import GCMapper
+
 class FormationHandler(object):
     """Uses the aircraft-depart event to initiate formation allocation"""
 
@@ -89,19 +91,76 @@ class FormationHandler(object):
             
             hub_to_destination = Segment(aircraft.hub, aircraft.destination)
             
+            p('flight %s hub %s to destination: %s' % (
+                aircraft,
+                '%s{%d, %d}' % (
+                    aircraft.hub,
+                    aircraft.hub.lat,
+                    aircraft.hub.lon
+                ),
+                aircraft.destination
+            ))
+            p('flight %s hub %s to midpoint: %s' % (
+                aircraft,
+                '%s{%d, %d}' % (
+                    aircraft.hub,
+                    aircraft.hub.lat,
+                    aircraft.hub.lon
+                ),
+                arrival_midpoint
+            ))
+
             theta = abs(hub_to_destination.get_initial_bearing() -
                         hub_to_midpoint.get_initial_bearing())
             (a, b) = project_segment(theta, hub_to_destination.get_length())
             aircraft.Q = get_hookoff_quotient(a, b, config.alpha)
             
+            p('hookoff params for aircraft %s: %s' % (
+                aircraft,
+                'a = %s, b = %s, Q = %s' % (
+                    a, b, aircraft.Q
+                )
+            ))
+            
             aircraft.hookoff_point = formation.hub.get_position(
                 hub_to_midpoint.get_initial_bearing(),
                 a * aircraft.Q
             )
-            aircraft.hookoff_point.name = 'hookoff-%s' % aircraft.hookoff_point
-            
             hub_to_hookoff = Segment(aircraft.hub, aircraft.hookoff_point)
+            
+            p('flight %s, hub %s to hook-off point: %s' % (
+                aircraft,
+                '%s{%d, %d}' % (
+                    aircraft.hub,
+                    aircraft.hub.lat,
+                    aircraft.hub.lon
+                ),
+                aircraft.hookoff_point
+            ))
+
+            # If Z is really big, the hookoff point may inadvertedly be
+            # projected back into where the aircraft came from. In that case,
+            # there is no benefit to flying in formation so the aircraft should
+            # hook off as soon as they hook up.
+            #angle = hub_to_destination.get_initial_bearing() -\
+            #        hub_to_hookoff.get_initial_bearing()
+            #p('angle = %s - %s = %s' % (
+            #    hub_to_destination.get_initial_bearing(),
+            #    hub_to_hookoff.get_initial_bearing(),
+            #    angle
+            #))
+            #if abs(angle) > 90:
+            #    aircraft.hookoff_point = aircraft.hub
+            #    hub_to_hookoff = Segment(aircraft.hub, aircraft.hookoff_point)
+
+            aircraft.hookoff_point.name = 'hookoff-%s' % aircraft.hookoff_point
             aircraft.P = hub_to_hookoff.get_length() / hub_to_midpoint.get_length()
+            
+            #map = GCMapper()
+            #map.plot_segment(hub_to_destination)
+            #map.plot_segment(hub_to_midpoint)
+            #map.plot_segment(hub_to_hookoff)
+            #map.render()
 
         # Place aircraft in order, ascending with Q, to fulfill LIFO condition.
         formation = sorted(formation, key = lambda item: item.P)
@@ -115,14 +174,17 @@ class FormationHandler(object):
         
         # First find the leading set of aircraft having the same destination
         formation.reverse()
-        leading_destination = formation[0].route.waypoints[-1]
+        leading_destination = formation[0].destination
         leaders = []
         for aircraft in formation:
-            if not aircraft.route.waypoints[-1].coincides(leading_destination):
+            if not aircraft.destination.coincides(leading_destination):
                 break
             leaders.append(aircraft)
-        # Change reversed formation back to normal
-        formation.reverse()
+        
+        p('Leaders of formation %s are %s' % (
+            formation,
+            leaders
+        ))
         
         # Then find the buddy just before the set of leading aircraft, if
         # it exists.
@@ -133,15 +195,32 @@ class FormationHandler(object):
                 aircraft.Q = last_buddy.Q
                 aircraft.P = last_buddy.P
                 aircraft.hookoff_point = last_buddy.hookoff_point
-
         except IndexError:
             pass
+
+        #assert 0
+
+        # Change reversed formation back to normal
+        formation.reverse()
         
         #debug.print_object(aircraft)
         #assert aircraft.waypoints_passed[1].coincides(aircraft.hub)
         
         for aircraft in formation:
-            aircraft.route.waypoints = [aircraft.hookoff_point] +\
-                                        aircraft.route.waypoints
+            p('Adjusting waypoints of %s. Initial waypoints: %s' % (
+                aircraft,
+                aircraft.route.waypoints
+            ))
+            aircraft.route.waypoints = [
+                #aircraft.hub,
+                aircraft.hookoff_point,
+                aircraft.destination]
             aircraft.route.init_segments()
+            p('Adjusted waypoints of %s. New waypoints: %s' % (
+                aircraft,
+                aircraft.route.waypoints
+            ))
+            p('Need to calibrate aircraft %s (%s) in formation %s' % (
+                aircraft, aircraft.route, formation
+            ))
             aircraft.controller.calibrate()

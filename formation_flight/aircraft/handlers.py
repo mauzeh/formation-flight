@@ -2,6 +2,7 @@
 
 from controllers import AircraftController
 from lib import sim
+from lib.debug import print_line as p
 
 class AircraftHandler(object):
 
@@ -24,6 +25,9 @@ class AircraftHandler(object):
     def handle_waypoint(self, event):
         aircraft = event.sender
         aircraft.at_waypoint()
+        p('Need to calibrate aircraft %s (%s)' % (
+            aircraft, aircraft.route
+        ))
         aircraft.controller.calibrate()
 
     def handle_arrival(self, event):

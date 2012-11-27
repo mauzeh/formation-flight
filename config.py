@@ -5,7 +5,7 @@ events_printed = [
     'aircraft-at-waypoint',
     'enter-lock-area',
     'formation-alive',
-    #'aircraft-arrive',
+    'aircraft-arrive',
 ]
 
 # The maximum difference in heading upon hub departure (in degrees)
@@ -15,10 +15,10 @@ phi_max = 3
 psi = .132
 
 # Discount factor (@todo rename to beta as in research paper)
-alpha = .50
+alpha = .13
 
 # How long before hub arrival can we allocate into formations? (mins)
-lock_time = 5
+lock_time = 45
 
 # How much the arrival at the virtual hub can be delayed/expedited (mins)
 etah_slack = 5
@@ -33,7 +33,7 @@ S_max = 100
 restrictions = None
 
 count_hubs = 1
-Z = .2
+Z = .01
 
 # Generate hubs
 # Visualization:
