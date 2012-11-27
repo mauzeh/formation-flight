@@ -46,5 +46,12 @@ class Aircraft(object):
         return distance / self.speed
 
     def __repr__(self):
-        return '%s (%s, t=%d)' % (self.label, self.aircraft_type, self.departure_time)
+        return '%s (%s, %s-%s, t=%d)' %\
+        (
+            self.label,
+            self.aircraft_type,
+            self.origin,
+            self.destination,
+            self.departure_time
+        )
     

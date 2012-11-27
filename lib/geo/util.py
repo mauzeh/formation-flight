@@ -1,6 +1,8 @@
 import math
 from point import Point
 
+from lib.debug import print_line as p
+
 def cross_track_distance(d_13, theta_13, theta_12):
     """Calculate distance from great circle path (1 -> 2) to point (3).
 
@@ -47,7 +49,7 @@ def reduce_points(points):
         for point_other in ret:
             # If the point is already in our return list
             if point_other.coincides(point):
-                point_other.weight = point_other.weight + 1
+                point.weight = point_other.weight + 1
                 
         # Only add our point if no weight was set
         if not hasattr(point, 'weight'):

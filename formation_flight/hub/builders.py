@@ -9,6 +9,8 @@ from lib.geo.waypoint import Waypoint
 from lib.geo.segment import Segment
 from lib.geo.route import Route
 
+from lib import debug
+
 class Builder(object):
     
     def __init__(self, routes):
@@ -29,6 +31,10 @@ class Builder(object):
         origins_ranked = rank_origins(self.origins, self.destinations)
         origin_chunks  = list_chop(origins_ranked, count_hubs)
         
+        debug.print_line('Origin count: %d' % len(origins_ranked))
+        debug.print_line('Hubs required: %d' % count_hubs)
+        debug.print_line('Chunk count: %d' % len(origin_chunks))
+
         od_chunks = []
         for origin_chunk in origin_chunks:
     
@@ -40,7 +46,7 @@ class Builder(object):
                 destination_chunk.append(route.waypoints[-1])
             destination_chunk = reduce_points(destination_chunk)
             od_chunks.append((origin_chunk, destination_chunk))
-    
+        
         for od_chunk in od_chunks:
     
             #hub_segment = Segment(
@@ -48,12 +54,19 @@ class Builder(object):
             #    construct_hub(origin_chunk, destination_chunk, Z = 1))
     
             hub = construct_hub(
-                origins = od_chunk[0],
-                destinations = od_chunk[1],
+                origins = reduce_points(od_chunk[0]),
+                destinations = reduce_points(od_chunk[1]),
                 Z = Z)
             
+            hub.name = 'HUB%02d' % od_chunks.index(od_chunk)
+            
+            #debug.print_object(hub, [('','Hub created')])
+            
             self.hubs.append(hub)
-    
+        
+        #for hub in self.hubs:
+            #debug.print_object(hub)
+        
     def get_hub_by_route(self, route):
         assert len(self.hubs) > 0
         for hub in self.hubs:

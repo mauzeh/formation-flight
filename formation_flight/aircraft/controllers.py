@@ -32,7 +32,7 @@ class AircraftController(object):
             self.schedule_waypoint()
         else:
             self.schedule_arrival()
-            
+
     def add_event(self, event):
         self.aircraft.events.append(event)
         sim.events.append(event)
@@ -51,6 +51,14 @@ class AircraftController(object):
                 sim.events.remove(event)
             except ValueError:
                 pass
+            
+    def delay_events(self, delta_t):
+        if hasattr(self.aircraft, 'waypoint_eta'):
+            self.aircraft.waypoint_eta = self.aircraft.waypoint_eta + delta_t
+        if hasattr(self.aircraft, 'arrival_time'):
+            self.aircraft.arrival_time = self.aircraft.arrival_time + delta_t
+        for event in self.aircraft.events:
+            event.time = event.time + delta_t
     
     def schedule_departure(self):
         self.add_event(sim.Event(

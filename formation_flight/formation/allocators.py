@@ -49,7 +49,7 @@ class FormationAllocatorEtah(FormationAllocator):
         # Only consider other aircraft flying to the same hub
         candidates = filter(lambda a: a.route.waypoints[0] is hub, 
                             self.aircraft_queue)
-
+        
         # Other interesting filters
         if config.restrictions == 'same-airline':
             airline = aircraft.label[0:2]
@@ -65,11 +65,12 @@ class FormationAllocatorEtah(FormationAllocator):
             # Quick and dirty: recalc position. Instead, pull eta from var.
             candidate.controller.update_position()
             hub_eta = sim.time + candidate.time_to_waypoint()
-            p('Hub (= %s) eta %s for candidate %s' % (hub, hub_eta, candidate))
+            p('Time = %s, Hub (= %s) eta %s for candidate %s' %\
+              (sim.time, hub, hub_eta, candidate))
             intervals.append(Interval(
                 candidate,
-                hub_eta - config.etah_slack,
-                hub_eta + config.etah_slack
+                int(hub_eta) - config.etah_slack,
+                int(hub_eta) + config.etah_slack
             ))
             
         for interval_group in group(intervals):

@@ -11,8 +11,8 @@ class Interval:
         self.end = end
 
     def __repr__(self):
-        return '%s (%s ~ %s)' % (self.obj, self.start, self.end)
-        #return self.name
+        #return '%s (%s ~ %s)' % (self.obj, self.start, self.end)
+        return self.obj
 
 def group(intervals):
     """
@@ -29,8 +29,8 @@ def group(intervals):
 
 if __name__ == "__main__":
     print group([
-        Interval('G', 0, 2),
-        Interval('B', 4, 4),
+        Interval('G', 4, 4),
+        Interval('B', 3.998, 3.999),
         Interval('C', 1, 3),
         Interval('D', 3, 5),
         Interval('A', 1, 3),

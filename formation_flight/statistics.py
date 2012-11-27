@@ -1,7 +1,10 @@
 import random
 import config
 
+from lib.geo.segment import Segment
+
 from lib import sim, debug
+from lib.debug import print_line as p
 
 def init():
     Statistics()
@@ -13,6 +16,7 @@ class Statistics(object):
         sim.dispatcher.register('aircraft-depart', self.handle_depart)
         sim.dispatcher.register('aircraft-at-waypoint', self.handle_at_waypoint)
         sim.dispatcher.register('formation-alive', self.handle_alive)
+        sim.dispatcher.register('aircraft-arrive', self.handle_arrive)
         sim.dispatcher.register('sim-finish', self.handle_finish)
         self.vars = {}
         self.hubs = []
@@ -21,31 +25,69 @@ class Statistics(object):
         self.vars['sim_start'] = int(event.time)
         
     def handle_at_waypoint(self, event):
-        #print event.sender.route
+        """This event only fires when reaching either:
+           1 - The hub.
+           2 - The hookoff point.
+        """
         aircraft = event.sender
-        if not hasattr(aircraft, 'Q'):
-            return
+
+        # When this event fires, assume waypoint is already in "passed" stack.
+        waypoint = aircraft.waypoints_passed[-1]
         
-        if 'Q_sum' not in self.vars:
-            self.vars['Q_sum'] = 0
-            self.vars['Q_count'] = 0
-        self.vars['Q_sum']   = self.vars['Q_sum'] + aircraft.Q
-        self.vars['Q_count'] = self.vars['Q_count'] + 1
+        assert waypoint in self.hubs or \
+               waypoint.coincides(aircraft.hookoff_point)
+        
+        # If at hook-off point.
+        if waypoint not in self.hubs and \
+           waypoint.coincides(aircraft.hookoff_point):
+            self.handle_hookoff(event)
+        # If at hub
+        else:
+            self.handle_at_hub(event)
+        
+    def handle_at_hub(self, event):
+        """Important, we don't know if aircraft is in a formation or not here"""
+        aircraft = event.sender
+        hub = aircraft.waypoints_passed[-1]
+        assert hub in self.hubs
+        key = 'flight_count_%s' % hub
+        if key not in self.vars:
+            self.vars[key] = 0
+        self.vars[key] = self.vars[key] + 1
+
+    def handle_hookoff(self, event):
+        aircraft = event.sender
 
     def handle_depart(self, event):
+
+        aircraft = event.sender
 
         if 'aircraft_count' not in self.vars:
             self.vars['aircraft_count'] = 0
         self.vars['aircraft_count'] = self.vars['aircraft_count'] + 1
-
-        if 'distance_solo' not in self.vars:
-            self.vars['distance_solo'] = 0
-        self.vars['distance_solo'] =\
-            self.vars['distance_solo'] + event.sender.route.get_length()
+        
+        # If a hub was planned
+        hub = aircraft.route.waypoints[0]
+        #assert hub.is_hub
+        if True:
+            if hub not in self.hubs:
+                self.hubs.append(hub)
+                self.vars['formation_count_%s' % hub] = 0
 
     def handle_alive(self, event):
 
         formation = event.sender
+        
+        # We should have a hookoff point for each participant, and it should be
+        # the current segment
+        for aircraft in formation:
+            assert aircraft.hookoff_point
+            # The remaining segment should be hookoff-destination
+            assert len(aircraft.route.segments) > 0
+            
+            #assert aircraft.route.segments[0].end.coincides(
+            #    aircraft.hookoff_point
+            #)
         
         if 'formation_count' not in self.vars:
             self.vars['formation_count'] = 0
@@ -55,35 +97,69 @@ class Statistics(object):
             self.vars['formation_aircraft_count'] = 0
         self.vars['formation_aircraft_count'] = \
             self.vars['formation_aircraft_count'] + len(formation)
-
-        if 'formation_dispersity' not in self.vars:
-            self.vars['formation_dispersity'] = 0
+            
+        for aircraft in formation:
+            if 'Q_sum' not in self.vars:
+                self.vars['Q_sum'] = 0
+                self.vars['Q_count'] = 0
+            self.vars['Q_sum']   = self.vars['Q_sum'] + aircraft.Q
+            self.vars['Q_count'] = self.vars['Q_count'] + 1
         
-        # Keep track of how many NMs were flown in formation
-        # @todo disregard the solo distance from hook-off to destination
-        if 'distance_formation' not in self.vars:
-            self.vars['distance_formation'] = 0
-        
-        # @todo calculate the distance flown in formation
-        
-        #self.vars['distance_formation'] =\
-        #    self.vars['distance_formation'] +\
-        #    len(formation) * formation[0].route.segments[0].get_length()
-        
-        # Any NM that was flown in formation is not flown solo (of course)
-        # @todo also subtract solo distance from hook-off to destination
-        assert 'distance_solo' in self.vars
-        #self.vars['distance_solo'] =\
-        #    self.vars['distance_solo'] -\
-        #    len(formation) * formation[0].route.segments[0].get_length()
-
-        if formation.hub not in self.hubs:
-            self.hubs.append(formation.hub)
-
-        hub_key = 'count_%s' % formation.hub
+        hub_key = 'formation_count_%s' % formation.hub
         if hub_key not in self.vars:
             self.vars[hub_key] = 0
         self.vars[hub_key] = self.vars[hub_key] + 1
+        
+    def handle_arrive(self, event):
+        
+        aircraft = event.sender
+        hub = aircraft.waypoints_passed[1]
+        
+        # In some cases, the aircraft flies directly from origin to destination
+        
+        if not hub in self.hubs:
+            #debug.print_object(aircraft)
+            assert 1==0
+        
+        #assert hub.is_hub
+        assert hub in self.hubs
+
+        if 'distance_formation' not in self.vars:
+            self.vars['distance_formation'] = 0
+        if 'distance_solo' not in self.vars:
+            self.vars['distance_solo'] = 0
+        if 'distance_direct' not in self.vars:
+            self.vars['distance_direct'] = 0
+        
+        # If in formation
+        if hasattr(aircraft, 'formation'):
+            
+            segment = Segment(aircraft.origin, hub)
+            self.vars['distance_solo'] = self.vars['distance_solo'] +\
+                segment.get_length()
+            
+            segment = Segment(hub, aircraft.hookoff_point)
+            self.vars['distance_formation'] = self.vars['distance_formation'] +\
+                segment.get_length()
+
+            segment = Segment(aircraft.hookoff_point, aircraft.destination)
+            self.vars['distance_solo'] = self.vars['distance_solo'] +\
+                segment.get_length()
+
+        # If fully solo
+        else:
+            segment = Segment(aircraft.origin, hub)
+            self.vars['distance_solo'] = self.vars['distance_solo'] +\
+                segment.get_length()
+            
+            segment = Segment(hub, aircraft.destination)
+            self.vars['distance_solo'] = self.vars['distance_solo'] +\
+                segment.get_length()
+            
+        # Also calculate the direct distance
+        segment = Segment(aircraft.origin, aircraft.destination)
+        self.vars['distance_direct'] = self.vars['distance_direct'] +\
+            segment.get_length()
 
     def handle_finish(self, event):
 
@@ -97,14 +173,18 @@ class Statistics(object):
             self.vars['avg_formation_size'] = \
                 self.vars['formation_aircraft_count'] /\
                 float(self.vars['formation_count'])
-            self.vars['fuel_saved'] = \
-                self.vars['formation_success_rate'] *\
-                config.alpha
+            self.vars['distance_success_rate'] = \
+                self.vars['distance_formation'] /\
+                (self.vars['distance_formation'] + self.vars['distance_solo'])
+            self.vars['distance_penalty'] = -1 + \
+                (self.vars['distance_formation'] + self.vars['distance_solo'])/\
+                (self.vars['distance_direct'])
 
         duration = self.vars['sim_finish'] - self.vars['sim_start']
 
-        for hub in self.hubs:
-            flow_rate = float(self.vars['count_%s' % hub]) * 60 / duration
-            self.vars['flow_rate_%s' % hub] = '%.5f' % flow_rate
+        #for hub in self.hubs:
+        #    flow_rate = float(self.vars['formation_count_%s' % hub]) *\
+        #                      60 / duration
+        #    self.vars['flow_rate_%s' % hub] = '%.5f' % flow_rate
         
         debug.print_dictionary(self.vars)

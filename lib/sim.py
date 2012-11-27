@@ -41,6 +41,12 @@ def log_event(event):
     if event.label not in config.events_printed:
         return
 
+    #try:    
+    #    if(event.sender.label != 'LH450'):
+    #        return
+    #except Exception:
+    #    return
+
     headers = []
     headers.append(('Time', '%d' % time))
     headers.append((event.sender.__class__.__name__, event.label))

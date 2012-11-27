@@ -72,7 +72,7 @@ class FormationHandler(object):
 
     def handle_alive(self, event):
         """Initialize the formation and determine hookoff points."""
-        
+
         formation = event.sender
 
         # Determine formation trunk route
@@ -98,6 +98,7 @@ class FormationHandler(object):
                 hub_to_midpoint.get_initial_bearing(),
                 a * aircraft.Q
             )
+            aircraft.hookoff_point.name = 'hookoff-%s' % aircraft.hookoff_point
             
             hub_to_hookoff = Segment(aircraft.hub, aircraft.hookoff_point)
             aircraft.P = hub_to_hookoff.get_length() / hub_to_midpoint.get_length()
@@ -120,23 +121,25 @@ class FormationHandler(object):
             if not aircraft.route.waypoints[-1].coincides(leading_destination):
                 break
             leaders.append(aircraft)
+        # Change reversed formation back to normal
+        formation.reverse()
         
         # Then find the buddy just before the set of leading aircraft, if
         # it exists.
         try:
+            # The leaders: same hookoff point as last buddy.
             last_buddy = formation[len(leaders)]
+            for aircraft in leaders:
+                aircraft.Q = last_buddy.Q
+                aircraft.P = last_buddy.P
+                aircraft.hookoff_point = last_buddy.hookoff_point
+
         except IndexError:
-            return
-
-        # Change reversed formation back to normal
-        formation.reverse()
+            pass
         
-        # The leaders: same hookoff point as last buddy.
-        for aircraft in leaders:
-            aircraft.Q = last_buddy.Q
-            aircraft.P = last_buddy.P
-            aircraft.hookoff_point = last_buddy.hookoff_point
-
+        #debug.print_object(aircraft)
+        #assert aircraft.waypoints_passed[1].coincides(aircraft.hub)
+        
         for aircraft in formation:
             aircraft.route.waypoints = [aircraft.hookoff_point] +\
                                         aircraft.route.waypoints

@@ -48,34 +48,21 @@ def parse_options():
 
     return parser.parse_args()
 
-# Override auto-planes, useful when reproducing a bug...
-# Important: use the same object for the hub (don't instantiate it again),
-# because aircraft are grouped by their hubs which is tested using "is".
-#hub = Waypoint('MAN')
-#planes = [
-#    Aircraft('FLT001', Route([Waypoint('DUS'), hub,
-#        Waypoint('JFK')]), 12),
-#    Aircraft('FLT002', Route([Waypoint('DUS'), hub,
-#        Waypoint('BOS')]), 12),
-#    Aircraft('FLT003', Route([Waypoint('FRA'), hub,
-#        Waypoint('EWR')]), 0),
-#    Aircraft('FLT004', Route([Waypoint('BRU'), hub,
-#        Waypoint('LAX')]), 11),
-#    Aircraft('FLT005', Route([Waypoint('AMS'), hub,
-#        Waypoint('SFO')]), 7),
-#    Aircraft('FLT007', Route([Waypoint('AMS'), hub,
-#        Waypoint('LAX')]), 100),
-#    Aircraft('FLT008', Route([Waypoint('BRU'), hub,
-#        Waypoint('SFO')]), 100),
-#    Aircraft('FLT009', Route([Waypoint('CDG'), hub,
-#        Waypoint('LAX')]), 100),
-#]
+def planes_manual():
 
-def init():
+    # Override auto-planes, useful when reproducing a bug...
+    # Important: use the same object for the hub (don't instantiate it again),
+    # because aircraft are grouped by their hubs which is tested using "is".
+    #hub = Waypoint('MAN')
+    return [
+        Aircraft('FLT001', Route([Waypoint('DUS'), Waypoint('JFK')]), 12),
+        Aircraft('FLT002', Route([Waypoint('DUS'), Waypoint('BOS')]), 12),
+        Aircraft('FLT005', Route([Waypoint('AMS'), Waypoint('SFO')]), 57),
+        Aircraft('FLT007', Route([Waypoint('AMS'), Waypoint('LAX')]), 59),
+    ]
+
+def planes_from_cli():
     
-    # Remove planes that were initialized for debugging purposes
-    del(planes[:])
-
     # Initialize settings from command line options
     (options, args) = parse_options()
     starttime = int(options.starttime)
@@ -95,7 +82,7 @@ def init():
             random.uniform(
                 config.departure_distribution['lower_bound'],
                 config.departure_distribution['upper_bound'])
-        
+
         # First construct the direct flight (solo, point-to-point)
         aircraft = Aircraft(
             label = label,
@@ -118,6 +105,12 @@ def init():
         
         planes.append(aircraft)
         
+    return planes
+
+def init():
+    
+    planes = planes_manual()
+
     routes = []
     for flight in planes:
         routes.append(flight.route)
@@ -137,9 +130,11 @@ def init():
                                   hub,
                                   flight.route.waypoints[1]]
         flight.route.init_segments()
+    
+    return planes
 
 def run():
-    init()
+    planes = init()
     for aircraft in planes:
         sim.events.append(sim.Event('aircraft-init', aircraft, 0))
     sim.run()

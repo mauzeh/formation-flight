@@ -14,7 +14,10 @@ class Point(object):
     def __init__(self, lat, lon, name = 'Point'):
         self.lat = lat
         self.lon = lon
-        self.name = name
+        if name == 'Point':
+            self.name = '{%.2f, %.2f}' % (self.lat, self.lon)
+        else:
+            self.name = name
 
     def distance_to(self, point):
         R = Earth.R
@@ -40,14 +43,9 @@ class Point(object):
     
     def coincides(self, point):
         if point is self:
-            p('Point %s coincides with self %s because same instance' %\
-              (point, self))
             return True
         if self.lat == point.lat and self.lon == point.lon:
-            p('Point %s coincides with self %s because same latlons' %\
-              (point, self))
             return True
-        p('Point %s does not coincide with self %s.' % (point, self))
         return False
 
     def get_position(self, bearing, distance):
@@ -86,8 +84,7 @@ class Point(object):
 
     def __repr__(self):
         #return "%s(%r)" % (self.__class__, self.__dict__)
-        return '{%.2f, %.2f}' % (self.lat, self.lon)
-        #return '%s' % self.name
+        return '%s' % self.name
 
 class Position(Point):
     """
@@ -97,7 +94,9 @@ class Position(Point):
     def __init__(self, lat, lon, bearing):
         super(Position, self).__init__(lat, lon, 'Position')
         self.bearing = bearing
+        self.name = '{%.2f, %.2f}' % (self.lat, self.lon)
 
     def __repr__(self):
         #return "%r" % (self.__dict__)
-        return '{%.2f, %.2f}' % (self.lat, self.lon)
+        #return '{%.2f, %.2f}' % (self.lat, self.lon)
+        return self.name
