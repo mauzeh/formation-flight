@@ -49,7 +49,7 @@ class FormationSynchronizer(object):
                 aircraft, sim.time + time_to_hub
             ))
             
-            p('critical','Required hub arrival delay for aircraft %s: %d.' % (
+            p('Required hub arrival delay for aircraft %s: %d.' % (
                 aircraft, delay
             ))
 

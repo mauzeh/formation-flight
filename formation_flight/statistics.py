@@ -207,12 +207,10 @@ class Statistics(object):
                 config.alpha *\
                 self.vars['distance_success_rate'] -\
                 self.vars['distance_penalty']
+            self.vars['distance_penalty'] = -1 + \
+                self.vars['distance_total'] / self.vars['distance_direct']
+            self.vars['hub_delay_normalized'] = self.vars['hub_delay_sum'] /\
+                self.vars['aircraft_count']
 
         duration = self.vars['sim_finish'] - self.vars['sim_start']
-
-        #for hub in self.hubs:
-        #    flow_rate = float(self.vars['formation_count_%s' % hub]) *\
-        #                      60 / duration
-        #    self.vars['flow_rate_%s' % hub] = '%.5f' % flow_rate
-        
         debug.print_dictionary(self.vars)
