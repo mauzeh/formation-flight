@@ -1,5 +1,11 @@
 """Contains functions to easily verbosely print variables.""" 
 
+# Which severities can we print? Default to all
+print_severities = [
+    'notice',
+    'critical'
+]
+
 # output table width (in chars)
 width = 80
 
@@ -58,7 +64,8 @@ def print_line(severity, message = None):
 
     if message is None:
         message = severity
-        severity = 'notice'
+        severity = 'debug'
     
-    #print message
-    #pass
+    # if not in debug mode, do not print anything except severity "critical"
+    if severity in print_severities:
+        print '%s' % message

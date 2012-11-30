@@ -19,6 +19,8 @@ class Aircraft(object):
         self.destination = self.route.waypoints[-1]
         # Distance units per time unit (500 kts)
         self.speed = 500/60
+        # Temporary, set speed to 1 for easy manual distance/time verification
+        #self.speed = 1
 
     def depart(self):
         """Sets the current position and increments to the first waypoint."""

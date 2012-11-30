@@ -116,13 +116,6 @@ class Statistics(object):
         aircraft = event.sender
         hub = aircraft.hub
         
-        # In some cases, the aircraft flies directly from origin to destination
-        
-        #if not hub in self.hubs:
-            #debug.print_object(aircraft)
-            #assert 1==0
-        
-        #assert hub.is_hub
         assert hub in self.hubs
 
         if 'distance_formation' not in self.vars:
@@ -131,36 +124,66 @@ class Statistics(object):
             self.vars['distance_solo'] = 0
         if 'distance_direct' not in self.vars:
             self.vars['distance_direct'] = 0
+
+        # Aircraft always fly solo to the hub
+        segment = Segment(aircraft.origin, hub)
+        origin_to_hub = segment.get_length()
+        p('Distance origin_to_hub for %s is %dNM' % (
+            aircraft,
+            origin_to_hub
+        ))
+        self.vars['distance_solo'] = self.vars['distance_solo'] +\
+            origin_to_hub
         
         # If in formation
         if hasattr(aircraft, 'formation'):
             
-            segment = Segment(aircraft.origin, hub)
-            self.vars['distance_solo'] = self.vars['distance_solo'] +\
-                segment.get_length()
-            
             segment = Segment(hub, aircraft.hookoff_point)
+            hub_to_hookoff = segment.get_length()
+            p('Distance hub_to_hookoff for %s is %dNM' % (
+                aircraft,
+                hub_to_hookoff
+            ))
             self.vars['distance_formation'] = self.vars['distance_formation'] +\
-                segment.get_length()
+                hub_to_hookoff
 
             segment = Segment(aircraft.hookoff_point, aircraft.destination)
+            hookoff_to_destination = segment.get_length()
+            p('Distance hookoff_to_destination for %s is %dNM' % (
+                aircraft,
+                hookoff_to_destination
+            ))
             self.vars['distance_solo'] = self.vars['distance_solo'] +\
-                segment.get_length()
+                hookoff_to_destination
+
+            # Collect all hub delays
+            # The calibration aircraft was never delayed
+            if hasattr(aircraft, 'hub_delay'):
+                if 'hub_delay_sum' not in self.vars:
+                    self.vars['hub_delay_sum'] = 0
+                self.vars['hub_delay_sum'] = self.vars['hub_delay_sum'] +\
+                    aircraft.hub_delay
 
         # If fully solo
         else:
-            segment = Segment(aircraft.origin, hub)
-            self.vars['distance_solo'] = self.vars['distance_solo'] +\
-                segment.get_length()
             
             segment = Segment(hub, aircraft.destination)
+            hub_to_destination = segment.get_length()
+            p('Distance hub_to_destination for %s is %dNM' % (
+                aircraft,
+                hub_to_destination
+            ))
             self.vars['distance_solo'] = self.vars['distance_solo'] +\
-                segment.get_length()
+                hub_to_destination
             
         # Also calculate the direct distance
         segment = Segment(aircraft.origin, aircraft.destination)
-        self.vars['distance_direct'] = self.vars['distance_direct'] +\
-            segment.get_length()
+        direct = segment.get_length()
+        p('Distance direct for %s is %dNM' % (
+            aircraft,
+            direct
+        ))
+        self.vars['distance_direct'] = self.vars['distance_direct'] + direct
 
     def handle_finish(self, event):
 
@@ -174,12 +197,16 @@ class Statistics(object):
             self.vars['avg_formation_size'] = \
                 self.vars['formation_aircraft_count'] /\
                 float(self.vars['formation_count'])
+            self.vars['distance_total'] = \
+                self.vars['distance_formation'] + self.vars['distance_solo']
             self.vars['distance_success_rate'] = \
-                self.vars['distance_formation'] /\
-                (self.vars['distance_formation'] + self.vars['distance_solo'])
+                self.vars['distance_formation'] / self.vars['distance_total']
             self.vars['distance_penalty'] = -1 + \
-                (self.vars['distance_formation'] + self.vars['distance_solo'])/\
-                (self.vars['distance_direct'])
+                self.vars['distance_total'] / self.vars['distance_direct']
+            self.vars['alpha_effective'] =\
+                config.alpha *\
+                self.vars['distance_success_rate'] -\
+                self.vars['distance_penalty']
 
         duration = self.vars['sim_finish'] - self.vars['sim_start']
 

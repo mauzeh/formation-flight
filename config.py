@@ -1,8 +1,15 @@
+# Are we in debug mode? Then we are printing a lot of status messages.
+from lib import debug
+debug.print_severities = [
+    #'debug',
+    'critical'
+]
+
 # The events we wish to print to the terminal when they occur.
 events_printed = [
     #'aircraft-init',
     #'aircraft-depart',
-    'aircraft-at-waypoint',
+    #'aircraft-at-waypoint',
     'enter-lock-area',
     'formation-alive',
     'aircraft-arrive',
@@ -21,7 +28,7 @@ alpha = .13
 lock_time = 45
 
 # How much the arrival at the virtual hub can be delayed/expedited (mins)
-etah_slack = 5
+etah_slack = 100
 
 # How large is a formation allowed to be
 S_max = 100
@@ -32,8 +39,8 @@ S_max = 100
 #   None
 restrictions = None
 
-count_hubs = 1
-Z = .01
+count_hubs = 5
+Z = .3
 
 # Generate hubs
 # Visualization:

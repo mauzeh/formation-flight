@@ -52,20 +52,19 @@ def planes_manual():
 
     # Override auto-planes, useful when reproducing a bug...
     return [
-        Aircraft('FLT001', Route([Waypoint('AMS'), Waypoint('JFK')]), 12),
-        Aircraft('FLT002', Route([Waypoint('AMS'), Waypoint('SFO')]), 12),
-        Aircraft('FLTWRONG', Route([Waypoint('AMS'), Waypoint('SFO')]), 13),
-        Aircraft('FLT003', Route([Waypoint('AMS'), Waypoint('SFO')]), 57),
+        Aircraft('FLT001', Route([Waypoint('FRA'), Waypoint('JFK')]), 12),
+        Aircraft('FLT002', Route([Waypoint('ZRH'), Waypoint('SFO')]), 12),
+        Aircraft('FLT003', Route([Waypoint('CPH'), Waypoint('SFO')]), 57),
         Aircraft('FLT004', Route([Waypoint('AMS'), Waypoint('LAX')]), 59),
     ]
 
-def planes_from_cli():
+def planes_cli():
     
     # Initialize settings from command line options
     (options, args) = parse_options()
     starttime = int(options.starttime)
     duration  = int(options.duration)
-    
+
     # Set up the planes list, assume tab-separated columns via stdin. 
     # Can be piped, example "$ cat data/flights.tsv | ./thesis.py"
     for row in csv.reader(sys.stdin, delimiter = '\t'):
@@ -107,7 +106,7 @@ def planes_from_cli():
 
 def init():
     
-    planes = planes_manual()
+    planes = planes_cli()
         
     routes = []
     for flight in planes:

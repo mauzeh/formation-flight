@@ -60,17 +60,28 @@ class AircraftController(object):
             except ValueError:
                 pass
             
-    def delay_events(self, delta_t):
-        p('Delaying all events for aircraft %s by delta_t %s.' % (
-            self.aircraft, delta_t
+    def delay_events(self, delay):
+        
+        p('Delaying all events for aircraft %s by delay = %s.' % (
+            self.aircraft, delay
         ))
         p('Event list before delayal: %s' % self.aircraft.events)
+        
+        # Quick an dirty: expose delay for statistics.
+        # @todo decouple. Idea: create a separate delay event that sends the
+        # amount this aircraft was delayed to anybody who listens?
+        # In order to make this quick-and-dirty fix bug free, we can only
+        # delay an aircraft once in its lifetime to prevent the variable being
+        # overwritten by multiple calls to this methods.
+        assert not hasattr(self.aircraft, 'hub_delay')
+        self.aircraft.hub_delay = delay
+        
         if hasattr(self.aircraft, 'waypoint_eta'):
-            self.aircraft.waypoint_eta = self.aircraft.waypoint_eta + delta_t
+            self.aircraft.waypoint_eta = self.aircraft.waypoint_eta + delay
         if hasattr(self.aircraft, 'arrival_time'):
-            self.aircraft.arrival_time = self.aircraft.arrival_time + delta_t
+            self.aircraft.arrival_time = self.aircraft.arrival_time + delay
         for event in self.aircraft.events:
-            event.time = event.time + delta_t
+            event.time = event.time + delay
         p('Event list after delayal: %s' % self.aircraft.events)
     
     def schedule_departure(self):

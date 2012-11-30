@@ -10,32 +10,54 @@ import config
 class FormationSynchronizer(object):
     
     def synchronize(self, formation):
-
-        # @todo Rationalize and remodel.
-        leader = formation[0]
-        leader.controller.update_position()
-        time_to_hub = leader.time_to_waypoint()
-
-        # Happens when origin is very close to hub
-        if time_to_hub < config.etah_slack:
-            p('Ignore: hub is too close to formation leader origin.')
-            return
         
         for aircraft in formation:
+            
+            # Ensure position is up-to-date for eta calculation later
+            aircraft.controller.update_position()
+            
+            # Ensure all participants have the hub as their active waypoint
+            assert aircraft.route.waypoints[0].coincides(formation.hub)
 
+        # Select the aircraft that arrives last at the hub
+        last_aircraft = max(formation, key = lambda a: a.time_to_waypoint())
+        time_to_hub   = last_aircraft.time_to_waypoint()
+        
+        p('The last aircraft in formation %s is: %s.' % (
+            formation, last_aircraft
+        ))
+        p('The time to hub for formation %s is %d.' % (
+            formation, time_to_hub
+        ))
+
+        for aircraft in formation:
+            
+            if aircraft is last_aircraft:
+                continue
+            
             # Make sure the position of the aircraft is current
             aircraft.controller.update_position()
+            
+            # Compute time difference between arrivals
+            delay = time_to_hub - aircraft.time_to_waypoint()
+            
+            p('Original hub arrival time for aircraft %s: %d.' % (
+                aircraft, sim.time + aircraft.time_to_waypoint()
+            ))
+            
+            p('Required hub arrival time for aircraft %s: %d.' % (
+                aircraft, sim.time + time_to_hub
+            ))
+            
+            p('critical','Required hub arrival delay for aircraft %s: %d.' % (
+                aircraft, delay
+            ))
 
-            # Adjust the speed of the aircraft
-            #ratio = aircraft.time_to_waypoint() / float(time_to_hub)
+            # We should only delay, never expedite
+            assert delay >= 0
 
-            # Unrealistic speeds = modeling error!
-            #assert ratio < 2 and ratio > 0.5
-            #aircraft.speed = aircraft.speed * ratio
-
-            # Replan all events.
-            delta_t = time_to_hub - aircraft.time_to_waypoint()
-            aircraft.controller.delay_events(delta_t)
+            # Delay arrival of participant to match required arrival.
+            aircraft.controller.delay_events(delay)
 
         # Add a tiny delay to make sure that all aircraft-at-waypoint
         # events are fired before the formation-alive event.
