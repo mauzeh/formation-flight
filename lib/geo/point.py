@@ -25,9 +25,15 @@ class Point(object):
         lat2 = math.radians(point.lat)
         lon1 = math.radians(self.lon)
         lon2 = math.radians(point.lon)
-        return math.acos(math.sin(lat1)*math.sin(lat2)+
-                         math.cos(lat1)*math.cos(lat2)*
-                         math.cos(lon2-lon1))*R
+        param = \
+            math.sin(lat1)*math.sin(lat2)+\
+            math.cos(lat1)*math.cos(lat2)*\
+            math.cos(lon2-lon1)
+
+        # Reduce precision to avoid 1.00000000000000034734 being out of domain
+        param = float('%.6f' % param)
+
+        return math.acos(param)*R
 
     def bearing_to(self, point):
         lat1 = math.radians(self.lat)
