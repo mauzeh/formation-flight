@@ -9,8 +9,6 @@ from lib.geo.segment import Segment
 from lib.geo.util import project_segment, get_hookoff_quotient, midpoint
 import config
 
-from lib.geo.visualization import GCMapper
-
 class FormationHandler(object):
     """Uses the aircraft-depart event to initiate formation allocation"""
 
