@@ -1,7 +1,7 @@
 # Are we in debug mode? Then we are printing a lot of status messages.
 from lib import debug
 debug.print_severities = [
-    #'debug',
+#    'debug',
     'critical'
 ]
 
@@ -9,10 +9,10 @@ debug.print_severities = [
 events_printed = [
     #'aircraft-init',
     #'aircraft-depart',
-    #'aircraft-at-waypoint',
-    'enter-lock-area',
-    'formation-alive',
-    'aircraft-arrive',
+#    'aircraft-at-waypoint',
+    #'enter-lock-area',
+    #'formation-alive',
+    #'aircraft-arrive',
 ]
 
 # The maximum difference in heading upon hub departure (in degrees)
@@ -25,10 +25,10 @@ psi = .132
 alpha = .13
 
 # How long before hub arrival can we allocate into formations? (mins)
-lock_time = 45
+lock_time = 15
 
 # How much the arrival at the virtual hub can be delayed/expedited (mins)
-etah_slack = 100
+etah_slack = 5
 
 # How large is a formation allowed to be
 S_max = 100
@@ -39,7 +39,7 @@ S_max = 100
 #   None
 restrictions = None
 
-count_hubs = 5
+count_hubs = 2
 Z = .3
 
 # Generate hubs

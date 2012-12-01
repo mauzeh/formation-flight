@@ -57,12 +57,10 @@ class Aircraft(object):
         ttwp = distance / self.speed
         p('Time to waypoint %s (d=%d, curtime=%d) for aircraft %s (v=%s, pos=%s) = %d' % (
             '%s {%d, %d}' % (waypoint, waypoint.lat, waypoint.lon),
-            distance,
-            sim.time,
-            self,
-            self.speed,
-            '{%d, %d}' % (self.position.lat, self.position.lon),
-            ttwp
+            distance, sim.time, self, self.speed, '{%d, %d}' % (
+                self.position.lat,
+                self.position.lon
+            ), ttwp
         ))
         return ttwp
 

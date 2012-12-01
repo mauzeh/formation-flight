@@ -66,7 +66,7 @@ class AircraftController(object):
             self.aircraft, delay
         ))
         p('Event list before delayal: %s' % self.aircraft.events)
-        
+
         # Quick an dirty: expose delay for statistics.
         # @todo decouple. Idea: create a separate delay event that sends the
         # amount this aircraft was delayed to anybody who listens?
@@ -75,7 +75,7 @@ class AircraftController(object):
         # overwritten by multiple calls to this methods.
         assert not hasattr(self.aircraft, 'hub_delay')
         self.aircraft.hub_delay = delay
-        
+
         if hasattr(self.aircraft, 'waypoint_eta'):
             self.aircraft.waypoint_eta = self.aircraft.waypoint_eta + delay
         if hasattr(self.aircraft, 'arrival_time'):

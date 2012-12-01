@@ -23,6 +23,7 @@ class FormationAllocator(object):
         for formation in self.formations:
             if aircraft in formation:
                 return formation
+        raise Exception("No formation having %s found" % aircraft)
 
     def add_aircraft(self, aircraft):
         self.aircraft_queue.append(aircraft)
