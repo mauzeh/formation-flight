@@ -60,6 +60,9 @@ def print_object(obj, headers = []):
             lines.append((key, obj.__dict__[key]))
     print_table(headers, lines)
 
+# Ugly, but really handy
+import sim
+
 def print_line(severity, message = None):
 
     if message is None:
@@ -68,4 +71,4 @@ def print_line(severity, message = None):
     
     # if not in debug mode, do not print anything except severity "critical"
     if severity in print_severities:
-        print '%s' % message
+        print 't = %4d :: %s' % (sim.time, message)

@@ -93,6 +93,11 @@ class AircraftController(object):
 
     def schedule_waypoint(self):
         self.aircraft.waypoint_eta = sim.time + self.aircraft.time_to_waypoint()
+        p('Schedule waypoint-arrive. WP: %s. ETA: %d. Aircraft: %s' % (
+            self.aircraft.route.waypoints[0],
+            self.aircraft.waypoint_eta,
+            self.aircraft
+            ))
         self.add_event(sim.Event(
             'aircraft-at-waypoint',
             self.aircraft,

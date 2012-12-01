@@ -59,22 +59,29 @@ class Builder(object):
                 Z = Z)
             
             hub.name = 'HUB%02d' % od_chunks.index(od_chunk)
-            
-            #debug.print_object(hub, [('','Hub created')])
-            
             self.hubs.append(hub)
-        
-        #for hub in self.hubs:
-            #debug.print_object(hub)
-        
+
+        for hub in self.hubs:
+            debug.print_line('Hub %s created at %s' % (
+                hub, "%d, %d" % (
+                    hub.lat, hub.lon
+                )
+            ))
+            debug.print_line('Hub %s has %d origins %s' % (
+                hub, len(hub.origins), hub.origins
+            ))
+
     def get_hub_by_route(self, route):
         assert len(self.hubs) > 0
         for hub in self.hubs:
             for hub_origin in hub.origins:
                 if hub_origin.coincides(route.waypoints[0]):
+                    debug.print_line('Route %s has hub %s' % (
+                        route, hub
+                    ))
                     return hub
         raise Exception('Hub not found for route %s' % route)
-    
+
 def construct_hub(origins, destinations, Z):
 
     midpoint_origins      = midpoint(origins)

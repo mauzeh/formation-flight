@@ -14,7 +14,6 @@ class Statistics(object):
     def __init__(self):
         sim.dispatcher.register('sim-start', self.handle_start)
         sim.dispatcher.register('aircraft-depart', self.handle_depart)
-        sim.dispatcher.register('aircraft-at-waypoint', self.handle_at_waypoint)
         sim.dispatcher.register('formation-alive', self.handle_alive)
         sim.dispatcher.register('aircraft-arrive', self.handle_arrive)
         sim.dispatcher.register('sim-finish', self.handle_finish)
@@ -23,40 +22,6 @@ class Statistics(object):
 
     def handle_start(self, event):
         self.vars['sim_start'] = int(event.time)
-        
-    def handle_at_waypoint(self, event):
-        """This event only fires when reaching either:
-           1 - The hub.
-           2 - The hookoff point.
-        """
-        aircraft = event.sender
-
-        # When this event fires, assume waypoint is already in "passed" stack.
-        waypoint = aircraft.waypoints_passed[-1]
-        
-        assert waypoint in self.hubs or \
-               waypoint.coincides(aircraft.hookoff_point)
-        
-        # If at hook-off point.
-        if waypoint not in self.hubs and \
-           waypoint.coincides(aircraft.hookoff_point):
-            self.handle_hookoff(event)
-        # If at hub
-        else:
-            self.handle_at_hub(event)
-        
-    def handle_at_hub(self, event):
-        """Important, we don't know if aircraft is in a formation or not here"""
-        aircraft = event.sender
-        hub = aircraft.waypoints_passed[-1]
-        assert hub in self.hubs
-        key = 'flight_count_%s' % hub
-        if key not in self.vars:
-            self.vars[key] = 0
-        self.vars[key] = self.vars[key] + 1
-
-    def handle_hookoff(self, event):
-        aircraft = event.sender
 
     def handle_depart(self, event):
 
@@ -117,6 +82,17 @@ class Statistics(object):
         hub = aircraft.hub
         
         assert hub in self.hubs
+
+        aircraft = event.sender
+        hub = aircraft.hub
+        p('Flight %s arrives at hub %s' % (
+            aircraft, hub
+            ))
+        assert hub in self.hubs
+        key = 'flight_count_%s' % hub
+        if key not in self.vars:
+            self.vars[key] = 0
+        self.vars[key] = self.vars[key] + 1
 
         if 'distance_formation' not in self.vars:
             self.vars['distance_formation'] = 0
