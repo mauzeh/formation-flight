@@ -16,18 +16,25 @@ def get_manual():
         Aircraft('FLT004', Route([Waypoint('AMS'), Waypoint('LAX')]), 59),
         ]
 
-def get_via_stdn():
+# Keep track of what was passed via stdin for a potential re-init
+input_history = []
 
-    # Set up the planes list, assume tab-separated columns via stdin.
-    # Can be piped, example "$ cat data/flights.tsv | ./thesis.py"
-    for row in csv.reader(sys.stdin, delimiter = '\t'):
+def get_via_stdin():
+    """Set up the planes list, assume tab-separated columns via stdin.
+    Can be piped, example: $ cat data/flights.tsv | ./thesis.py"""
+    
+    planes = []
+
+    if len(input_history) == 0:
+        for row in csv.reader(sys.stdin, delimiter = '\t'):
+            input_history.append(row)
+
+    for row in input_history:
 
         departure_time = int(row[0])
         label          = row[1]
         waypoints      = row[2].split('-')
         aircraft_type  = row[3]
-
-        planes = []
 
         # Departure times are randomly distributed
         departure_time = departure_time +\

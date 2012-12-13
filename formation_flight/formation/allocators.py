@@ -49,14 +49,22 @@ class FormationAllocatorEtah(FormationAllocator):
         # @todo: pre-process at a higher level.
         # Only consider other aircraft flying to the same hub
         candidates = filter(lambda a: a.route.waypoints[0] is hub, 
-                            self.aircraft_queue)
+                            candidates)
+
+        # Only consider aircraft having a maximum heading difference between
+        # the hub and their destination
+        leader_heading = aircraft.route.segments[0].get_initial_bearing()
+        def heading_filter(buddy):
+            buddy_heading = buddy.route.segments[0].get_initial_bearing()
+            return abs(leader_heading - buddy_heading) < config.phi_max
+        candidates = filter(heading_filter, candidates)
         
         # Other interesting filters
-        if config.restrictions == 'same-airline':
+        if 'same-airline' in config.restrictions:
             airline = aircraft.label[0:2]
             candidates = filter(lambda a: a.label[0:2] == airline,
                                 candidates)
-        elif config.restrictions == 'same-aircraft-type':
+        if 'same-aircraft-type' in config.restrictions:
             aircraft_type = aircraft.aircraft_type
             candidates = filter(lambda a: a.aircraft_type == aircraft_type,
                                 candidates)

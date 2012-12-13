@@ -13,33 +13,34 @@ segments = {
 }
 
 def init():
-    sim.dispatcher.register('aircraft-init', handle_init)
-    sim.dispatcher.register('aircraft-at-waypoint', handle_at_waypoint)
-    sim.dispatcher.register('formation-alive', handle_alive)
     sim.dispatcher.register('aircraft-arrive', handle_arrive)
     sim.dispatcher.register('sim-finish', render)
 
-def handle_init(event):
-    pass
-    
-def handle_at_waypoint(event):
-    pass
-
-def handle_alive(event):
-    pass
-
 def handle_arrive(event):
     aircraft = event.sender
-    route = Route(aircraft.waypoints_passed)
     p('After arrival, the aircraft has passed the following waypoints: %s' % (
         aircraft.waypoints_passed
     ))
+    
+    # Temp: only draw flights to selected West Coast destinations
+    #if aircraft.destination.name not in [
+    #    'SFO',
+    #    'LAX',
+    #    'SEA',
+    #    'YVR',
+    #    'SAN'
+    #]:
+    #    return
+    
     if hasattr(aircraft, 'formation'):
-        for segment in route.segments:
-            segments['formation'].append(segment)
+        segments['formation'].append(Segment(aircraft.origin, aircraft.hub))
+        segments['formation'].append(Segment(aircraft.hub, aircraft.hookoff_point))
+        segments['formation'].append(Segment(aircraft.hookoff_point, aircraft.destination))
+        pass
     else:
-        for segment in route.segments:
-            segments['solo'].append(segment)
+        segments['solo'].append(Segment(aircraft.origin, aircraft.hub))
+        segments['solo'].append(Segment(aircraft.hub, aircraft.destination))
+        pass
 
 def render(event):
     # create new figure, axes instances.
