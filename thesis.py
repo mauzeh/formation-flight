@@ -15,27 +15,31 @@ from formation_flight import statistics
 
 import config
 
-aircraft_handlers.init()
-formation_handlers.init()
-statistics.init()
-sink.init()
 #visualization.init()
 
 def run():
 
-    # Construct flight list
-    planes = generators.get_manual()
+    for i in xrange(0, 5):
 
-    # Find hubs
-    hubs = builders.build_hubs(planes, config.count_hubs, config.Z)
+      sim.init()
+      aircraft_handlers.init()
+      formation_handlers.init()
+      statistics.init()
+      sink.init()
 
-    # Allocate hubs to flights
-    allocators.allocate(planes, hubs)
+      # Construct flight list
+      planes = generators.get_via_stdin()
+  
+      # Find hubs
+      hubs = builders.build_hubs(planes, config.count_hubs, config.Z)
+  
+      # Allocate hubs to flights
+      allocators.allocate(planes, hubs)
 
-    for flight in planes:
-        sim.events.append(sim.Event('aircraft-init', flight, 0))
-
-    sim.run()
+      for flight in planes:
+          sim.events.append(sim.Event('aircraft-init', flight, 0))
+  
+      sim.run()
 
 # docs: http://docs.python.org/library/profile.html
 import cProfile, pstats

@@ -63,16 +63,14 @@ def run():
     will, including while the simulation is running.
     """
     global time, events, dispatcher
-
+    
     # First fire a 'start sim' event just before the first actual event
     event = min(events, key = lambda e: e.time)
     dispatcher.bubble(Event('sim-start', None, event.time))
     
     while len(events) > 0:
         event = min(events, key = lambda e: e.time)
-        global time
         assert event.time >= time
-
         time = event.time
         events.remove(event)
         dispatcher.bubble(event)

@@ -7,6 +7,9 @@ vars = {}
 hubs = []
 
 def init():
+    global vars, hubs
+    vars = {}
+    hubs = []
     sim.dispatcher.register('sim-start',       handle_start)
     sim.dispatcher.register('aircraft-depart', handle_depart)
     sim.dispatcher.register('formation-alive', handle_alive)

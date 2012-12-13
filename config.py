@@ -15,32 +15,35 @@ events_printed = [
     #'aircraft-arrive',
 ]
 
-# The maximum difference in heading upon hub departure (in degrees)
-phi_max = 3
-
 # The slack ramp (in time units per distance unit away from the hub)
 psi = .132
 
 # Discount factor (@todo rename to beta as in research paper)
 alpha = .13
 
-# How long before hub arrival can we allocate into formations? (mins)
-lock_time = 15
-
 # How much the arrival at the virtual hub can be delayed/expedited (mins)
 etah_slack = 5
 
-# How large is a formation allowed to be
-S_max = 100
+# How long before hub arrival can we allocate into formations? (mins)
+lock_time = 15
+
+# The maximum difference in heading upon hub departure (in degrees)
+phi_max = 15
+
+count_hubs = 11
+Z = .25
 
 # Restrictions on formations. Options: 
 #   'same-airline',
 #   'same-aircraft-type', and
 #   None
-restrictions = None
+restrictions = [
+    #'same-airline',
+    #'same-aircraft-type'
+]
 
-count_hubs = 2
-Z = .3
+# How large is a formation allowed to be
+S_max = 100
 
 # Generate hubs
 # Visualization:
