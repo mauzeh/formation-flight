@@ -58,7 +58,7 @@ class FormationAllocatorEtah(FormationAllocator):
             buddy_heading = buddy.route.segments[0].get_initial_bearing()
             return abs(leader_heading - buddy_heading) < config.phi_max
         candidates = filter(heading_filter, candidates)
-        
+
         # Other interesting filters
         if 'same-airline' in config.restrictions:
             airline = aircraft.label[0:2]
