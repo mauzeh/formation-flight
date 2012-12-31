@@ -181,8 +181,6 @@ def handle_finish(event):
             config.alpha *\
             vars['distance_success_rate'] -\
             vars['distance_penalty']
-        vars['distance_penalty'] = -1 + \
-            vars['distance_total'] / vars['distance_direct']
         vars['hub_delay_avg'] = vars['hub_delay_sum'] /\
             vars['formation_aircraft_count']
 

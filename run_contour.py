@@ -17,18 +17,34 @@ import config
 from lib.geo.point import Point
 from lib.geo.waypoint import Waypoint
 
+import numpy as np
+
 # Create custom set of hubs
-hubs = [
-    Point(60, -30), Point(60, -20), Point(60, -10), 
-    Point(50, -30), Point(50, -20), Point(50, -10), 
-    Point(40, -30), Point(40, -20), Point(40, -10), 
-]
+lats = np.mgrid[ 40: 60: 35j]
+lons = np.mgrid[-30: 10: 35j]
+
+hubs = []
+for lat in lats:
+    for lon in lons:
+        hubs.append(Point(lat, lon))
+
+# Keep this here for debug purposes
+#hubs = [
+#    Point(60, -30), Point(60, -20), Point(60, -10), 
+#    Point(50, -30), Point(50, -20), Point(50, -10), 
+#    Point(40, -30), Point(40, -20), Point(40, -10), 
+#]
 
 def run():
     
     sink.init('data/sink.tsv')
 
     for hub in hubs:
+        
+        print 'Progress: %d of %d iterations' % (
+            hubs.index(hub)+1,
+            len(hubs)
+        )
 
         sim.init()
         aircraft_handlers.init()
@@ -40,7 +56,7 @@ def run():
         
         # Allocate hubs to flights
         for flight in planes:
-            
+
             # Assign hub by injecting into route
             flight.route.waypoints = [
                 flight.route.waypoints[0],
@@ -57,10 +73,18 @@ def run():
 
         # Prepare data matrix
         d = {
-            'hub_lat' : hub.lat,
-            'hub_lon' : hub.lon,
-            'success_rate' : statistics.vars['formation_success_rate']
+            'hub_lat'                : hub.lat,
+            'hub_lon'                : hub.lon,
+            'distance_total'         : float(statistics.vars['distance_total']),
+            'distance_formation'     : float(statistics.vars['distance_formation']),
+            'distance_solo'          : float(statistics.vars['distance_solo']),
+            'formation_count'        : float(statistics.vars['formation_count']),
+            'formation_success_rate' : float(statistics.vars['formation_success_rate']),
+            'alpha_eff'              : float(statistics.vars['alpha_effective']),
+            'distance_success_rate'  : float(statistics.vars['distance_success_rate']),
         }
+
+        print d.keys()
 
         sink.push(d)
         debug.print_dictionary(d)

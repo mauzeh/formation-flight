@@ -1,31 +1,54 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy import interpolate
+import math
+import csv
 
-x = np.array([
-    -30, -20, -10,
-    -30, -20, -10,
-    -30, -20, -10,
-])
+data_file = "../data/sink.tsv"
 
-y = np.array([
-    60, 60, 60,
-    50, 50, 50,
-    40, 40, 40,
-])
+def get_key(column_name):
+    global data_file
+    rows = csv.reader(open(data_file, 'rb'), delimiter = "\t")
+    for row in rows:
+        for column in row:
+            if column_name == column:
+                return row.index(column)
+        break
 
-z = np.array([
-    0.9494, 0.9363, 0.9232, 
-    0.9438, 0.9400, 0.8726, 
-    0.9382, 0.9307, 0.8970,
-])
+npdata = np.loadtxt(
+    open(data_file, 'rb'),
+    delimiter = "\t",
+    skiprows = 1
+)
 
-x = x.reshape(3, 3)
-y = y.reshape(3, 3)
-z = z.reshape(3, 3)
+#column = 'distance_total'
+#column = 'distance_formation'
+#column = 'distance_solo'
+#column = 'formation_count'
+#column = 'formation_success_rate'
+#column = 'alpha_eff'
+#column = 'distance_success_rate'
+column = 'formation_success_rate'
+
+x = npdata[:, get_key('hub_lon')]
+y = npdata[:, get_key('hub_lat')]
+z = npdata[:, get_key(column)]
+
+print x
+print y
+print z
+
+N = len(x)
+nx = math.sqrt(N)
+ny = nx
+
+x = x.reshape(nx, ny)
+y = y.reshape(nx, ny)
+z = z.reshape(nx, ny)
 
 plt.figure()
-plt.contour(x, y, z)
+plt.contourf(x, y, z, 20)
+plt.contour(x, y, z, 20)
 plt.colorbar()
-plt.title("Sparsely sampled function.")
+plt.title(column)
 plt.show()

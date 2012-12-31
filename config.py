@@ -22,10 +22,10 @@ psi = .132
 alpha = .13
 
 # How much the arrival at the virtual hub can be delayed/expedited (mins)
-etah_slack = 5
+etah_slack = 3
 
 # How long before hub arrival can we allocate into formations? (mins)
-lock_time = 15
+lock_time = 10
 
 # The maximum difference in heading upon hub departure (in degrees)
 phi_max = 15

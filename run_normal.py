@@ -19,26 +19,28 @@ import config
 
 def run():
 
-    for i in xrange(0, 5):
+    for i in xrange(0, 1):
 
-      sim.init()
-      aircraft_handlers.init()
-      formation_handlers.init()
-      statistics.init()
-
-      # Construct flight list
-      planes = generators.get_via_stdin()
-  
-      # Find hubs
-      hubs = builders.build_hubs(planes, config.count_hubs, config.Z)
-  
-      # Allocate hubs to flights
-      allocators.allocate(planes, hubs)
-
-      for flight in planes:
-          sim.events.append(sim.Event('aircraft-init', flight, 0))
-  
-      sim.run()
+        sim.init()
+        aircraft_handlers.init()
+        formation_handlers.init()
+        statistics.init()
+        
+        # Construct flight list
+        planes = generators.get_via_stdin()
+        
+        # Find hubs
+        hubs = builders.build_hubs(planes, config.count_hubs, config.Z)
+        
+        # Allocate hubs to flights
+        allocators.allocate(planes, hubs)
+        
+        for flight in planes:
+            sim.events.append(sim.Event('aircraft-init', flight, 0))
+        
+        sim.run()
+        
+        debug.print_dictionary(statistics.vars)
 
 # docs: http://docs.python.org/library/profile.html
 import cProfile, pstats
