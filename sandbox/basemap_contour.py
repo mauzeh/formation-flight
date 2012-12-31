@@ -6,8 +6,6 @@ import numpy as np
 # More Info: http://davydany.com/post/32287214449/matplotlibs-basemap-plotting-a-list-of-latitude
 def show_map(a):
 
-
-
     # 'a' is of the format [(lats, lons, data), (lats, lons, data)... (lats, lons, data)]
     lats = [ x[0] for x in a ]
     lons = [ x[1] for x in a ]
@@ -19,7 +17,6 @@ def show_map(a):
     lon_max = max(lons)
     data_min = min(data)
     data_max = max(data)
-
 
     m = Basemap(
         projection = 'merc',
