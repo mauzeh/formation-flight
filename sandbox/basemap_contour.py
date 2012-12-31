@@ -2,73 +2,55 @@ from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
 from matplotlib import mlab
 import numpy as np
+import math
 
-# More Info: http://davydany.com/post/32287214449/matplotlibs-basemap-plotting-a-list-of-latitude
-def show_map(a):
+lats = np.mgrid[ 40: 70: 3j]
+lons = np.mgrid[-60: 25: 3j]
 
-    # 'a' is of the format [(lats, lons, data), (lats, lons, data)... (lats, lons, data)]
-    lats = [ x[0] for x in a ]
-    lons = [ x[1] for x in a ]
-    data = [ x[2] for x in a ]
-     
-    lat_min = min(lats)
-    lat_max = max(lats)
-    lon_min = min(lons)
-    lon_max = max(lons)
-    data_min = min(data)
-    data_max = max(data)
+lons, lats = np.meshgrid(lons, lats)
 
-    m = Basemap(
-        projection = 'merc',
-        llcrnrlat=lat_min, urcrnrlat=lat_max,
-        llcrnrlon=lon_min, urcrnrlon=lon_max,
-        rsphere=6371200., resolution='l', area_thresh=10000
-    )
-
-    spatial_resolution = 0.5
-    fig = plt.figure()
-
-    x = np.array(lats)
-    y = np.array(lons)
-    z = np.array(data)
-   
-    xinum = (lat_max - lat_min) / spatial_resolution
-    yinum = (lon_max - lon_min) / spatial_resolution
-    xi = np.linspace(lat_min, lat_max + spatial_resolution, xinum)        # same as [lat_min:spatial_resolution:lat_max] in matlab
-    yi = np.linspace(lon_min, lon_max + spatial_resolution, yinum)        # same as [lon_min:spatial_resolution:lon_max] in matlab
-    xi, yi = np.meshgrid(xi, yi)
-   
-    zi = mlab.griddata(x, y, z, xi, yi)
-   
-    lat, lon = m.makegrid(zi.shape[1], zi.shape[0])
-    x,y = m(lat, lon)
-
-    m.contourf(x, y, zi)
-    cs = m.contour(x, y, zi)
-
-    m.drawcoastlines()
-    m.drawstates()
-    m.drawcountries()
-    
-    plt.clabel(cs, fmt = '%.0f', inline = True)   
-    plt.show()
-
-show_map([
-    (10.,  9., 15.),
-    (11., 11., 17.),
-    (12., 11., 17.),
-    (13., 11., 17.),
-    (14., 11., 17.),
-    (15., 11., 17.),
-    (16., 11., 17.),
-    (17., 11., 17.),
-    (18., 11., 17.),
-    (19., 11., 17.),
-    (20., 11., 17.),
-    (21., 11., 17.),
-    (21., 11., 17.),
-    (22., 15., 16.),
-    (23., 14., 12.),
-    (24., 12., 11.),
-    (25., 13., 1.),
+data = np.array([
+    .5, .6, .7,
+    .4, .5, .7,
+    .3, .5, .8
 ])
+
+minlat = np.min(lats)
+maxlat = np.max(lats)
+minlon = np.min(lons)
+maxlon = np.max(lons)
+
+m = Basemap(
+    projection = 'merc',
+    llcrnrlat = minlat, urcrnrlat = maxlat,
+    llcrnrlon = minlon, urcrnrlon = maxlon
+)
+
+x = lons
+y = lats
+
+
+z = data
+
+# Reverse Y-axis (high lat = low y)
+y = y[::-1]
+
+N = len(z)
+print N
+nx = math.sqrt(N)
+ny = nx
+
+z = z.reshape(nx, ny)
+
+print x
+print y
+print z
+
+m.drawcoastlines()
+m.drawstates()
+m.drawcountries()
+
+x, y = m(x, y)
+m.contourf(x, y, z)
+
+plt.show()
