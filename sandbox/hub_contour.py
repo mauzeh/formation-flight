@@ -3,6 +3,7 @@ import numpy as np
 from scipy import interpolate
 import math
 import csv
+from mpl_toolkits.basemap import Basemap
 
 data_file = "../data/sink.tsv"
 
@@ -51,4 +52,4 @@ plt.contourf(x, y, z, 20)
 plt.contour(x, y, z, 20)
 plt.colorbar()
 plt.title(column)
-plt.show()
+#plt.show()
