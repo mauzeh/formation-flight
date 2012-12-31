@@ -25,7 +25,6 @@ def run():
       aircraft_handlers.init()
       formation_handlers.init()
       statistics.init()
-      sink.init()
 
       # Construct flight list
       planes = generators.get_via_stdin()

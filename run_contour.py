@@ -14,36 +14,58 @@ from formation_flight import statistics
 
 import config
 
-def run():
+from lib.geo.point import Point
+from lib.geo.waypoint import Waypoint
 
-    for i in xrange(0, 5):
+# Create custom set of hubs
+hubs = [
+    Point(60, -30), Point(60, -20), Point(60, -10), 
+    Point(50, -30), Point(50, -20), Point(50, -10), 
+    Point(40, -30), Point(40, -20), Point(40, -10), 
+]
+
+def run():
+    
+    sink.init('data/sink.tsv')
+
+    for hub in hubs:
 
         sim.init()
         aircraft_handlers.init()
         formation_handlers.init()
         statistics.init()
-        sink.init()
         
         # Construct flight list
         planes = generators.get_via_stdin()
         
-        # Find hubs
-        hubs = builders.build_hubs(planes, config.count_hubs, config.Z)
-        
         # Allocate hubs to flights
-        allocators.allocate(planes, hubs)
+        for flight in planes:
+            
+            # Assign hub by injecting into route
+            flight.route.waypoints = [
+                flight.route.waypoints[0],
+                hub,
+                flight.route.waypoints[1]
+            ]
+    
+            flight.route.init_segments()
         
         for flight in planes:
             sim.events.append(sim.Event('aircraft-init', flight, 0))
-        
+
         sim.run()
 
-# docs: http://docs.python.org/library/profile.html
-import cProfile, pstats
-profile_file = 'data/profile.txt'
-cProfile.run('run()', profile_file)
-p = pstats.Stats(profile_file)
-p.strip_dirs()
-p.sort_stats('cumulative')
-p.sort_stats('time')
-#p.print_stats(30)
+        # Prepare data matrix
+        d = {
+            'hub_lat' : hub.lat,
+            'hub_lon' : hub.lon,
+            'success_rate' : statistics.vars['formation_success_rate']
+        }
+
+        sink.push(d)
+        debug.print_dictionary(d)
+
+        #debug.print_dictionary(statistics.vars)
+        #sink.push(statistics.vars)
+
+run()

@@ -186,4 +186,4 @@ def handle_finish(event):
         vars['hub_delay_avg'] = vars['hub_delay_sum'] /\
             vars['formation_aircraft_count']
 
-    debug.print_dictionary(vars)
+    #debug.print_dictionary(vars)

@@ -2,21 +2,18 @@
 import csv
 from lib import sim
 
-from formation_flight import statistics
-
 writer = None
 
-# Only print the header once. Useful when running the sim multiple times.
+# Only print the header once. Useful when calling the sink multiple times.
 print_header = True
 
-def init():
+def init(filename):
     global writer
-    writer = csv.writer(open('data/sink.tsv', 'w'), delimiter = '\t')
-    sim.dispatcher.register('sim-finish', execute)
+    writer = csv.writer(open(filename, 'w'), delimiter = '\t')
 
-def execute(event):
-    global writer, print_header
+def push(dictionary):
+    global print_header, writer
     if print_header == True:
-        writer.writerow(statistics.vars.keys())
-    writer.writerow(statistics.vars.values())
+        writer.writerow(dictionary.keys())
+    writer.writerow(dictionary.values())
     print_header = False
