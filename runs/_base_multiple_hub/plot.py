@@ -12,6 +12,9 @@ segments = {
     'solo'      : []
 }
 
+def execute():
+    raise Error('This run has no plots because they are integrated into the sim')
+
 def init():
     sim.dispatcher.register('aircraft-arrive', handle_arrive)
     sim.dispatcher.register('sim-finish', render)

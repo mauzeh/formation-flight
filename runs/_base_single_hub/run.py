@@ -41,11 +41,13 @@ for lat in lats:
     for lon in lons:
         config.hubs.append(Point(lat, lon))
 
-config.sink_path = os.path.dirname(__file__)
+config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 
 def execute():
     
-    sink.init(config.sink_path)
+    print 'init sink %s' % config.sink_dir
+    
+    sink.init(config.sink_dir)
 
     for hub in config.hubs:
         

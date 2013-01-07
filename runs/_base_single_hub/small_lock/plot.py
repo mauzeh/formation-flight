@@ -1,3 +1,8 @@
 from .. import plot
+import config
+import os
 
-data_file = "%s/sink/latest.tsv" % os.path.dirname(__file__)
+config.sink_dir = '%s/sink' % os.path.dirname(__file__)
+
+def run():
+    plot.run()

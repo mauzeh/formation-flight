@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 """Simulation Bootstrapper"""
 
-from runs._base_multiple_hub import run, plot
+from runs._base_multiple_hub import run
     
 if __name__ == '__main__':
-
     run.execute()
     
     ## docs: http://docs.python.org/library/profile.html

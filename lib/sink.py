@@ -28,10 +28,12 @@ def force_symlink(source, target):
 
 def init(directory):
     
-    path = '%s/sink/%s.tsv' % (
+    path = '%s/%s.tsv' % (
         directory,
         datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     )
+    
+    print "Sinking to %s" % path
 
     global writer
     make_sure_path_exists(os.path.dirname(path))

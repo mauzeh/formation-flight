@@ -9,4 +9,5 @@
 # Ignore output data
 data/output*
 data/profile*
+runs/*/*/sink/
 runs/*/sink/

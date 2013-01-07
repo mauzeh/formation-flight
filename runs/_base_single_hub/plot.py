@@ -5,13 +5,16 @@ from scipy import interpolate
 import math
 import csv
 from mpl_toolkits.basemap import Basemap
+import config
 
-data_file = "%s/sink/latest.tsv" % os.path.dirname(__file__)
+config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 
 #print data_file
 
 def get_key(column_name):
-    global data_file
+    
+    data_file = '%s/latest.tsv' % config.sink_dir
+
     rows = csv.reader(open(data_file, 'rb'), delimiter = "\t")
     for row in rows:
         for column in row:
@@ -21,9 +24,7 @@ def get_key(column_name):
 
 def run():
     
-    global data_file
-    
-    print data_file
+    data_file = '%s/latest.tsv' % config.sink_dir
     
     npdata = np.loadtxt(
         open(data_file, 'rb'),
