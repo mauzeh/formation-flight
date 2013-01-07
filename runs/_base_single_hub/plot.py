@@ -4,6 +4,7 @@ import numpy as np
 from scipy import interpolate
 import math
 import csv
+from lib.util import make_sure_path_exists
 from mpl_toolkits.basemap import Basemap
 import config
 
@@ -80,4 +81,11 @@ def run():
     x, y = m(x, y)
     m.contourf(x, y, z, 20)
     
-    plt.show()
+    #plt.show()
+    
+    fig_path = '%s/plot.pdf' % config.sink_dir
+    fig_path = fig_path.replace('/runs/', '/plots/')
+    fig_path = fig_path.replace('/sink/', '/')
+    make_sure_path_exists(os.path.dirname(fig_path))
+    plt.savefig(fig_path)
+    

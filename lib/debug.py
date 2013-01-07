@@ -61,7 +61,7 @@ def print_object(obj, headers = []):
     print_table(headers, lines)
 
 # Ugly, but really handy
-import sim
+#import sim
 
 def print_line(severity, message = None):
 

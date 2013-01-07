@@ -1,4 +1,21 @@
 from lib.debug import print_line as p
+import os, errno
+
+def force_symlink(source, target):
+    try:
+        os.symlink(source, target)
+    except OSError, e:
+        if e.errno != errno.EEXIST:
+            raise
+        os.remove(target)
+        os.symlink(source, target)
+
+def make_sure_path_exists(path):
+    try:
+        os.makedirs(path)
+    except OSError as exception:
+        if exception.errno != errno.EEXIST:
+            raise
 
 def list_chop(elements, n):
     """Divides list into n chunks. The last chunk may be smaller."""

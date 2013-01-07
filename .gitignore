@@ -11,3 +11,4 @@ data/output*
 data/profile*
 runs/*/*/sink/
 runs/*/sink/
+plots/
