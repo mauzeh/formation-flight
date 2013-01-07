@@ -9,4 +9,4 @@
 # Ignore output data
 data/output*
 data/profile*
-*/sink/*.tsv
+runs/*/sink/
