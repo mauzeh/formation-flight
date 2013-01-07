@@ -29,17 +29,19 @@ config.departure_distribution = {
     'upper_bound' : 10
 }
 
-sink.init(os.path.dirname(__file__))
+config.sink_path = os.path.dirname(__file__)
 
 def execute():
 
-    for i in xrange(0, 1):
+    sink.init(config.sink_path)
+
+    for i in xrange(0, 10):
 
         sim.init()
         aircraft_handlers.init()
         formation_handlers.init()
         statistics.init()
-        plot.init()
+        #plot.init()
         
         # Construct flight list
         planes = generators.get_via_stdin()

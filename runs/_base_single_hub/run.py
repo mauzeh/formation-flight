@@ -25,7 +25,6 @@ config.alpha      = .13
 config.etah_slack = 50
 config.lock_time  = 10
 config.phi_max    = 5
-config.count_hubs = 11
 config.Z          = .25
 config.departure_distribution = {
     'type'        : 'uniform',
@@ -34,30 +33,25 @@ config.departure_distribution = {
 }
 
 # Create custom set of hubs
-lats = np.mgrid[ 40: 70: 3j]
-lons = np.mgrid[-60: 25: 3j]
+lats = np.mgrid[ 40: 70: 2j]
+lons = np.mgrid[-60: 25: 2j]
 
-hubs = []
+config.hubs = []
 for lat in lats:
     for lon in lons:
-        hubs.append(Point(lat, lon))
+        config.hubs.append(Point(lat, lon))
 
-# Keep this here for debug purposes
-#hubs = [
-#    Point(60, -30), Point(60, -20), Point(60, -10), 
-#    Point(50, -30), Point(50, -20), Point(50, -10), 
-#    Point(40, -30), Point(40, -20), Point(40, -10), 
-#]
+config.sink_path = os.path.dirname(__file__)
 
 def execute():
     
-    sink.init(os.path.dirname(__file__))
+    sink.init(config.sink_path)
 
-    for hub in hubs:
+    for hub in config.hubs:
         
         print 'Progress: %d of %d iterations' % (
-            hubs.index(hub)+1,
-            len(hubs)
+            config.hubs.index(hub)+1,
+            len(config.hubs)
         )
 
         sim.init()
@@ -100,6 +94,3 @@ def execute():
 
         sink.push(d)
         debug.print_dictionary(d)
-
-        #debug.print_dictionary(statistics.vars)
-        #sink.push(statistics.vars)

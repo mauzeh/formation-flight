@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 """Plot Bootstrapper"""
 
-from runs.single_hub_3x3 import plot
+from runs._base_single_hub import run, plot
 
-plot.run()
+if __name__ == '__main__':
+    
+    plot.run()

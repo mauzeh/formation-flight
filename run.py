@@ -1,14 +1,18 @@
 #!/usr/bin/env python
 """Simulation Bootstrapper"""
 
-from runs.normal_biglock import run
+from runs._base_multiple_hub import run, plot
+    
+if __name__ == '__main__':
 
-# docs: http://docs.python.org/library/profile.html
-import cProfile, pstats
-profile_file = 'data/profile.txt'
-cProfile.run('run.execute()', profile_file)
-p = pstats.Stats(profile_file)
-p.strip_dirs()
-p.sort_stats('cumulative')
-p.sort_stats('time')
-#p.print_stats(30)
+    run.execute()
+    
+    ## docs: http://docs.python.org/library/profile.html
+    #import cProfile, pstats
+    #profile_file = 'data/profile.txt'
+    #cProfile.run('run.execute()', profile_file)
+    #p = pstats.Stats(profile_file)
+    #p.strip_dirs()
+    #p.sort_stats('cumulative')
+    #p.sort_stats('time')
+    ##p.print_stats(30)
