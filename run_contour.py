@@ -23,9 +23,6 @@ import numpy as np
 lats = np.mgrid[ 40: 70: 35j]
 lons = np.mgrid[-60: 25: 35j]
 
-lats = np.mgrid[ 40: 70: 3j]
-lons = np.mgrid[-60: 25: 3j]
-
 hubs = []
 for lat in lats:
     for lon in lons:

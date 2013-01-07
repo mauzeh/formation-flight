@@ -29,7 +29,6 @@ npdata = np.loadtxt(
 #column = 'formation_success_rate'
 #column = 'alpha_eff'
 #column = 'distance_success_rate'
-column = 'formation_success_rate'
 
 x = npdata[:, get_key('hub_lon')]
 y = npdata[:, get_key('hub_lat')]
@@ -41,13 +40,13 @@ minlon = np.min(x)
 maxlon = np.max(x)
 
 m = Basemap(
-    projection = 'merc',
+    projection = 'merc', resolution = 'l',
     llcrnrlat = minlat, urcrnrlat = maxlat,
     llcrnrlon = minlon, urcrnrlon = maxlon
 )
 
 # Reverse Y-axis (high lat = low y)
-y = y[::-1]
+#y = y[::-1]
 
 #x, y = np.meshgrid(x, y)
 
@@ -69,6 +68,6 @@ m.drawstates()
 m.drawcountries()
 
 x, y = m(x, y)
-m.contourf(x, y, z)
+m.contourf(x, y, z, 20)
 
 plt.show()

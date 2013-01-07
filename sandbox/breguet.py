@@ -2,8 +2,8 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 
-def get_range(V, C, L_D, Wi, Wf):
-    return (V / C) * L_D * math.log(float(Wi) / Wf)
+def get_range(V, C, L_D, W_1, W_2):
+    return (V / C) * L_D * math.log(float(W_1) / W_2)
 
 def get_weight_ratio(V, C, L_D, distance):
     return math.exp(distance * C / (V * L_D))
@@ -36,22 +36,22 @@ MTOW = 297550
 # http://www.airliners.net/aviation-forums/tech_ops/read.main/83781/
 DepartFuel = 10000 + 13000
 
-# How much fuel you are willing to burn during cruise (dkg)
+# How much fuel you are willing to burn during cruise (kg)
 CruiseFuel = MaxFuelCapacity - DepartFuel
 
 # Weight of aircraft at start of cruise (kg)
 # Have to deduct fuel burned to reach cruise
-Wi = MTOW - DepartFuel
+W_1 = MTOW - DepartFuel
 
 # Weight of aircraft at end of cruise (kg)
-Wf = Wi - CruiseFuel
+W_2 = W_1 - CruiseFuel
 
-fractions = [float(i)/100 for i in range(1, 100)]
-ranges = [get_range(V, C, L_D, 1, fraction) for fraction in fractions]
+if __name__ == '__main__':
 
-print 'Wi / Wf = %d / %d = %d' % (float(Wi), Wf, float(Wi)/Wf)
-
-print get_range(V, C, L_D, Wi, Wf)
-
-#plt.plot(fractions, ranges)
-#plt.show()
+    print 'W_1 / W_2 = %d / %d = %s' % (float(W_1), W_2, float(W_1)/W_2)
+    print get_range(V, C, L_D, W_1, W_2)
+    
+    #fractions = [float(i)/100 for i in range(1, 100)]
+    #ranges = [get_range(V, C, L_D, 1, fraction) for fraction in fractions]
+    #plt.plot(fractions, ranges)
+    #plt.show()
