@@ -16,12 +16,14 @@ from formation_flight import statistics
 import config
 import os
 
+import numpy as np
+
 # Overwrite default configuration values
 config.alpha      = .13
 config.etah_slack = 3
 config.lock_time  = 10
 config.phi_max    = 5
-config.count_hubs = 11
+config.count_hubs = 2
 config.Z          = .25
 config.departure_distribution = {
     'type'        : 'uniform',
@@ -35,8 +37,8 @@ def execute():
 
     sink.init(config.sink_dir)
 
-    for i in xrange(0, 10):
-
+    for i in np.arange(0, 1, 1):
+        
         sim.init()
         aircraft_handlers.init()
         formation_handlers.init()

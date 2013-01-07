@@ -6,12 +6,8 @@ import numpy as np
 
 from lib.geo.point import Point
 
-config.lock_time = 30
+config.lock_time = 60
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
-
-# Create custom set of hubs
-lats = np.mgrid[ 40: 70: 10j]
-lons = np.mgrid[-60: 25: 10j]
 
 config.hubs = []
 for lat in lats:

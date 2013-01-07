@@ -16,7 +16,7 @@ def project_segment(theta, c):
 
 def get_hookoff(alpha, trunk, cross, W_1, model):
     
-    Q_list     = np.arange(0, 1, .01)
+    Q_list     = np.arange(.86, .91, .0001)
     fuel_list  = []
 
     for Q in Q_list:
@@ -39,7 +39,7 @@ def get_hookoff(alpha, trunk, cross, W_1, model):
     return (Q_list, Q_opt, fuel_list, fuel_opt)
 
 def get_fuel_burned_during_cruise(distance, W_1, model):
-    
+
     V   = model['V']
     c_L = model['c_L']
     L_D = model['L_D']
@@ -47,16 +47,16 @@ def get_fuel_burned_during_cruise(distance, W_1, model):
     return W_1 * (1 - 1 / get_weight_ratio(V, c_L, L_D, distance))
 
 def run():
-    
+
     alpha              = .13 # Formation discount
     hub_to_destination = 1500 # distance in NM
     trunk_deviation    = 4 # degrees
     W_1                = 297550 - 14000 # B777 Maxweight at start of cruise
-    
+
     font = {'family' : 'sans-serif',
             'weight' : 'normal',
             'size'   : 12}
-    
+
     models = [{
         'name' : 'B772',
         'V'    : 500,
@@ -65,22 +65,27 @@ def run():
     },{
         'name' : 'A333',
         'V'    : 500,
-        'c_L'  : .4,
-        'L_D'  : 10
+        'c_L'  : .5,
+        'L_D'  : 17
+    },{
+        'name' : 'B763',
+        'V'    : 500,
+        'c_L'  : .48,
+        'L_D'  : 16
     }]
 
     matplotlib.rc('font', **font)
     matplotlib.rc('mathtext', default='sf')
-    
+
     # Split the segment hub-destination up into a trunk segment and a
     # cross segment
     (trunk, cross) = project_segment(trunk_deviation, hub_to_destination)
-    
+
     for model in models:
     
         x = []
         y = []
-        for alpha in np.arange(0, 1, .005):
+        for alpha in np.arange(0.10, .16, .005):
             
             (Q_list, Q_opt, fuel_list, fuel_opt) =\
             get_hookoff(alpha, trunk, cross, W_1, model)
@@ -96,17 +101,3 @@ def run():
             r'$Q_{opt}$ against $\alpha$ using Breguet Fuel Estimation'
         )
     plt.show()
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    

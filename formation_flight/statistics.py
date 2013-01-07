@@ -31,11 +31,9 @@ def handle_depart(event):
     
     # If a hub was planned
     hub = aircraft.route.waypoints[0]
-    #assert hub.is_hub
     if True:
         if hub not in hubs:
             hubs.append(hub)
-            vars['formation_count_%s' % hub] = 0
 
 def handle_alive(event):
     global vars
@@ -183,5 +181,13 @@ def handle_finish(event):
             vars['distance_penalty']
         vars['hub_delay_avg'] = vars['hub_delay_sum'] /\
             vars['formation_aircraft_count']
+        vars['fuel_saved'] = 0
+    
+    vars['config_alpha']      = config.alpha
+    vars['config_etah_slack'] = config.etah_slack
+    vars['config_lock_time']  = config.lock_time
+    vars['config_phi_max']    = config.phi_max
+    vars['config_count_hubs'] = config.count_hubs
+    vars['config_Z']          = config.Z
 
     #debug.print_dictionary(vars)
