@@ -13,6 +13,7 @@ from lib.debug import print_line as p
 from formation_flight import statistics
 
 import config
+import os
 
 from lib.geo.point import Point
 from lib.geo.waypoint import Waypoint
@@ -20,8 +21,8 @@ from lib.geo.waypoint import Waypoint
 import numpy as np
 
 # Create custom set of hubs
-lats = np.mgrid[ 40: 70: 35j]
-lons = np.mgrid[-60: 25: 35j]
+lats = np.mgrid[ 40: 70: 2j]
+lons = np.mgrid[-60: 25: 2j]
 
 hubs = []
 for lat in lats:
@@ -35,9 +36,9 @@ for lat in lats:
 #    Point(40, -30), Point(40, -20), Point(40, -10), 
 #]
 
-def run():
+def execute():
     
-    sink.init('data/sink.tsv')
+    sink.init(os.path.dirname(__file__))
 
     for hub in hubs:
         
@@ -84,12 +85,8 @@ def run():
             'distance_success_rate'  : float(statistics.vars['distance_success_rate']),
         }
 
-        print d.keys()
-
         sink.push(d)
         debug.print_dictionary(d)
 
         #debug.print_dictionary(statistics.vars)
         #sink.push(statistics.vars)
-
-run()

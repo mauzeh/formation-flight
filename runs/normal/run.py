@@ -14,10 +14,13 @@ from lib.debug import print_line as p
 from formation_flight import statistics
 
 import config
+import os
 
 #visualization.init()
 
-def run():
+def execute():
+    
+    sink.init(os.path.dirname(__file__))
 
     for i in xrange(0, 1):
 
@@ -39,15 +42,7 @@ def run():
             sim.events.append(sim.Event('aircraft-init', flight, 0))
         
         sim.run()
-        
+
+        sink.push(statistics.vars)
         debug.print_dictionary(statistics.vars)
 
-# docs: http://docs.python.org/library/profile.html
-import cProfile, pstats
-profile_file = 'data/profile.txt'
-cProfile.run('run()', profile_file)
-p = pstats.Stats(profile_file)
-p.strip_dirs()
-p.sort_stats('cumulative')
-p.sort_stats('time')
-#p.print_stats(30)
