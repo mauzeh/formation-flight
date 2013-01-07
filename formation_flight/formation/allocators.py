@@ -74,6 +74,7 @@ class FormationAllocatorEtah(FormationAllocator):
             # Quick and dirty: recalc position. Instead, pull eta from var.
             candidate.controller.update_position()
             hub_eta = sim.time + candidate.time_to_waypoint()
+
             p('Time = %s, Hub (= %s) eta %s for candidate %s' %\
               (sim.time, hub, hub_eta, candidate))
             intervals.append(Interval(

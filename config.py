@@ -1,7 +1,7 @@
 # Are we in debug mode? Then we are printing a lot of status messages.
 from lib import debug
 debug.print_severities = [
-#    'debug',
+    #'debug',
     'critical'
 ]
 
@@ -9,14 +9,11 @@ debug.print_severities = [
 events_printed = [
     #'aircraft-init',
     #'aircraft-depart',
-#    'aircraft-at-waypoint',
+    #'aircraft-at-waypoint',
     #'enter-lock-area',
     #'formation-alive',
     #'aircraft-arrive',
 ]
-
-# The slack ramp (in time units per distance unit away from the hub)
-psi = .132
 
 # Discount factor (@todo rename to beta as in research paper)
 alpha = .13
@@ -41,9 +38,6 @@ restrictions = [
     #'same-airline',
     #'same-aircraft-type'
 ]
-
-# How large is a formation allowed to be
-S_max = 100
 
 # Generate hubs
 # Visualization:

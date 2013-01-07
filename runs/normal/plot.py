@@ -31,7 +31,7 @@ def handle_arrive(event):
     #    'SAN'
     #]:
     #    return
-    
+
     if hasattr(aircraft, 'formation'):
         segments['formation'].append(Segment(aircraft.origin, aircraft.hub))
         segments['formation'].append(Segment(aircraft.hub, aircraft.hookoff_point))

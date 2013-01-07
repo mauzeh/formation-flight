@@ -10,13 +10,24 @@ from formation_flight.hub import allocators
 from lib import sim, debug, sink
 from lib.debug import print_line as p
 
-#from formation_flight import visualization
+import plot
 from formation_flight import statistics
 
 import config
 import os
 
-#visualization.init()
+# Overwrite default configuration values
+config.alpha      = .13
+config.etah_slack = 3
+config.lock_time  = 10
+config.phi_max    = 5
+config.count_hubs = 11
+config.Z          = .25
+config.departure_distribution = {
+    'type'        : 'uniform',
+    'lower_bound' : -10,
+    'upper_bound' : 10
+}
 
 def execute():
     
@@ -28,6 +39,7 @@ def execute():
         aircraft_handlers.init()
         formation_handlers.init()
         statistics.init()
+        plot.init()
         
         # Construct flight list
         planes = generators.get_via_stdin()
@@ -45,4 +57,3 @@ def execute():
 
         sink.push(statistics.vars)
         debug.print_dictionary(statistics.vars)
-
