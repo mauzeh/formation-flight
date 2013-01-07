@@ -29,9 +29,9 @@ config.departure_distribution = {
     'upper_bound' : 10
 }
 
+sink.init(os.path.dirname(__file__))
+
 def execute():
-    
-    sink.init(os.path.dirname(__file__))
 
     for i in xrange(0, 1):
 

@@ -1,2 +1,0 @@
-cat data/flights.tsv | egrep '(SFO|LAX|SEA|SAN|PDX|YVR)'| ./thesis.py
-cat data/flights.tsv | egrep '(JFK|EWR|BOS|PHL|ATL|IAD|YMQ)'| ./thesis.py

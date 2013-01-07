@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Simulation Bootstrapper"""
 
-from runs.normal import run
+from runs.normal_biglock import run
 
 # docs: http://docs.python.org/library/profile.html
 import cProfile, pstats
