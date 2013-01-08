@@ -2,30 +2,19 @@
 alpha = .13
 
 # How much the arrival at the virtual hub can be delayed/expedited (mins)
-etah_slack = 5
+etah_slack = 7
 
 # How long before hub arrival can we allocate into formations? (mins)
-lock_time = 10
+lock_time = 50
 
 # The maximum difference in heading upon hub departure (in degrees)
-phi_max = 5
+phi_max = 15
 
-count_hubs = 2
-Z = .25
+count_hubs = 5
+Z = .2
 
-# Departure time distribution
-departure_distribution = {
-    'type'        : 'uniform',
-    'lower_bound' : -10,
-    'upper_bound' : 10
-}
-
-# Are we in debug mode? Then we are printing a lot of status messages.
-from lib import debug
-debug.print_severities = [
-    #'debug',
-    'critical'
-]
+# Departure time distribution bound (becomes param for uniform(-,+))
+dt = 10
 
 # Restrictions on formations. Options: 
 #   'same-airline',
@@ -44,4 +33,11 @@ events_printed = [
     #'enter-lock-area',
     #'formation-alive',
     #'aircraft-arrive',
+]
+
+# Are we in debug mode? Then we are printing a lot of status messages.
+from lib import debug
+debug.print_severities = [
+    #'debug',
+    'critical'
 ]

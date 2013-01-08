@@ -16,6 +16,7 @@ synchronizer = FormationSynchronizer()
 def init():
     sim.dispatcher.register('aircraft-depart', handle_departure)
     sim.dispatcher.register('enter-lock-area', handle_lock)
+    sim.dispatcher.register('aircraft-at-waypoint', handle_waypoint)
     sim.dispatcher.register('formation-alive', handle_alive)
 
 def handle_departure(event):
@@ -35,22 +36,29 @@ def handle_departure(event):
         sim.time + max(aircraft.time_to_waypoint() - config.lock_time, 0)
     ))
 
+def handle_waypoint(event):
+    # Aircraft is no longer a candidate when it arrives at any waypoint
+    # @todo Only remove from queue if at hub. But it's unlikely that aircraft
+    # reach another waypoint before the hub so this is fine for now.
+    p('Aircraft %s at waypoint, no longer formation candidate' % event.sender)
+    allocator.remove_aircraft(event.sender)
+
 def handle_lock(event):
     """Upon lock, find a formation (if exists) for current aircraft."""
 
-    aircraft  = event.sender
+    aircraft = event.sender
     global allocator
     
     # Find the formation having self.
     formation = allocator.find_formation(aircraft)
 
-    # Never try to allocate again, even if no formation was found
-    allocator.remove_aircraft(aircraft)
-
     # If no formation is possible
     if formation is None or not len(formation) > 1:
         p('No formation was possible: %s' % formation)
         return
+
+    # If a formation was found, aircraft is no longer a candidate
+    allocator.remove_aircraft(aircraft)
 
     # Register which hub this formation belongs to
     formation.hub = formation[0].hub

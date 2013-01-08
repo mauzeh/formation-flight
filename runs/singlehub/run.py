@@ -20,17 +20,6 @@ from lib.geo.waypoint import Waypoint
 
 import numpy as np
 
-# Overwrite default configuration values
-config.alpha      = .13
-config.etah_slack = 5
-config.lock_time  = 10
-config.phi_max    = 5
-config.departure_distribution = {
-    'type'        : 'uniform',
-    'lower_bound' : -10,
-    'upper_bound' : 10
-}
-
 # Create custom set of hubs
 lats = np.mgrid[ 40: 70: 35j]
 lons = np.mgrid[-60: 25: 35j]

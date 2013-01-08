@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import interpolate
 import math
-import csv
 from lib.util import make_sure_path_exists
+from lib.util import tsv_get_column_index
 from mpl_toolkits.basemap import Basemap
 import config
 
@@ -50,17 +50,6 @@ config.plots = [
 
 #print data_file
 
-def get_key(column_name):
-    
-    data_file = '%s/latest.tsv' % config.sink_dir
-
-    rows = csv.reader(open(data_file, 'rb'), delimiter = "\t")
-    for row in rows:
-        for column in row:
-            if column_name == column:
-                return row.index(column)
-        break
-
 def run():
     
     data_file = '%s/latest.tsv' % config.sink_dir
@@ -81,9 +70,11 @@ def do_plot(plotconf, data):
     column = plotconf['column']
     print 'Drawing plot for %s' % column
     
-    x = data[:, get_key('hub_lon')]
-    y = data[:, get_key('hub_lat')]
-    z = data[:, get_key(column)]
+    data_file = '%s/latest.tsv' % config.sink_dir
+    
+    x = data[:, tsv_get_column_index(data_file, 'hub_lon')]
+    y = data[:, tsv_get_column_index(data_file, 'hub_lat')]
+    z = data[:, tsv_get_column_index(data_file, column)]
     
     minlat = np.min(y)
     maxlat = np.max(y)

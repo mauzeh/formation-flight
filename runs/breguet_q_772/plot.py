@@ -4,48 +4,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.interpolate import spline
 
-def get_range(V, C, L_D, W_1, W_2):
-    return (V / C) * L_D * math.log(float(W_1) / W_2)
-
-def get_weight_ratio(V, C, L_D, distance):
-    return math.exp(distance * C / (V * L_D))
-
-def project_segment(theta, c):
-    theta = math.radians(theta)
-    return c * math.cos(theta), c * math.sin(theta)
-
-def get_hookoff(alpha, trunk, cross, W_1):
-    
-    Q_list     = np.arange(0, 1, .01)
-    fuel_list  = []
-
-    for Q in Q_list:
-    
-        # The distance from the hub to the hookoff point
-        a = Q * trunk
-        
-        # The distance from the hookoff point to the destination
-        b = math.sqrt((trunk-a)**2 + cross**2)
-        
-        formation_fuel = (1 - alpha) * get_fuel_burned_during_cruise(a, W_1)
-        solo_fuel      = get_fuel_burned_during_cruise(b, W_1 - formation_fuel)
-        fuel           = formation_fuel + solo_fuel
-        
-        fuel_list.append(fuel)
-    
-    fuel_opt = min(fuel_list)
-    Q_opt = Q_list[fuel_list.index(fuel_opt)]
-    
-    return (Q_list, Q_opt, fuel_list, fuel_opt)
-
-def get_fuel_burned_during_cruise(distance, W_1):
-    
-    # B777
-    V   = 490
-    c_L = .6
-    L_D = 19.26
-    
-    return W_1 * (1 - 1 / get_weight_ratio(V, c_L, L_D, distance))
+from lib.geo.util import get_range
+from lib.geo.util import get_weight_ratio
+from lib.geo.util import project_segment
+from lib.geo.util import get_hookoff
 
 def run():
     
@@ -58,6 +20,14 @@ def run():
             'weight' : 'normal',
             'size'   : 12}
     
+    model = {
+        'name' : 'B772',
+        'W_1'  : W_1,
+        'V'    : 500,
+        'c_L'  : .6,
+        'L_D'  : 19.26
+    }
+    
     matplotlib.rc('font', **font)
     matplotlib.rc('mathtext', default='sf')
     
@@ -68,7 +38,7 @@ def run():
     for alpha in np.arange(.04, .20, .02):
 
         (Q_list, Q_opt, fuel_list, fuel_opt) =\
-            get_hookoff(alpha, trunk, cross, W_1)
+            get_hookoff(alpha, trunk, cross, model)
 
         plt.plot(Q_list, fuel_list, label = r'$\alpha=%s$' % alpha)
         plt.plot(Q_opt, fuel_opt, 'sb')

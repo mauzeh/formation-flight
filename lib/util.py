@@ -1,5 +1,15 @@
 from lib.debug import print_line as p
 import os, errno
+import csv
+
+def tsv_get_column_index(data_file, column_name):
+
+    rows = csv.reader(open(data_file, 'rb'), delimiter = "\t")
+    for row in rows:
+        for column in row:
+            if column_name == column:
+                return row.index(column)
+        break
 
 def force_symlink(source, target):
     try:

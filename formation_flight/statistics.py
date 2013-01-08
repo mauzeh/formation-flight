@@ -2,6 +2,7 @@ import config
 from lib.geo.segment import Segment
 from lib import sim, debug
 from lib.debug import print_line as p
+from lib.geo.util import get_fuel_burned_during_cruise
 
 vars = {}
 hubs = []
@@ -68,10 +69,10 @@ def handle_alive(event):
             vars['Q_sum'] = 0
         vars['Q_sum']   = vars['Q_sum'] + aircraft.Q
 
-    hub_key = 'formation_count_%s' % formation.hub
-    if hub_key not in vars:
-        vars[hub_key] = 0
-    vars[hub_key] += 1
+    #hub_key = 'formation_count_%s' % formation.hub
+    #if hub_key not in vars:
+    #    vars[hub_key] = 0
+    #vars[hub_key] += 1
     
 def handle_arrive(event):
     global vars, hubs
@@ -87,10 +88,10 @@ def handle_arrive(event):
         aircraft, hub
     ))
     assert hub in hubs
-    key = 'flight_count_%s' % hub
-    if key not in vars:
-        vars[key] = 0
-    vars[key] = vars[key] + 1
+    #key = 'flight_count_%s' % hub
+    #if key not in vars:
+    #    vars[key] = 0
+    #vars[key] = vars[key] + 1
 
     if 'distance_formation' not in vars:
         vars['distance_formation'] = 0
@@ -98,6 +99,10 @@ def handle_arrive(event):
         vars['distance_solo'] = 0
     if 'distance_direct' not in vars:
         vars['distance_direct'] = 0
+    if 'fuel_actual' not in vars:
+        vars['fuel_actual'] = 0
+    if 'fuel_direct' not in vars:
+        vars['fuel_direct'] = 0
 
     # Aircraft always fly solo to the hub
     segment = Segment(aircraft.origin, hub)
@@ -135,6 +140,15 @@ def handle_arrive(event):
             vars['hub_delay_sum'] = vars['hub_delay_sum'] +\
                 aircraft.hub_delay
 
+        # @todo first aircraft has no discount
+        discount = 1 - config.alpha
+        vars['fuel_actual'] = vars['fuel_actual'] +\
+            get_fuel_burned_during_cruise(
+                origin_to_hub +\
+                discount * hub_to_hookoff +\
+                hookoff_to_destination
+            )
+
     # If fully solo
     else:
         
@@ -146,6 +160,11 @@ def handle_arrive(event):
         ))
         vars['distance_solo'] += hub_to_destination
         
+        vars['fuel_actual'] = vars['fuel_actual'] +\
+            get_fuel_burned_during_cruise(
+                origin_to_hub + hub_to_destination
+            )
+        
     # Also calculate the direct distance
     segment = Segment(aircraft.origin, aircraft.destination)
     direct = segment.get_length()
@@ -154,6 +173,10 @@ def handle_arrive(event):
         direct
     ))
     vars['distance_direct'] = vars['distance_direct'] + direct
+    vars['fuel_direct'] = vars['fuel_direct'] +\
+        get_fuel_burned_during_cruise(
+            direct
+        )
 
 def handle_finish(event):
 
@@ -181,13 +204,24 @@ def handle_finish(event):
             vars['distance_penalty']
         vars['hub_delay_avg'] = vars['hub_delay_sum'] /\
             vars['formation_aircraft_count']
-        vars['fuel_saved'] = 0
-    
+        
+        # estimate hub delay fuel
+        fuel_per_minute = 150
+        
+        vars['fuel_delay'] = vars['hub_delay_avg'] * 152 * (
+            vars['formation_aircraft_count'] - vars['formation_count']
+        )
+        vars['fuel_saved'] = 1 -\
+            (vars['fuel_actual'] + vars['fuel_delay']) / vars['fuel_direct']
+        vars['fuel_saved_disregard_delay'] = 1 -\
+            (vars['fuel_actual']) / vars['fuel_direct']
+
     vars['config_alpha']      = config.alpha
     vars['config_etah_slack'] = config.etah_slack
     vars['config_lock_time']  = config.lock_time
     vars['config_phi_max']    = config.phi_max
     vars['config_count_hubs'] = config.count_hubs
     vars['config_Z']          = config.Z
+    vars['config_dt']         = config.dt
 
     #debug.print_dictionary(vars)

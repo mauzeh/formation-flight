@@ -20,7 +20,8 @@ def init(directory):
     
     print "Sinking to %s" % path
 
-    global writer
+    global writer, print_header
+    print_header = True
     make_sure_path_exists(os.path.dirname(path))
     writer = csv.writer(open(path, 'w'), delimiter = '\t')
     

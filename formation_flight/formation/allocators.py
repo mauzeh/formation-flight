@@ -29,7 +29,10 @@ class FormationAllocator(object):
         self.aircraft_queue.append(aircraft)
 
     def remove_aircraft(self, aircraft):
-        self.aircraft_queue.remove(aircraft)
+        try:
+            self.aircraft_queue.remove(aircraft)
+        except ValueError:
+            p('Could not remove %s from queue because not present' % aircraft)
 
 class FormationAllocatorEtah(FormationAllocator):
     """Uses interval overlapping to group aircraft into formations"""
@@ -73,14 +76,22 @@ class FormationAllocatorEtah(FormationAllocator):
 
             # Quick and dirty: recalc position. Instead, pull eta from var.
             candidate.controller.update_position()
-            hub_eta = sim.time + candidate.time_to_waypoint()
+            tth = candidate.time_to_waypoint() # time to hub
+            hub_eta = sim.time + tth
+            
+            # From the moment the aircraft enters the lock area, the slack
+            # decreases linearly to zero upon hub arrival.
+            if tth < config.lock_time:
+                slack = tth * config.etah_slack / config.lock_time
+            else:
+                slack = config.etah_slack
 
             p('Time = %s, Hub (= %s) eta %s for candidate %s' %\
               (sim.time, hub, hub_eta, candidate))
             intervals.append(Interval(
                 candidate,
-                int(hub_eta) - config.etah_slack,
-                int(hub_eta) + config.etah_slack
+                int(hub_eta) - slack,
+                int(hub_eta) + slack
             ))
             
         for interval_group in group(intervals):

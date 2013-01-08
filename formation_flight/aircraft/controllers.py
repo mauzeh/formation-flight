@@ -85,6 +85,11 @@ class AircraftController(object):
         p('Event list after delayal: %s' % self.aircraft.events)
     
     def schedule_departure(self):
+        p('Scheduling departure of %s at %s. Waypoint: %s' % (
+            self.aircraft,
+            self.aircraft.departure_time,
+            self.aircraft.route.waypoints[0]
+        ))
         self.add_event(sim.Event(
             'aircraft-depart',
             self.aircraft,
@@ -97,7 +102,7 @@ class AircraftController(object):
             self.aircraft.route.waypoints[0],
             self.aircraft.waypoint_eta,
             self.aircraft
-            ))
+        ))
         self.add_event(sim.Event(
             'aircraft-at-waypoint',
             self.aircraft,
