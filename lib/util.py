@@ -27,6 +27,9 @@ def make_sure_path_exists(path):
         if exception.errno != errno.EEXIST:
             raise
 
+def round_float(number, base = 30):
+    return int(base * round(float(number) / base))
+
 def list_chop(elements, n):
     """Divides list into n chunks. The last chunk may be smaller."""
     

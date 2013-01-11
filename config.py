@@ -45,6 +45,7 @@ events_printed = [
 # Are we in debug mode? Then we are printing a lot of status messages.
 from lib import debug
 debug.print_severities = [
-    #'debug',
-    'critical'
+#    'debug',
+    'critical',
+    'new'
 ]

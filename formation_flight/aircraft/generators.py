@@ -14,8 +14,8 @@ def get_manual():
     return [
         Aircraft('FLT001', Route([Waypoint('FRA'), Waypoint('JFK')]), 12),
         Aircraft('FLT002', Route([Waypoint('FRA'), Waypoint('SFO')]), 12),
-        #Aircraft('FLT003', Route([Waypoint('CPH'), Waypoint('SFO')]), 57),
-        #Aircraft('FLT004', Route([Waypoint('AMS'), Waypoint('LAX')]), 59),
+        Aircraft('FLT003', Route([Waypoint('CPH'), Waypoint('SFO')]), 57),
+        Aircraft('FLT004', Route([Waypoint('AMS'), Waypoint('LAX')]), 59),
     ]
 
 # Keep track of what was passed via stdin for a potential re-init
