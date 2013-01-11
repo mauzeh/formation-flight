@@ -223,5 +223,6 @@ def handle_finish(event):
     vars['config_count_hubs'] = config.count_hubs
     vars['config_Z']          = config.Z
     vars['config_dt']         = config.dt
+    vars['config_min_P']      = config.min_P
 
     #debug.print_dictionary(vars)

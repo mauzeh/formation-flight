@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Simulation Bootstrapper"""
 
-from runs.multihub.n_dt import run
+from runs.singlehub.benchmark import run
 run.execute()
 
 #from runs.multihub.L_s_2hubs  import run

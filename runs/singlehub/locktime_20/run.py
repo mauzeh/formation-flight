@@ -6,7 +6,7 @@ import numpy as np
 
 from lib.geo.point import Point
 
-config.lock_time = 60
+config.lock_time = 20
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 
 def execute():

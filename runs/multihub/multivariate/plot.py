@@ -34,6 +34,9 @@ config.interesting_z_axes = [{
 },{
     'name' : 'Fuel Saved (Without Delay Costs)',
     'column' : 'fuel_saved_disregard_delay'
+},{
+    'name' : 'Fuel Delay',
+    'column' : 'fuel_delay'
 }]
 
 def run():

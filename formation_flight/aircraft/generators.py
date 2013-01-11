@@ -6,6 +6,8 @@ from formation_flight.aircraft.models import Aircraft
 from lib.geo.route import Route
 from lib.geo.waypoint import Waypoint
 
+from lib.debug import print_line as p
+
 def get_manual():
 
     # Override auto-planes, useful when reproducing a bug...
@@ -35,6 +37,23 @@ def get_via_stdin():
         label          = row[1]
         waypoints      = row[2].split('-')
         aircraft_type  = row[3]
+
+        # If a flight has been calibrated, the formation probability will be
+        # given. Otherwise it will be set to None.
+        try:
+            probability = float(row[4])
+            # Disregard row if config tells us to
+            if probability < config.min_P:
+                p('Probability of row does not match criterium %s, row %s' % (
+                    config.min_P,
+                    row
+                ))
+                continue
+        except IndexError:
+            probability = None
+            
+        # Keep track of scheduled departure time for later retrieval
+        departure_time_scheduled = departure_time
         
         # Departure times are randomly distributed
         # In some rare cases (only for early aircraft) the departure time might
@@ -50,6 +69,12 @@ def get_via_stdin():
             ]),
             departure_time = departure_time,
             aircraft_type = aircraft_type)
+
+        aircraft.departure_time_scheduled = departure_time_scheduled
+        
+        # If a flight has been calibrated, the formation probability will be
+        # given. Otherwise it will be set to None.
+        aircraft.probability = probability
 
         ## Find a random hub
         #hub = random.choice(config.hubs),

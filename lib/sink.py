@@ -30,6 +30,11 @@ def init(directory):
         path,
         '%s/latest.tsv' % os.path.dirname(path)
     )
+    
+def dump_rows(the_list):
+    global writer
+    for row in the_list:
+        writer.writerow(row)
 
 def push(dictionary):
     global print_header, writer
