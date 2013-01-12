@@ -19,8 +19,8 @@ Z = .14
 # Departure time distribution bound (becomes param for uniform(-,+))
 dt = 10
 
-# If flight list was calibrated, set a selection criterium for the formation
-# probability here
+# If flight list was calibrated, use this value as the selection criterium for
+# the minimum formation required probability
 min_P = .5
 
 # Restrictions on formations. Options: 

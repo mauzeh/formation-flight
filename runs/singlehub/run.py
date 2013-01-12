@@ -80,6 +80,7 @@ def execute():
             'formation_success_rate' : float(statistics.vars['formation_success_rate']),
             'alpha_eff'              : float(statistics.vars['alpha_effective']),
             'distance_success_rate'  : float(statistics.vars['distance_success_rate']),
+            'avg_formation_size'     : float(statistics.vars['avg_formation_size']),
             'fuel_saved'             : float(statistics.vars['fuel_saved']),
             'distance_penalty'       : float(statistics.vars['distance_penalty']),
         }

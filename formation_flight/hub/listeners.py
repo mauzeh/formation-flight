@@ -6,6 +6,7 @@ from lib.debug import print_dictionary
 from lib.util import round_float
 
 import numpy as np
+import math
 
 vars = {}
 interval_length = 30
@@ -39,15 +40,68 @@ def handle_at_waypoint(event):
         vars[index] += 1
 
 def handle_finish(event):
+    plot_flow_rate(vars)
 
-#    print_dictionary(vars)
+def plot_flow_rate(data):
 
-    x = []
-    y = []
+    timestamps = []
+    values     = []
+    
+    for key in sorted(data.iterkeys()):
+        timestamps.append(key)
+        values.append(data[key])
+    
+    # For testing/debugging
+    #timestamps = np.arange(0, 1440, 60)
+    #values = np.linspace(0, 35, len(timestamps))
 
-    for key in sorted(vars.iterkeys()):
-        x.append(key)
-        y.append(vars[key])
+    time_labels = []
 
-    plt.plot(x, y)
+    for timestamp in timestamps:
+    
+        # Normalize time to be reset after midnight (if > 1440, then subtract 1440)
+        timestamp = timestamp % 1440
+        hours     = math.floor(timestamp / 60)
+        minutes   = math.floor(timestamp - hours * 60)
+        
+        time_labels.append('%02d:%02d' % (hours, minutes))
+
+    #plt.rc(('xtick.major', 'ytick.major'), pad = 10)
+    
+    plt.bar(
+        timestamps,
+        values,
+        width = interval_length - 5,
+        linewidth = 0,
+        color = '#999999'
+    )
+    
+    plt.title(r'Traffic Density at hub $(H=1)$')
+    plt.xlabel(r'Time of day (UTC)')#, labelpad = 20)
+    plt.ylabel(r'Number of flights')#, labelpad = 20)
+    
+    plt.xlim(0, 1440)
+    plt.ylim(0, 45)
+    
+    plt.xticks(
+        [0,
+         180,
+         360,
+         540,
+         720,
+         900,
+         1080,
+         1260,
+         1440],
+        ['00:00',
+         '03:00',
+         '06:00',
+         '09:00',
+         '12:00',
+         '15:00',
+         '18:00',
+         '21:00',
+         '00:00']
+    )
+    
     plt.show()
