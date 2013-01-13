@@ -20,5 +20,8 @@ def run():
     x = data[:, tsv_get_column_index(data_file, 'config_min_P')]
     y = data[:, tsv_get_column_index(data_file, 'fuel_saved')]
     
+    plt.xlabel(r'Minimum Formation Probability $P_{min}$')
+    plt.ylabel(r'Fuel Saved $S_f$')
+    
     plt.plot(x, y)
     plt.show()
