@@ -3,6 +3,9 @@ from lib.geo.segment import Segment
 from lib import sim, debug
 from lib.debug import print_line as p
 from lib.geo.util import get_fuel_burned_during_cruise
+from lib.geo.util import formationburn
+
+import copy
 
 vars = {}
 hubs = []
@@ -83,6 +86,7 @@ def handle_alive(event):
     #vars[hub_key] += 1
     
 def handle_arrive(event):
+    
     global vars, hubs
 
     aircraft = event.sender
@@ -109,9 +113,12 @@ def handle_arrive(event):
         origin_to_hub
     ))
     vars['distance_solo'] += origin_to_hub
+    
+    # Temporarily use one model for everything
+    model = copy.deepcopy(config.model)
 
-    # If in formation and not a leader
-    if hasattr(aircraft, 'formation') and aircraft.incurs_benefits:
+    # If in formation
+    if hasattr(aircraft, 'formation'):
         
         segment = Segment(hub, aircraft.hookoff_point)
         hub_to_hookoff = segment.get_length()
@@ -135,21 +142,32 @@ def handle_arrive(event):
         if hasattr(aircraft, 'hub_delay'):
             vars['hub_delay_sum'] = vars['hub_delay_sum'] +\
                 aircraft.hub_delay
+            
+        if aircraft.incurs_benefits:
+            discount = config.alpha
+        else:
+            discount = 0
 
-        discount = 1 - config.alpha
-        vars['fuel_actual'] = vars['fuel_actual'] +\
-            get_fuel_burned_during_cruise(
-                origin_to_hub +\
-                discount * hub_to_hookoff +\
-                hookoff_to_destination
-            )
-        p('validate', '%s has discount' % (aircraft))
+        p('validate', 'Discount = %s for %s' % (discount, aircraft))
+        
+        fuel_formation = formationburn(
+            int(origin_to_hub),
+            int(hub_to_hookoff),
+            int(hookoff_to_destination),
+            model = model,
+            discount = discount
+        )
+        
+        p('validate', 'Fuel burn formation = %d for %s' % (
+            fuel_formation, aircraft
+        ))
 
+        vars['fuel_actual'] += fuel_formation
     # If fully solo
     else:
-        
-        p('validate', '%s has no discount' % (aircraft))
-        
+
+        p('validate', 'Discount = false for %s' % (aircraft))
+
         segment = Segment(hub, aircraft.destination)
         hub_to_destination = segment.get_length()
         p('Distance hub_to_destination for %s is %dNM' % (
@@ -158,30 +176,40 @@ def handle_arrive(event):
         ))
         vars['distance_solo'] += hub_to_destination
         
-        vars['fuel_actual'] = vars['fuel_actual'] +\
-            get_fuel_burned_during_cruise(
-                origin_to_hub + hub_to_destination
-            )
-        
+        fuel_solo = get_fuel_burned_during_cruise(
+            origin_to_hub + hub_to_destination,
+            model = model,
+        )
+
+        p('validate', 'Fuel burn solo = %d for %s' % (
+            fuel_solo, aircraft
+        ))
+
+        vars['fuel_actual'] += fuel_solo
+
     # Also calculate the direct distance
     segment = Segment(aircraft.origin, aircraft.destination)
     direct = segment.get_length()
-    p('Distance direct for %s is %dNM' % (
-        aircraft,
-        direct
+    #direct = 3193 #temp overwrite for validation
+    p('validate', 'Distance direct for %s is %dNM' % (
+        aircraft, direct
     ))
-    vars['distance_direct'] = vars['distance_direct'] + direct
+    p('validate', 'Getting the benchmark fuel')
+    vars['distance_direct'] += direct
     vars['fuel_direct'] = vars['fuel_direct'] +\
-        get_fuel_burned_during_cruise(direct)
+        get_fuel_burned_during_cruise(direct, model)
+    p('validate', 'OK, we have the benchmark fuel now')
 
 def handle_finish(event):
 
     global vars
 
     vars['sim_finish'] = int(event.time)
-    if 'Q_sum' in vars:
-        vars['Q_avg'] = vars['Q_sum'] / vars['formation_aircraft_count']
-    if 'formation_aircraft_count' in vars:
+
+    if vars['formation_aircraft_count'] > 0.:
+        if 'Q_sum' in vars:
+            vars['Q_avg'] = float(vars['Q_sum']) /\
+                vars['formation_aircraft_count']
         vars['formation_success_rate'] = \
             vars['formation_aircraft_count'] /\
             float(vars['aircraft_count'])
@@ -200,10 +228,10 @@ def handle_finish(event):
             vars['distance_penalty']
         vars['hub_delay_avg'] = vars['hub_delay_sum'] /\
             vars['formation_aircraft_count']
-        
+
         # estimate hub delay fuel
         fuel_per_minute = 150
-        
+
         vars['fuel_delay'] = vars['hub_delay_avg'] * fuel_per_minute * (
             vars['formation_aircraft_count'] - vars['formation_count']
         )

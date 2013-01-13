@@ -16,12 +16,12 @@ from formation_flight import calibrate
 import config, os, copy
 
 config.alpha      = .13
-config.etah_slack = 0
+config.etah_slack = 1
 config.lock_time  = 60
-config.phi_max    = 1
-config.count_hubs = 10
+config.phi_max    = 2
+config.count_hubs = 1
 config.Z          = .2
-config.dt         = 1
+config.dt         = 10
 
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 
@@ -32,10 +32,13 @@ def execute():
     # Construct flight list (for aircraft lookup)
     planes = generators.get_via_stdin()
     
-    for i in xrange(0, 25):
+    runs = 25
+    
+    for i in xrange(1, runs + 1):
         # Construct flight list once more for the sim runs
         single_run(generators.get_via_stdin())
-        print calibrate.vars
+        print 'Completed run %d of %d...' % (i, runs)
+        #print calibrate.vars
 
     rows = []
     for label, value in calibrate.vars.items():

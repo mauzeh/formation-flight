@@ -6,6 +6,8 @@ from lib.debug import print_line as p
 from models import Formation
 import config
 
+from lib.geo.segment import Segment
+
 class FormationAllocator(object):
     """Abstract Allocator. Creates one giant formation."""
     
@@ -39,6 +41,8 @@ class FormationAllocatorEtah(FormationAllocator):
     
     def allocate(self, aircraft):
         
+        p('debug', 'Starting formation allocation for %s' % aircraft)
+        
         # Do not perform allocation if no hub exists in the flight route.
         if len(aircraft.route.segments) == 0:
             return
@@ -56,10 +60,15 @@ class FormationAllocatorEtah(FormationAllocator):
 
         # Only consider aircraft having a maximum heading difference between
         # the hub and their destination
-        leader_heading = aircraft.route.segments[0].get_initial_bearing()
+        segment = Segment(aircraft.hub, aircraft.destination)
+        leader_heading = segment.get_initial_bearing()
+
         def heading_filter(buddy):
-            buddy_heading = buddy.route.segments[0].get_initial_bearing()
+
+            segment = Segment(buddy.hub, buddy.destination)
+            buddy_heading = segment.get_initial_bearing()
             return abs(leader_heading - buddy_heading) < config.phi_max
+
         candidates = filter(heading_filter, candidates)
 
         # Other interesting filters
@@ -71,7 +80,7 @@ class FormationAllocatorEtah(FormationAllocator):
             aircraft_type = aircraft.aircraft_type
             candidates = filter(lambda a: a.aircraft_type == aircraft_type,
                                 candidates)
-            
+
         for candidate in candidates:
 
             # Quick and dirty: recalc position. Instead, pull eta from var.

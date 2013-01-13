@@ -4,6 +4,8 @@ from lib.geo.util import reduce_points
 from lib.geo.util import point_in_points
 from lib.geo.segment import Segment
 
+from lib.debug import print_line as p
+
 from lib.util import list_chop
 
 from lib import debug
@@ -81,6 +83,8 @@ def construct_hub(origins, destinations, Z):
     
     hub.origins      = origins
     hub.destinations = destinations
+    
+    p('debug', 'Constructed hub at %s' % (hub))
     
     return hub
 

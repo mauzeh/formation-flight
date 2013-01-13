@@ -3,7 +3,7 @@
 
 import config
 
-from runs.multihub.min_P import plot
+from runs.multihub.z import plot
 plot.run()
 
 #from runs.multihub.L_s_2hubs import plot

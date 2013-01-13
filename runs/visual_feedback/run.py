@@ -6,11 +6,11 @@ from formation_flight.aircraft import handlers as aircraft_handlers
 from formation_flight.aircraft import generators
 from formation_flight.hub import builders
 from formation_flight.hub import allocators
+from formation_flight import visualization
 
 from lib import sim, debug, sink
 from lib.debug import print_line as p
 
-import plot
 from formation_flight import statistics
 
 import config
@@ -18,13 +18,7 @@ import os
 
 import numpy as np
 
-config.sink_dir = '%s/sink' % os.path.dirname(__file__)
-
-def init():
-    sink.init(config.sink_dir)
-
 def execute():
-    init()
     single_run()
 
 def single_run():
@@ -33,11 +27,10 @@ def single_run():
     aircraft_handlers.init()
     formation_handlers.init()
     statistics.init()
-    #plot.init()
+    visualization.init()
     
     # Construct flight list
-    planes = generators.get_via_stdin()
-    #planes = generators.get_manual()
+    planes = generators.get_manual()
     
     # Find hubs
     hubs = builders.build_hubs(planes, config.count_hubs, config.Z)
@@ -50,5 +43,4 @@ def single_run():
     
     sim.run()
 
-    sink.push(statistics.vars)
     debug.print_dictionary(statistics.vars)

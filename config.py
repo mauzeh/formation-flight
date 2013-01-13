@@ -8,20 +8,32 @@ etah_slack = 7
 lock_time = 60
 
 # The maximum difference in heading upon hub departure (in degrees)
-phi_max = 1
+phi_max = 3
 
 # The amount of hubs in the system
 count_hubs = 5
 
 # A measure for how far the hub is away from the origin
-Z = .14
+Z = .25
 
 # Departure time distribution bound (becomes param for uniform(-,+))
 dt = 10
 
 # If flight list was calibrated, use this value as the selection criterium for
 # the minimum formation required probability
-min_P = .5
+min_P = .9
+
+# Mainly used for validation. One way in which validation is performed is by
+# comparing the simulation output to a manual calculation. Having a single
+# aircraft model makes this a bit easier.
+model = {
+    'name' : 'B772',
+    'V'    : 500,
+    'c_L'  : .6,
+    'L_D'  : 17,
+    #'W_1' : 297550 - 14000 # B777 Maxweight at start of cruise
+    'W_1'  : 300000
+}
 
 # Restrictions on formations. Options: 
 #   'same-airline',
@@ -46,7 +58,7 @@ events_printed = [
 from lib import debug
 debug.print_severities = [
     #'debug',
-    'validate',
+    #'validate',
     'critical',
     'new'
 ]

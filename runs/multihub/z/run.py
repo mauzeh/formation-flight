@@ -12,7 +12,7 @@ def execute():
     
     run.init()
     
-    for Z in np.arange(0, 1, .05):
+    for Z in np.linspace(0, 1, 25):
 
         config.Z = Z
         run.single_run()

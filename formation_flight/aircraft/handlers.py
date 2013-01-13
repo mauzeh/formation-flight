@@ -23,7 +23,8 @@ def handle_departure(event):
 def handle_waypoint(event):
     aircraft = event.sender
     aircraft.at_waypoint()
-    p('Aircraft at waypoint: %s' % (
+    p('Aircraft at waypoint: %s (%s)' % (
+        aircraft.position,
         aircraft
     ))
     p('Need to calibrate aircraft %s (%s)' % (

@@ -3,32 +3,74 @@ from point import Point
 
 import numpy as np
 from scipy.interpolate import spline
+import copy
+
+from ..debug import print_line as p
 
 def get_range(V, C, L_D, W_1, W_2):
     return (V / C) * L_D * math.log(float(W_1) / W_2)
 
 def get_weight_ratio(V, C, L_D, distance):
-    return math.exp(distance * C / (V * L_D))
+    answer = math.exp(distance * C / (V * L_D))
+    p('validate', 'get weight ratio (V, C, L_D, d) = (%s, %s, %s, %s) = %s' % (
+        V, C, L_D, distance, answer
+    ))
+    return answer
 
 def get_fuel_burned_during_cruise(distance, model = None):
     
     if model is None:
-        # Use B772 as default at beginning of cruise
-        W_1 = 297550 - 14000 # B777 Maxweight at start of cruise
-        model = {
-            'name' : 'B772',
-            'W_1'  : W_1,
-            'V'    : 500,
-            'c_L'  : .6,
-            'L_D'  : 19.26
-        }
+        model = copy.deepcopy(config.model)
 
     W_1 = model['W_1']
     V   = model['V']
     c_L = model['c_L']
     L_D = model['L_D']
     
-    return W_1 * (1 - 1 / get_weight_ratio(V, c_L, L_D, distance))
+    answer = W_1 * (1 - 1 / get_weight_ratio(V, c_L, L_D, distance))
+    
+    p('validate', 'fuel burn during cruise(): W_1 = %s'    % W_1)
+    p('validate', 'fuel burn during cruise(): V = %s'      % V)
+    p('validate', 'fuel burn during cruise(): c_L = %s'    % c_L)
+    p('validate', 'fuel burn during cruise(): L_D = %s'    % L_D)
+    p('validate', 'fuel burn during cruise(): answer = %s' % answer)
+    
+    return answer
+
+def formationburn(
+    d_origin_to_hub, d_hub_to_exit, d_exit_to_destination,
+    model = None, discount = 0
+):
+    """If discount > 0, it is assumed to apply to d_hub_to_exit"""
+    
+    if model is None:
+        model = copy.deepcopy(config.model)
+    
+    p('validate', 'formationburn()')
+    p('validate', 'formationburn(): d_origin_to_hub = %d'       % d_origin_to_hub)
+    p('validate', 'formationburn(): d_hub_to_exit = %d'         % d_hub_to_exit)
+    p('validate', 'formationburn(): d_exit_to_destination = %d' % d_exit_to_destination)
+    p('validate', 'formationburn(): model = %s'                 % model)
+    p('validate', 'formationburn(): discount = %s'              % discount)
+
+    # We are going to adjust the model, we don't want the original one to
+    # be modified though...
+    model = copy.deepcopy(model)
+    departure_fuel = get_fuel_burned_during_cruise(d_origin_to_hub, model)
+    p('validate', ('departure_fuel = %d' % departure_fuel))
+    model['W_1'] -= departure_fuel
+    enroute_fuel = get_fuel_burned_during_cruise(d_hub_to_exit, model) *\
+        (1 - discount)
+    p('validate', ('enroute_fuel = %d' % enroute_fuel))
+    model['W_1'] -= enroute_fuel
+    arrival_fuel = get_fuel_burned_during_cruise(d_exit_to_destination, model)
+    p('validate', ('arrival_fuel = %d' % arrival_fuel))
+    
+    cruiseburn = departure_fuel + enroute_fuel + arrival_fuel
+    
+    p('validate', 'formationburn(): answer = %s' % cruiseburn)
+    
+    return cruiseburn
 
 def get_hookoff(alpha, trunk, cross, model):
     

@@ -18,7 +18,7 @@ def run():
     )
     
     x = data[:, tsv_get_column_index(data_file, 'config_Z')]
-    y = data[:, tsv_get_column_index(data_file, 'formation_count')]
+    y = data[:, tsv_get_column_index(data_file, 'fuel_saved')]
 
     plt.plot(x, y)
     plt.show()
