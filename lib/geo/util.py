@@ -1,8 +1,6 @@
 import math
 from point import Point
 
-from lib.debug import print_line as p
-
 import numpy as np
 from scipy.interpolate import spline
 
@@ -11,6 +9,26 @@ def get_range(V, C, L_D, W_1, W_2):
 
 def get_weight_ratio(V, C, L_D, distance):
     return math.exp(distance * C / (V * L_D))
+
+def get_fuel_burned_during_cruise(distance, model = None):
+    
+    if model is None:
+        # Use B772 as default at beginning of cruise
+        W_1 = 297550 - 14000 # B777 Maxweight at start of cruise
+        model = {
+            'name' : 'B772',
+            'W_1'  : W_1,
+            'V'    : 500,
+            'c_L'  : .6,
+            'L_D'  : 19.26
+        }
+
+    W_1 = model['W_1']
+    V   = model['V']
+    c_L = model['c_L']
+    L_D = model['L_D']
+    
+    return W_1 * (1 - 1 / get_weight_ratio(V, c_L, L_D, distance))
 
 def get_hookoff(alpha, trunk, cross, model):
     
@@ -42,26 +60,6 @@ def get_hookoff(alpha, trunk, cross, model):
     Q_opt = Q_list[fuel_list.index(fuel_opt)]
     
     return (Q_list, Q_opt, fuel_list, fuel_opt)
-
-def get_fuel_burned_during_cruise(distance, model = None):
-    
-    if model is None:
-        # Use B772 as default at beginning of cruise
-        W_1 = 297550 - 14000 # B777 Maxweight at start of cruise
-        model = {
-            'name' : 'B772',
-            'W_1'  : W_1,
-            'V'    : 500,
-            'c_L'  : .6,
-            'L_D'  : 19.26
-        }
-
-    W_1 = model['W_1']
-    V   = model['V']
-    c_L = model['c_L']
-    L_D = model['L_D']
-    
-    return W_1 * (1 - 1 / get_weight_ratio(V, c_L, L_D, distance))
 
 def cross_track_distance(d_13, theta_13, theta_12):
     """Calculate distance from great circle path (1 -> 2) to point (3).

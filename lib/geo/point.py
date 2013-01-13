@@ -33,7 +33,13 @@ class Point(object):
         # Reduce precision to avoid 1.00000000000000034734 being out of domain
         param = float('%.6f' % param)
 
-        return math.acos(param)*R
+        d = math.acos(param)*R
+        
+        p('validate', 'Distance between %s and %s is %sNM' % (
+            self, point, d
+        ))
+        
+        return d
 
     def bearing_to(self, point):
         lat1 = math.radians(self.lat)

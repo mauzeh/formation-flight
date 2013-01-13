@@ -8,14 +8,29 @@ vars = {}
 hubs = []
 
 def init():
+
     global vars, hubs
-    vars = {}
+    
+    # Re-init vars for multiple runs in a row
     hubs = []
+    vars = {}
+    
     sim.dispatcher.register('sim-start',       handle_start)
     sim.dispatcher.register('aircraft-depart', handle_depart)
     sim.dispatcher.register('formation-alive', handle_alive)
     sim.dispatcher.register('aircraft-arrive', handle_arrive)
     sim.dispatcher.register('sim-finish',      handle_finish)
+    
+    vars['distance_formation'] = 0
+    vars['distance_solo'] = 0
+    vars['distance_direct'] = 0
+    vars['fuel_actual'] = 0
+    vars['fuel_direct'] = 0
+    vars['aircraft_count'] = 0
+    vars['formation_aircraft_count'] = 0
+    vars["formation_count"] = 0
+    vars['Q_sum'] = 0
+    vars['hub_delay_sum'] = 0
 
 def handle_start(event):
     global vars
@@ -26,8 +41,6 @@ def handle_depart(event):
 
     aircraft = event.sender
 
-    if 'aircraft_count' not in vars:
-        vars['aircraft_count'] = 0
     vars['aircraft_count'] += 1
     
     # If a hub was planned
@@ -37,6 +50,7 @@ def handle_depart(event):
             hubs.append(hub)
 
 def handle_alive(event):
+
     global vars
 
     formation = event.sender
@@ -56,17 +70,11 @@ def handle_alive(event):
         #    aircraft.hookoff_point
         #)
     
-    if "formation_count" not in vars:
-        vars["formation_count"] = 0
     vars["formation_count"] += 1
 
-    if 'formation_aircraft_count' not in vars:
-        vars['formation_aircraft_count'] = 0
     vars['formation_aircraft_count'] += len(formation)
         
     for aircraft in formation:
-        if 'Q_sum' not in vars:
-            vars['Q_sum'] = 0
         vars['Q_sum']   = vars['Q_sum'] + aircraft.Q
 
     #hub_key = 'formation_count_%s' % formation.hub
@@ -93,17 +101,6 @@ def handle_arrive(event):
     #    vars[key] = 0
     #vars[key] = vars[key] + 1
 
-    if 'distance_formation' not in vars:
-        vars['distance_formation'] = 0
-    if 'distance_solo' not in vars:
-        vars['distance_solo'] = 0
-    if 'distance_direct' not in vars:
-        vars['distance_direct'] = 0
-    if 'fuel_actual' not in vars:
-        vars['fuel_actual'] = 0
-    if 'fuel_direct' not in vars:
-        vars['fuel_direct'] = 0
-
     # Aircraft always fly solo to the hub
     segment = Segment(aircraft.origin, hub)
     origin_to_hub = segment.get_length()
@@ -113,15 +110,16 @@ def handle_arrive(event):
     ))
     vars['distance_solo'] += origin_to_hub
 
-    # If in formation
-    if hasattr(aircraft, 'formation'):
-
+    # If in formation and not a leader
+    if hasattr(aircraft, 'formation') and aircraft.incurs_benefits:
+        
         segment = Segment(hub, aircraft.hookoff_point)
         hub_to_hookoff = segment.get_length()
         p('Distance hub_to_hookoff for %s is %dNM' % (
             aircraft,
             hub_to_hookoff
         ))
+        
         vars['distance_formation'] += hub_to_hookoff
 
         segment = Segment(aircraft.hookoff_point, aircraft.destination)
@@ -135,12 +133,9 @@ def handle_arrive(event):
         # Collect all hub delays
         # The calibration aircraft was never delayed
         if hasattr(aircraft, 'hub_delay'):
-            if 'hub_delay_sum' not in vars:
-                vars['hub_delay_sum'] = 0
             vars['hub_delay_sum'] = vars['hub_delay_sum'] +\
                 aircraft.hub_delay
 
-        # @todo first aircraft has no discount
         discount = 1 - config.alpha
         vars['fuel_actual'] = vars['fuel_actual'] +\
             get_fuel_burned_during_cruise(
@@ -148,9 +143,12 @@ def handle_arrive(event):
                 discount * hub_to_hookoff +\
                 hookoff_to_destination
             )
+        p('validate', '%s has discount' % (aircraft))
 
     # If fully solo
     else:
+        
+        p('validate', '%s has no discount' % (aircraft))
         
         segment = Segment(hub, aircraft.destination)
         hub_to_destination = segment.get_length()
@@ -174,9 +172,7 @@ def handle_arrive(event):
     ))
     vars['distance_direct'] = vars['distance_direct'] + direct
     vars['fuel_direct'] = vars['fuel_direct'] +\
-        get_fuel_burned_during_cruise(
-            direct
-        )
+        get_fuel_burned_during_cruise(direct)
 
 def handle_finish(event):
 
@@ -208,7 +204,7 @@ def handle_finish(event):
         # estimate hub delay fuel
         fuel_per_minute = 150
         
-        vars['fuel_delay'] = vars['hub_delay_avg'] * 152 * (
+        vars['fuel_delay'] = vars['hub_delay_avg'] * fuel_per_minute * (
             vars['formation_aircraft_count'] - vars['formation_count']
         )
         vars['fuel_saved'] = 1 -\

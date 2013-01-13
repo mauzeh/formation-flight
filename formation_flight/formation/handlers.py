@@ -164,23 +164,37 @@ def handle_alive(event):
         
     # Place aircraft in order, ascending with Q, to fulfill LIFO condition.
     formation = sorted(formation, key = lambda item: item.P)
-    
+
     # All aircraft at the front of the formation having the same destination
     # should hook off where the previous buddy (having a different
     # destination) hooked off.
-    
+
     # Example: formation AMS-SFO, BRU-SFO, LHR-ATL.
     # AMS-SFO and BRU-SFO should hook off where LHR-ATL hooked off.
-    
+    # @todo Let AMS-SFO and BRU-SFO continue together along a new average
+    #       formation trajectory (in this case directly to the destination)
+
     # First find the leading set of aircraft having the same destination
     formation.reverse()
     leading_destination = formation[0].destination
     leaders = []
     for aircraft in formation:
+        
+        # Start with always incurring benefits
+        aircraft.incurs_benefits = True
+        
         if not aircraft.destination.coincides(leading_destination):
+            aircraft.is_leader = False
             break
+        
+        aircraft.is_leader = True
+        
+        # Only the first leader incurs no benefits at all
+        if len(leaders) == 0:
+            aircraft.incurs_benefits = False
+        
         leaders.append(aircraft)
-    
+        
     p('Leaders of formation %s are %s' % (
         formation,
         leaders
