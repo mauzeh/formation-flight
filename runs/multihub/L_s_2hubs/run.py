@@ -1,4 +1,4 @@
-from ..benchmark import run
+from ..L_s_1hub import run
 from lib import sink
 import config
 import os
@@ -13,16 +13,4 @@ config.runs = 250
 
 def execute():
     
-    run.init()
-    
-    # Output grid is a square
-    n = math.sqrt(config.runs)
-    
-    for lock_time in np.linspace(1, 60, n):
-        
-        config.lock_time = lock_time
-    
-        for slack in np.linspace(0, 60, n):
-    
-            config.etah_slack = slack
-            run.single_run()
+    run.execute()

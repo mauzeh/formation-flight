@@ -8,16 +8,21 @@ import math
 from lib.geo.point import Point
 
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
+config.count_hubs = 1
+config.runs = 50
 
 def execute():
     
     run.init()
     
-    for count_hubs in np.arange(1, 6, 1):
+    # Output grid is a square
+    n = math.sqrt(config.runs)
+    
+    for lock_time in np.linspace(1, 60, n):
         
-        config.count_hubs = count_hubs
+        config.lock_time = lock_time
     
-        for s in np.linspace(0, 60, 20):
+        for slack in np.linspace(0, 60, n):
     
-            config.etah_slack = s
+            config.etah_slack = slack
             run.single_run()

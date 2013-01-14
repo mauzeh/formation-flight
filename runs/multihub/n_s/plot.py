@@ -2,7 +2,6 @@ from ..multivariate import plot
 import config, os
 
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
-config.count_hubs = 2
 
 config.axis_x = {
     'name' : r'$n$',
@@ -13,8 +12,8 @@ config.axis_y = {
     'column' : 'config_s'
 }
 
-config.output_nx = 20
-config.output_ny = 5
+config.output_nx = 5
+config.output_ny = 20
 
 def run():
     plot.run()
