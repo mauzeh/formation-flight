@@ -112,6 +112,7 @@ def handle_arrive(event):
     # Sometimes (especially with very low Z and high L) aircraft are excluded
     # from formation flight due to the origin being within the lock area.
     if hasattr(aircraft, 'is_excluded') and aircraft.is_excluded:
+        vars['distance_solo'] += direct
         vars['fuel_actual'] += get_fuel_burned_during_cruise(direct, model)
         return
 

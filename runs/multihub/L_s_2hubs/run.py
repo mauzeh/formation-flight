@@ -9,7 +9,7 @@ from lib.geo.point import Point
 
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 config.count_hubs = 2
-config.runs = 100
+config.runs = 250
 
 def execute():
     

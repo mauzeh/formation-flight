@@ -8,6 +8,8 @@ from lib.util import tsv_get_column_index
 from mpl_toolkits.basemap import Basemap
 import config
 
+from lib.geo.point import Point
+
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 
 config.plots = [
@@ -30,7 +32,7 @@ config.plots = [
     },{
         'column' : 'fuel_saved',
         'title'  : r'Fuel Saved',
-        'levels' : 20,
+        'levels' : np.arange(-0.1, 0.1, 0.01),
     },{
         'column' : 'distance_penalty',
         'title'  : r'Distance Penalty $P_d$',
@@ -109,9 +111,29 @@ def do_plot(plotconf, data):
     m.drawstates()
     m.drawcountries()
     
+    # draw lat/lon grid lines every 10 degrees.
+    # draw parallels.
+    parallels = np.arange(-360.,360.,10.)
+    m.drawparallels(parallels,labels=[1,0,0,0],fontsize=10)
+    # draw meridians
+    meridians = np.arange(-360.,360.,10.)
+    m.drawmeridians(meridians,labels=[0,0,0,1],fontsize=10)
+
+    # Midpoints were determined in runs/singlehub/trunk
+    midpoint_origins = Point(50., 8.)
+    midpoint_destinations = Point(35.,-87.)
+
+    lon1 = midpoint_origins.lon
+    lat1 = midpoint_origins.lat
+    lon2 = midpoint_destinations.lon
+    lat2 = midpoint_destinations.lat
+    
+    # Draw the trunk route
+    m.drawgreatcircle(lon1, lat1, lon2, lat2, linewidth = 3, color='#000000')
+    
     x, y = m(x, y)
     m.contourf(x, y, z, plotconf['levels'])
-    
+
     plt.colorbar()
     plt.title(plotconf['title'])
     

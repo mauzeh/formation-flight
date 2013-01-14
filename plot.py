@@ -3,8 +3,11 @@
 
 import config
 
-from runs.calibrate import plot
+from runs.multihub.n import plot
 plot.run()
+
+#from runs.calibrate import plot
+#plot.run()
 
 #from runs.multihub.L_s_2hubs import plot
 #plot.run()
@@ -12,14 +15,9 @@ plot.run()
 #from runs.multihub.L_s_5hubs import plot
 #plot.run()
 #
-#from runs.multihub.L_s_10hubs import plot
-#plot.run()
-#
 #from runs.multihub.L_Z_2hubs import plot
 #plot.run()
 #
 #from runs.multihub.L_Z_5hubs import plot
 #plot.run()
-#
-#from runs.multihub.L_Z_10hubs import plot
-#plot.run()
+

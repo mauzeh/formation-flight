@@ -43,17 +43,14 @@ def run():
     
     for axis_y in config.interesting_y_axes:
     
-        x = data[:, tsv_get_column_index(data_file, 'config_count_hubs')]
+        x = data[:, tsv_get_column_index(data_file, 'config_Z')]
         y = data[:, tsv_get_column_index(data_file, axis_y['column'])]
         
         plt.figure()
         
         plt.plot(x, y)
-        plt.xlim(min(x), max(x))
-        plt.xticks(x)
-        plt.ylim(0., .05)
         plt.title(axis_y['name'])
-        plt.xlabel(r'Hub Count $H$')
+        plt.xlabel(r'Hub Location $Z$')
         plt.ylabel(axis_y['name'])
         plt.grid(True)
         #plt.show()

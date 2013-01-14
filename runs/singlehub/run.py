@@ -21,8 +21,8 @@ from lib.geo.waypoint import Waypoint
 import numpy as np
 
 # Create custom set of hubs
-lats = np.mgrid[ 40: 70: 35j]
-lons = np.mgrid[-60: 25: 35j]
+lats = np.mgrid[ 40: 70: 15j]
+lons = np.mgrid[-60: 25: 15j]
 
 config.hubs = []
 for lat in lats:

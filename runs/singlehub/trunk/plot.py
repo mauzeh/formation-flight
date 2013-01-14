@@ -1,8 +1,8 @@
-from ..L_s_2hubs import plot
-import config, os
+from .. import plot
+import config
+import os
 
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
-config.count_hubs = 15
 
 def run():
     plot.run()

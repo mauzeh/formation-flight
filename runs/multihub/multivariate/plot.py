@@ -63,6 +63,12 @@ def run():
         y = data[:, tsv_get_column_index(data_file, axis_y['column'])]
         z = data[:, tsv_get_column_index(data_file, axis_z['column'])]
         
+        # Note that we must convert the lock time into the lock distance L
+        if axis_x['column'] == 'config_lock_time':
+            x = 500 * x / 60
+        if axis_y['column'] == 'config_lock_time':
+            y = 500 * y / 60
+        
         try:
             nx = config.output_nx
             ny = config.output_ny
