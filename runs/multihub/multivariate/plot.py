@@ -6,6 +6,7 @@ from lib.util import make_sure_path_exists
 
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
 
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 config.count_hubs = 5
@@ -38,7 +39,13 @@ config.interesting_z_axes = [{
     'name' : 'Fuel Saved (Without Delay Costs)',
     'column' : 'fuel_saved_disregard_delay'
 },{
-    'name' : 'Fuel Delay',
+    'name' : 'Accumulated Hub Delay (minutes)',
+    'column' : 'hub_delay_sum'
+},{
+    'name' : 'Average Hub Delay (minutes)',
+    'column' : 'hub_delay_avg'
+},{
+    'name' : 'Delay Fuel [kg]',
     'column' : 'fuel_delay'
 }]
 
@@ -83,8 +90,12 @@ def run():
         
         plt.xlabel(axis_x['name'])
         plt.ylabel(axis_y['name'])
+        
+        plt.grid(True)
     
-        plt.contourf(x, y, z, 20)
+        cs = plt.contour(x, y, z, 10)
+        plt.clabel(cs)
+        
         plt.colorbar()
         
         #plt.title(r'%s ($n=%d$)' % (axis_z['name'], config.count_hubs))

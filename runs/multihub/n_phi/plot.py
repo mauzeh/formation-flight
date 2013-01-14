@@ -9,8 +9,8 @@ config.axis_x = {
     'column' : 'config_count_hubs'
 }
 config.axis_y = {
-    'name' : r'$dt$',
-    'column' : 'config_dt'
+    'name' : r'$\phi_{max}$',
+    'column' : 'config_phi_max'
 }
 
 config.output_nx, config.output_ny = get_matrix_dimensions()

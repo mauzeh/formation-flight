@@ -26,7 +26,7 @@ def execute():
 
         config.count_hubs = count_hubs
     
-        for value in np.linspace(0, 15, ny):
+        for value in np.linspace(.01, 15, ny):
 
-            config.etah_slack = value
+            config.phi_max = value
             run.single_run()

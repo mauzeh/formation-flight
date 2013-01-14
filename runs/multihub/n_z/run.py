@@ -26,7 +26,7 @@ def execute():
 
         config.count_hubs = count_hubs
     
-        for value in np.linspace(0, 15, ny):
+        for value in np.linspace(0, 1, ny):
 
-            config.etah_slack = value
+            config.Z = value
             run.single_run()
