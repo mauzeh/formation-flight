@@ -21,8 +21,8 @@ from lib.geo.waypoint import Waypoint
 import numpy as np
 
 # Create custom set of hubs
-lats = np.mgrid[ 40: 70: 15j]
-lons = np.mgrid[-60: 25: 15j]
+lats = np.mgrid[ 40: 70: 35j]
+lons = np.mgrid[-60: 25: 35j]
 
 config.hubs = []
 for lat in lats:
@@ -68,7 +68,7 @@ def execute():
             sim.events.append(sim.Event('aircraft-init', flight, 0))
 
         sim.run()
-
+        
         # Prepare data matrix
         d = {
             'hub_lat'                : hub.lat,

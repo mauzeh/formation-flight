@@ -32,10 +32,11 @@ def execute():
     # Construct flight list (for aircraft lookup)
     planes = generators.get_via_stdin()
     
-    runs = 25
+    runs = 100
     
     for i in xrange(1, runs + 1):
         # Construct flight list once more for the sim runs
+        # Very little performance drawback due to caching
         single_run(generators.get_via_stdin())
         print 'Completed run %d of %d...' % (i, runs)
         #print calibrate.vars
@@ -56,7 +57,7 @@ def execute():
         print row
 
 def single_run(planes):
-
+    
     sim.init()
     aircraft_handlers.init()
     formation_handlers.init()
@@ -64,10 +65,10 @@ def single_run(planes):
     calibrate.init()
     
     # Find hubs
-    hubs = builders.build_hubs(planes, config.count_hubs, config.Z)
+    config.hubs = builders.build_hubs(planes, config.count_hubs, config.Z)
     
     # Allocate hubs to flights
-    allocators.allocate(planes, hubs)
+    allocators.allocate(planes, config.hubs)
     
     for flight in planes:
         sim.events.append(sim.Event('aircraft-init', flight, 0))

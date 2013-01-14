@@ -98,10 +98,10 @@ class Formation(list):
             #    hub_to_hookoff = Segment(aircraft.hub, aircraft.hookoff_point)
     
             aircraft.hookoff_point.name = 'hookoff-%s' % aircraft.hookoff_point
-            aircraft.P = hub_to_hookoff.get_length() / hub_to_midpoint.get_length()
+            #aircraft.P = hub_to_hookoff.get_length() / hub_to_midpoint.get_length()
             
         # Place aircraft in order, ascending with Q, to fulfill LIFO condition.
-        formation = sorted(self, key = lambda item: item.P)
+        formation = sorted(self, key = lambda item: item.Q)
     
         # All aircraft at the front of the formation having the same destination
         # should hook off where the previous buddy (having a different
@@ -124,7 +124,7 @@ class Formation(list):
             if not aircraft.destination.coincides(leading_destination):
                 aircraft.is_leader = False
                 continue
-            
+
             aircraft.is_leader = True
             
             # Only the first leader incurs no benefits at all
@@ -145,7 +145,7 @@ class Formation(list):
             last_buddy = formation[len(leaders)]
             for aircraft in leaders:
                 aircraft.Q = last_buddy.Q
-                aircraft.P = last_buddy.P
+                #aircraft.P = last_buddy.P
                 aircraft.hookoff_point = last_buddy.hookoff_point
         except IndexError:
             pass

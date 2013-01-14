@@ -90,16 +90,31 @@ def handle_arrive(event):
     global vars, hubs
 
     aircraft = event.sender
-    hub = aircraft.hub
     
-    assert hub in hubs
-
-    aircraft = event.sender
-    hub = aircraft.hub
-    p('Flight %s arrives at hub %s' % (
-        aircraft, hub
+    # Temporarily use one model for everything
+    model = copy.deepcopy(config.model)
+    
+    # Also calculate the direct distance
+    segment = Segment(aircraft.origin, aircraft.destination)
+    direct = segment.get_length()
+    #direct = 3193 #temp overwrite for validation
+    p('validate', 'Distance direct for %s is %dNM' % (
+        aircraft, direct
     ))
-    assert hub in hubs
+    p('validate', 'Getting the benchmark fuel')
+    vars['distance_direct'] += direct
+    vars['fuel_direct'] += get_fuel_burned_during_cruise(direct, model)
+    p('validate', 'OK, we have the benchmark fuel now')
+    
+    hub = aircraft.hub
+    assert hub in config.hubs
+    
+    # Sometimes (especially with very low Z and high L) aircraft are excluded
+    # from formation flight due to the origin being within the lock area.
+    if hasattr(aircraft, 'is_excluded') and aircraft.is_excluded:
+        vars['fuel_actual'] += get_fuel_burned_during_cruise(direct, model)
+        return
+
     #key = 'flight_count_%s' % hub
     #if key not in vars:
     #    vars[key] = 0
@@ -114,9 +129,6 @@ def handle_arrive(event):
     ))
     vars['distance_solo'] += origin_to_hub
     
-    # Temporarily use one model for everything
-    model = copy.deepcopy(config.model)
-
     # If in formation
     if hasattr(aircraft, 'formation'):
         
@@ -186,19 +198,6 @@ def handle_arrive(event):
         ))
 
         vars['fuel_actual'] += fuel_solo
-
-    # Also calculate the direct distance
-    segment = Segment(aircraft.origin, aircraft.destination)
-    direct = segment.get_length()
-    #direct = 3193 #temp overwrite for validation
-    p('validate', 'Distance direct for %s is %dNM' % (
-        aircraft, direct
-    ))
-    p('validate', 'Getting the benchmark fuel')
-    vars['distance_direct'] += direct
-    vars['fuel_direct'] = vars['fuel_direct'] +\
-        get_fuel_burned_during_cruise(direct, model)
-    p('validate', 'OK, we have the benchmark fuel now')
 
 def handle_finish(event):
 

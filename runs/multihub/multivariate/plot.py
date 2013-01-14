@@ -29,6 +29,9 @@ config.interesting_z_axes = [{
     'name' : 'Formation Success Rate',
     'column' : 'formation_success_rate'
 },{
+    'name' : 'Average Formation Size',
+    'column' : 'avg_formation_size'
+},{
     'name' : 'Fuel Saved',
     'column' : 'fuel_saved'
 },{

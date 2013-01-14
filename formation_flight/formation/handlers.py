@@ -26,27 +26,27 @@ def handle_departure(event):
     # Register which hub this aircraft will fly to
     aircraft.hub = aircraft.route.waypoints[0]
     
-    assert aircraft.time_to_waypoint() > config.lock_time
-    
+    #assert aircraft.time_to_waypoint() > config.lock_time
+
     # If the origin lies within the hub lock area, the aircraft cannot
     # reach cruise before reaching the hub, so instead we ignore it altogether
     # and tell it to fly directly to its destination instead of via the hub.
-    #if(aircraft.time_to_waypoint() < config.lock_time):
-    #    
-    #    # Reset the aircraft route
-    #    aircraft.route.waypoints = [
-    #        aircraft.position,
-    #        aircraft.destination
-    #    ]
-    #    aircraft.route.init_segments()
-    #    aircraft.controller.calibrate()
-    #    p('debug', (
-    #        '++++++++++++++++++++++++++Aircraft %s not participating in formation flight due to the ' +
-    #        'origin being within the lock area' % (
-    #            aircraft
-    #        )
-    #    ))
-    #    return
+    if(aircraft.time_to_waypoint() < config.lock_time):
+        
+        # Reset the aircraft route
+        aircraft.route.waypoints = [
+            aircraft.position,
+            aircraft.destination
+        ]
+        aircraft.route.init_segments()
+        aircraft.controller.calibrate()
+        aircraft.is_excluded = True
+        p('warning', (
+            'Excluded from flying to the hub: %s' % (
+                aircraft
+            )
+        ))
+        return
 
     allocator.add_aircraft(aircraft)        
     sim.events.append(sim.Event(

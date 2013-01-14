@@ -8,7 +8,7 @@ etah_slack = 7
 lock_time = 60
 
 # The maximum difference in heading upon hub departure (in degrees)
-phi_max = 3
+phi_max = 5
 
 # The amount of hubs in the system
 count_hubs = 5
@@ -21,7 +21,7 @@ dt = 10
 
 # If flight list was calibrated, use this value as the selection criterium for
 # the minimum formation required probability
-min_P = .9
+min_P = .8
 
 # Mainly used for validation. One way in which validation is performed is by
 # comparing the simulation output to a manual calculation. Having a single
@@ -59,6 +59,8 @@ from lib import debug
 debug.print_severities = [
     #'debug',
     #'validate',
+    #'geo-debug',
+    #'warning',
     'critical',
     'new'
 ]

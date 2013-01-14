@@ -125,6 +125,7 @@ def midpoint(points):
 
     @todo Replace with vectorized version (most accurate solution)
     """
+    assert len(points) > 0
 
     sum_lat = sum((point.weight if hasattr(point, 'weight') else 1) * point.lat for point in points)
     sum_lon = sum((point.weight if hasattr(point, 'weight') else 1) * point.lon for point in points)

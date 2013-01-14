@@ -14,15 +14,15 @@ config.plots = [
     {
         'column' : 'formation_count',
         'title'  : r'Formation Count $M$',
-        'levels' : np.arange(0, 140, 10),
+        'levels' : np.arange(0, 30, 2),
     },{
         'column' : 'formation_success_rate',
         'title'  : r'Formation Success Rate $S_f$',
         'levels' : np.arange(0, 1.05, .05),
     },{
-        'column' : 'alpha_eff',
-        'title'  : r'Effective Discount $\alpha_{eff}$',
-        'levels' : np.arange(-.5, config.alpha, .025),
+        'column' : 'avg_formation_size',
+        'title'  : r'Average Formation Size $N_{avg}$',
+        'levels' : 20,
     },{
         'column' : 'distance_success_rate',
         'title'  : r'Distance Success Rate $S_d$',
@@ -34,7 +34,7 @@ config.plots = [
     },{
         'column' : 'distance_penalty',
         'title'  : r'Distance Penalty $P_d$',
-        'levels' : np.arange(0, 1.05, .05),
+        'levels' : 20,
     }
 ]
 
@@ -82,7 +82,7 @@ def do_plot(plotconf, data):
     maxlon = np.max(x)
     
     m = Basemap(
-        projection = 'merc', resolution = 'l',
+        projection = 'merc', resolution = 'c',
         llcrnrlat = minlat, urcrnrlat = maxlat,
         llcrnrlon = minlon, urcrnrlon = maxlon
     )

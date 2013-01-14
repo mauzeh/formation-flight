@@ -36,11 +36,13 @@ def handle_arrive(event):
         segments['formation'].append(Segment(aircraft.origin, aircraft.hub))
         segments['formation'].append(Segment(aircraft.hub, aircraft.hookoff_point))
         segments['formation'].append(Segment(aircraft.hookoff_point, aircraft.destination))
-        pass
     else:
-        segments['solo'].append(Segment(aircraft.origin, aircraft.hub))
-        segments['solo'].append(Segment(aircraft.hub, aircraft.destination))
-        pass
+        # Note: not all aircraft fly via the hub. If their origin is within the
+        # lock area, they fly directly to the destination
+        p('critical', aircraft.waypoints_passed)
+        route = Route(aircraft.waypoints_passed)
+        for segment in route.segments:
+            segments['solo'].append(segment)
 
 def render(event):
     # create new figure, axes instances.
@@ -65,6 +67,11 @@ def render(event):
         m.plot(x, y, 'ro', ms = 8)
 
     for segment in segments['formation']:
+        p('geo-debug', 'Start to plot a formation trajectory')
+        p('geo-debug', 'Trajectory: (%s, %s) -> (%s, %s)' % (
+            segment.start.lon, segment.start.lat,
+            segment.end.lon, segment.end.lat
+        ))
         m.drawgreatcircle(segment.start.lon, segment.start.lat,
                           segment.end.lon, segment.end.lat,
                           linewidth = 1.5, color='g')
@@ -72,6 +79,7 @@ def render(event):
         m.plot(x, y, 'go', ms = 8)
         x, y = m(segment.end.lon, segment.end.lat)
         m.plot(x, y, 'go', ms = 8)
+        p('geo-debug', 'Done with plotting a formation trajectory')
     
     m.drawcoastlines(color='#8f8457')
     m.fillcontinents(color='#f5f0db')

@@ -10,7 +10,6 @@ from formation_flight.hub import allocators
 from lib import sim, debug, sink
 from lib.debug import print_line as p
 
-import plot
 from formation_flight import statistics
 
 import config
@@ -40,10 +39,10 @@ def single_run():
     #planes = generators.get_manual()
     
     # Find hubs
-    hubs = builders.build_hubs(planes, config.count_hubs, config.Z)
-    
+    config.hubs = builders.build_hubs(planes, config.count_hubs, config.Z)
+
     # Allocate hubs to flights
-    allocators.allocate(planes, hubs)
+    allocators.allocate(planes, config.hubs)
     
     for flight in planes:
         sim.events.append(sim.Event('aircraft-init', flight, 0))

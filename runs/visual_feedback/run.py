@@ -30,13 +30,13 @@ def single_run():
     visualization.init()
     
     # Construct flight list
-    planes = generators.get_manual()
+    planes = generators.get_via_stdin()
     
     # Find hubs
-    hubs = builders.build_hubs(planes, config.count_hubs, config.Z)
+    config.hubs = builders.build_hubs(planes, config.count_hubs, config.Z)
     
     # Allocate hubs to flights
-    allocators.allocate(planes, hubs)
+    allocators.allocate(planes, config.hubs)
     
     for flight in planes:
         sim.events.append(sim.Event('aircraft-init', flight, 0))

@@ -44,11 +44,12 @@ def get_via_stdin():
             probability = float(row[4])
             # Disregard row if config tells us to
             if probability < config.min_P:
-                p('Probability of row does not match criterium %s, row %s' % (
+                p('warning', 'Probability of row does not match criterium %s, row %s' % (
                     config.min_P,
                     row
                 ))
                 continue
+            p('warning', 'Yes! Row %s can be included!' % row)
         except IndexError:
             probability = None
             

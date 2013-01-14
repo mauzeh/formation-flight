@@ -4,6 +4,17 @@ class Segment(object):
     """
 
     def __init__(self, start, end):
+        
+        # Points that are really close may cause plotting errors, so we
+        # let them coincide instead
+        if abs(start.lat - end.lat) < .01 and abs(start.lon - end.lon) < .01:
+            start.lat = end.lat
+            start.lon = end.lon
+            #raise Exception('Segment too short: (%s, %s) -> (%s, %s)' % (
+            #    start.lat, start.lon,
+            #    end.lat, end.lon
+            #))
+        
         self.start = start
         self.end   = end
         self.initial_bearing = self.start.bearing_to(self.end)

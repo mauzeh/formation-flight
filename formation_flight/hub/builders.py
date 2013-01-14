@@ -89,6 +89,8 @@ def construct_hub(origins, destinations, Z):
     return hub
 
 def rank_origins(origins, destinations):
+    
+    p('debug', 'Ranking origins: %s' % origins)
 
     midpoint_origins = midpoint(origins)
     midpoint_destinations = midpoint(destinations)

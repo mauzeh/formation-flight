@@ -37,10 +37,10 @@ def single_run():
     planes = generators.get_via_stdin()
 
     # Find hubs
-    hubs = builders.build_hubs(planes, config.count_hubs, config.Z)
+    config.hubs = builders.build_hubs(planes, config.count_hubs, config.Z)
 
     # Register hub arrivals to determine flow rates
-    listeners.init(hubs)
+    listeners.init(config.hubs)
 
     # Allocate hubs to flights
     allocators.allocate(planes, hubs)

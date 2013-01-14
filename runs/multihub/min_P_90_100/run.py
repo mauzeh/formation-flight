@@ -12,7 +12,7 @@ def execute():
     
     run.init()
     
-    for i in np.arange(0, 1, .001):
+    for i in np.linspace(0.9, 1, 10):
 
         config.min_P = i
         run.single_run()

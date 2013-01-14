@@ -16,7 +16,8 @@ model = {
     'name' : 'B772',
     'V'    : 500,
     'c_L'  : .6,
-    'L_D'  : 17
+    'L_D'  : 17,
+    'W_1'  : W_1
 }
 
 x = range(1, 11)
@@ -61,7 +62,7 @@ for j in x:
                 vars['origin_to_hub'],
                 vars['hub_to_hookoff'],
                 vars['hookoff_to_destination'],
-                W_1, model, discount
+                model, discount
             )
         )
         
@@ -107,7 +108,7 @@ plt.xlim(1, len(x))
 plt.xticks(x)
 plt.legend(loc = 'lower right')
 
-#plt.show()
+plt.show()
 
 
 
