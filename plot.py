@@ -3,7 +3,7 @@
 
 import config
 
-from runs.multihub.n_phi import plot
+from runs.multihub.pmin_phi import plot
 plot.run()
 
 #from runs.calibrate import plot

@@ -12,7 +12,7 @@ config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 def get_matrix_dimensions():
     
     hub_count       = 10
-    data_resolution = 10
+    data_resolution = 20
     
     return (hub_count, data_resolution,)
 
@@ -26,7 +26,7 @@ def execute():
 
         config.count_hubs = count_hubs
     
-        for dt in np.linspace(0, 60, ny):
+        for value in np.linspace(0, .99, ny):
 
-            config.dt = dt
+            config.min_P = value
             run.single_run()

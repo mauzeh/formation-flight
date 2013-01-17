@@ -1,8 +1,20 @@
 #!/usr/bin/env python
 """Simulation Bootstrapper"""
 
-from runs.multihub.n_s import run
+from runs.multihub.pmin_phi import run
 run.execute()
+
+#from runs.multihub.n_dt import run
+#run.execute()
+#
+#from runs.multihub.n_s import run
+#run.execute()
+#
+#from runs.multihub.n_phi import run
+#run.execute()
+#
+#from runs.multihub.n_z import run
+#run.execute()
 
 #from runs.singlehub.locktime_1  import run
 #run.execute()

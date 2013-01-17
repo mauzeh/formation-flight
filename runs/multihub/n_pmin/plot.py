@@ -9,8 +9,8 @@ config.axis_x = {
     'column' : 'config_count_hubs'
 }
 config.axis_y = {
-    'name' : r'$\sigma$',
-    'column' : 'config_dt'
+    'name' : r'$P_{min}$',
+    'column' : 'config_min_P'
 }
 
 config.output_nx, config.output_ny = get_matrix_dimensions()

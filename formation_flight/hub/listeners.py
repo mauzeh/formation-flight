@@ -81,7 +81,7 @@ def plot_flow_rate(data):
     plt.ylabel(r'Number of flights')#, labelpad = 20)
     
     plt.xlim(0, 1440)
-    plt.ylim(0, 45)
+    plt.ylim(0, 30)
     
     plt.xticks(
         [0,

@@ -17,6 +17,8 @@ import os
 
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 config.count_hubs = 1
+config.min_P = 0.7
+config.dt = 0
 
 def init():
     sink.init(config.sink_dir)
@@ -43,7 +45,7 @@ def single_run():
     listeners.init(config.hubs)
 
     # Allocate hubs to flights
-    allocators.allocate(planes, hubs)
+    allocators.allocate(planes, config.hubs)
 
     for flight in planes:
         sim.events.append(sim.Event('aircraft-init', flight, 0))

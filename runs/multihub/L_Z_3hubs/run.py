@@ -8,25 +8,27 @@ import math
 from lib.geo.point import Point
 
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
+config.count_hubs = 3
 
 def get_matrix_dimensions():
     
-    hub_count       = 10
-    data_resolution = 10
+    nx = 25
+    ny = 25
     
-    return (hub_count, data_resolution,)
+    return (nx, ny,)
 
 def execute():
     
     nx, ny = get_matrix_dimensions()
-    hub_range = np.linspace(1, nx, nx)
+    x_range = np.linspace(.01, .99, nx)
+    y_range = np.linspace(1, 60, ny)
     run.init()
 
-    for count_hubs in hub_range:
+    for x in x_range:
 
-        config.count_hubs = count_hubs
+        config.Z = x
     
-        for dt in np.linspace(0, 60, ny):
+        for y in y_range:
 
-            config.dt = dt
+            config.lock_time = y
             run.single_run()

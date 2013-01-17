@@ -5,23 +5,23 @@ alpha = .13
 etah_slack = 7
 
 # How long before hub arrival can we allocate into formations? (mins)
-lock_time = 60
+lock_time = 20
 
 # The maximum difference in heading upon hub departure (in degrees)
 phi_max = 5
 
 # The amount of hubs in the system
-count_hubs = 5
+count_hubs = 1
 
 # A measure for how far the hub is away from the origin
-Z = .25
+Z = .17
 
 # Departure time distribution bound (becomes param for uniform(-,+))
 dt = 10
 
 # If flight list was calibrated, use this value as the selection criterium for
 # the minimum formation required probability
-min_P = .8
+min_P = 0.8
 
 # Mainly used for validation. One way in which validation is performed is by
 # comparing the simulation output to a manual calculation. Having a single
