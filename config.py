@@ -58,7 +58,7 @@ events_printed = [
 from lib import debug
 debug.print_severities = [
     #'debug',
-    #'validate',
+    'validate',
     #'geo-debug',
     #'warning',
     'critical',

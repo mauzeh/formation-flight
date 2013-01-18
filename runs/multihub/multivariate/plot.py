@@ -45,6 +45,9 @@ config.interesting_z_axes = [{
     'name' : 'Average Hub Delay (minutes)',
     'column' : 'hub_delay_avg'
 },{
+    'name' : '$Q_{avg}$',
+    'column' : 'Q_avg'
+},{
     'name' : 'Delay Fuel [kg]',
     'column' : 'fuel_delay'
 }]

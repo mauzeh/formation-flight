@@ -12,10 +12,11 @@ def get_manual():
 
     # Override auto-planes, useful when reproducing a bug...
     return [
-        Aircraft('FLT001', Route([Waypoint('DUS'), Waypoint('JFK')]), 12),
-        Aircraft('FLT002', Route([Waypoint('DUS'), Waypoint('JFK')]), 12),
-        Aircraft('FLT003', Route([Waypoint('BRU'), Waypoint('EWR')]), 10),
-        Aircraft('FLT004', Route([Waypoint('BRU'), Waypoint('BOS')]), 10),
+        Aircraft('FLT001', Route([Waypoint('AMS'), Waypoint('JFK')]), 0),
+        Aircraft('FLT002', Route([Waypoint('AMS'), Waypoint('JFK')]), 0),
+        #Aircraft('FLT002', Route([Waypoint('DUS'), Waypoint('JFK')]), 0),
+        #Aircraft('FLT003', Route([Waypoint('BRU'), Waypoint('EWR')]), 0),
+        #Aircraft('FLT004', Route([Waypoint('BRU'), Waypoint('BOS')]), 0),
     ]
 
 # Keep track of what was passed via stdin for a potential re-init

@@ -35,7 +35,7 @@ class Point(object):
 
         d = math.acos(param)*R
         
-        p('validate', 'Distance between %s and %s is %sNM' % (
+        p('validate', 'Distance between %s and %s is %.2f NM' % (
             self, point, d
         ))
         
@@ -91,6 +91,13 @@ class Point(object):
                                               math.cos(lon1 - lon2)
         new_bearing = (math.degrees(math.atan2(y, x)) + 180) % 360
         new_position = Point(math.degrees(lat2), math.degrees(lon2))
+        #
+        #p('validate',
+        #    'Getting position. Start: %s, distance: %s, bearing: %s. '\
+        #    'Result: %s' % (
+        #        self, distance, bearing, new_position
+        #    )
+        #)
 
         return Position(new_position.lat, new_position.lon, new_bearing)
 

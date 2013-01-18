@@ -58,20 +58,20 @@ class Formation(list):
                         hub_to_midpoint.get_initial_bearing())
             (a, b) = project_segment(theta, hub_to_destination.get_length())
             aircraft.Q = get_hookoff_quotient(a, b, config.alpha)
-            
-            p('hookoff params for aircraft %s: %s' % (
+
+            p('validate', 'hookoff params for aircraft %s: %s' % (
                 aircraft,
-                'a = %s, b = %s, Q = %s' % (
-                    a, b, aircraft.Q
+                'a = %s, b = %s, Q = %s, HUB to HOOKOFF = %.2f' % (
+                    a, b, aircraft.Q, a * aircraft.Q
                 )
             ))
-            
+
             aircraft.hookoff_point = self.hub.get_position(
                 hub_to_midpoint.get_initial_bearing(),
                 a * aircraft.Q
             )
             hub_to_hookoff = Segment(aircraft.hub, aircraft.hookoff_point)
-            
+
             p('flight %s, hub %s to hook-off point: %s' % (
                 aircraft,
                 '%s{%d, %d}' % (
