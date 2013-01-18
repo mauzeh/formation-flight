@@ -39,7 +39,7 @@ def handle_arrive(event):
     else:
         # Note: not all aircraft fly via the hub. If their origin is within the
         # lock area, they fly directly to the destination
-        p('critical', aircraft.waypoints_passed)
+        p('debug', 'Not in formation: %s' % aircraft)
         route = Route(aircraft.waypoints_passed)
         for segment in route.segments:
             segments['solo'].append(segment)

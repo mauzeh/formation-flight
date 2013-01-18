@@ -2,13 +2,13 @@
 alpha = .13
 
 # How much the arrival at the virtual hub can be delayed/expedited (mins)
-etah_slack = 7
+etah_slack = 10
 
 # How long before hub arrival can we allocate into formations? (mins)
 lock_time = 20
 
 # The maximum difference in heading upon hub departure (in degrees)
-phi_max = 5
+phi_max = 15
 
 # The amount of hubs in the system
 count_hubs = 1
@@ -58,9 +58,9 @@ events_printed = [
 from lib import debug
 debug.print_severities = [
     #'debug',
-    'validate',
+    #'validate',
+    'verify',
     #'geo-debug',
     #'warning',
-    'critical',
-    'new'
+    'critical'
 ]

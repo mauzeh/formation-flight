@@ -68,7 +68,7 @@ def handle_lock(event):
 
     aircraft = event.sender
     global allocator
-    
+
     # Find the formation having self.
     formation = allocator.find_formation(aircraft)
 
@@ -102,4 +102,5 @@ def handle_alive(event):
     """Initialize the formation and determine hookoff points."""
 
     formation = event.sender
-    formation.calibrate()
+    formation.calibrate()    
+    

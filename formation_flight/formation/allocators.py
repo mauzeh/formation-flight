@@ -57,6 +57,8 @@ class FormationAllocatorEtah(FormationAllocator):
         # Only consider other aircraft flying to the same hub
         candidates = filter(lambda a: a.route.waypoints[0] is hub, 
                             candidates)
+        
+        p('debug', 'Full candidate set: %s' % candidates)
 
         # Only consider aircraft having a maximum heading difference between
         # the hub and their destination
@@ -67,7 +69,15 @@ class FormationAllocatorEtah(FormationAllocator):
 
             segment = Segment(buddy.hub, buddy.destination)
             buddy_heading = segment.get_initial_bearing()
-            return abs(leader_heading - buddy_heading) < config.phi_max
+            phi_obs = abs(leader_heading - buddy_heading)
+            p(
+                'debug',
+                'delta phi observed for %s (phi: %.2f) against %s (phi: %.2f)'
+                ': %.2f degrees' % (
+                    aircraft, leader_heading, buddy, buddy_heading, phi_obs
+                )
+            )
+            return phi_obs < config.phi_max
 
         candidates = filter(heading_filter, candidates)
 
@@ -80,6 +90,8 @@ class FormationAllocatorEtah(FormationAllocator):
             aircraft_type = aircraft.aircraft_type
             candidates = filter(lambda a: a.aircraft_type == aircraft_type,
                                 candidates)
+        
+        p('debug', 'Reduced candidate set: %s' % candidates)
 
         for candidate in candidates:
 
