@@ -7,12 +7,18 @@ from lib.debug import print_line as p
 
 from lib.geo.waypoint import Waypoint
 from lib.geo.point import Point
+from lib.geo.segment import Segment
 from lib.geo.route import Route
 
+from lib.geo.util import project_segment, get_hookoff_quotient, midpoint
+
 import copy
+import config
 
 import numpy as np
 import matplotlib.pyplot as plt
+
+config.Z = 0.065
 
 def w(d, W, model):
     result = W * (1 - math.exp(-d * model['c_T'] / (model['V'] * model['L_D'])))
@@ -34,6 +40,53 @@ def fuel_per_stage(d_1, d_2, model, discount = 0):
     F_4         = 385 + taxi_fuel
     return [F_0, F_1, F_2, F_3, F_4]
 
+def get_hub(flights):
+    o = []
+    d = []
+    for flight in flights:
+        o.append(flight['route'].waypoints[0])
+        d.append(flight['route'].waypoints[-1])
+    mid_o = midpoint(o)
+    mid_d = midpoint(d)
+    trunk_route = Segment(mid_o, mid_d)
+    return mid_o.get_position(
+        trunk_route.get_initial_bearing(),
+        trunk_route.get_length() * config.Z
+    )
+    
+def get_trunk_route(hub, formation):
+    destinations = []
+    for aircraft in formation:
+        destinations.append(aircraft['route'].waypoints[-1])
+    mid_d = midpoint(destinations)
+    return Segment(hub, mid_d)
+
+def get_exit(hub, trunk_route, flight):
+    dest = flight['route'].waypoints[-1]
+    hub_to_dest = Segment(hub, dest)
+    theta = abs(hub_to_dest.get_initial_bearing() -
+                trunk_route.get_initial_bearing())
+    (a, b) = project_segment(theta, hub_to_dest.get_length())
+    Q = get_hookoff_quotient(a, b, config.alpha)
+    d_hub_to_exit = a * Q
+    
+    # Exit to destination must be long enough to allow for safe descent
+    # TOD is at 150NM out of dest, so exit->dest must be longer than 150NM
+    d_exit_to_dest = 0
+    while d_exit_to_dest < 150:
+        exit_point = hub.get_position(
+            trunk_route.get_initial_bearing(),
+            d_hub_to_exit
+        )
+        d_hub_to_exit -= 1
+        exit_dest = Segment(exit_point, dest)
+        d_exit_to_dest = exit_dest.get_length()
+    assert exit_dest.get_length() > 150
+    print 'For flight %s, the exit point is %dNM away from dest' % (
+        flight['route'], d_exit_to_dest
+    )
+    return exit_point
+    
 def execute():
 
     models = {
@@ -63,9 +116,6 @@ def execute():
         }
     }
 
-    # Temporary
-    hub = Waypoint('MAN')
-
     formation = [{
         'aircraft' : '777',
         'route'    : Route([Waypoint('DUS'), Waypoint('IAD')]),
@@ -73,11 +123,11 @@ def execute():
     },{
         'aircraft' : '767',
         'route'    : Route([Waypoint('BRU'), Waypoint('ORD')]),
-        'discount' : 0.13
+        'discount' : config.alpha
     },{
         'aircraft' : '330',
         'route'    : Route([Waypoint('AMS'), Waypoint('IAH')]),
-        'discount' : 0.13
+        'discount' : config.alpha
     }]
 
     solo = [{
@@ -88,12 +138,17 @@ def execute():
         'route'    : Route([Waypoint('FRA'), Waypoint('SFO')])
     }]
     
+    hub = get_hub(formation + solo)
+    
     benchmark = copy.deepcopy(formation) + copy.deepcopy(solo)
+    
+    trunk_route = get_trunk_route(hub, formation)
+    print trunk_route
 
     # Origin to TOC
     d_0 = 100
     
-    # Exit to TOC
+    # Exit to TOD
     d_3 = 0
 
     # TOD to Destination
@@ -113,7 +168,13 @@ def execute():
         d_1 = d_origin_to_hub - d_0
         
         # Hub to exit
-        d_2 = d_direct - d_0 - d_1 - d_3 - d_4
+        exit_point = get_exit(hub, trunk_route, flight)
+        hub_to_exit = Segment(hub, exit_point)
+        d_2 = hub_to_exit.get_length()
+        
+        # Exit to TOD
+        exit_to_dest = Segment(exit_point, flight['route'].waypoints[-1])
+        d_3 = exit_to_dest.get_length() - d_4
         
         flight['f'] = fuel_per_stage(
             d_1, d_2, models[flight['aircraft']], flight['discount']
@@ -123,6 +184,15 @@ def execute():
         F_formation += sum(flight['f'])
 
     print 'formation fuel burn: %.2f' % (F_formation)
+    
+    # Origin to TOC
+    d_0 = 100
+    
+    # Exit to TOD
+    d_3 = 0
+
+    # TOD to Destination
+    d_4 = 150
 
     F_solo = 0
     for flight in solo:
@@ -162,6 +232,8 @@ def execute():
         flight['d'] = [d_0, d_1, d_2, d_3, d_4]
         
         F_b += sum(flight['f'])
+
+#def temp():
 
     print 'benchmark fuel burn: %.2f' % (F_b)
 
