@@ -1,8 +1,8 @@
-# Discount factor (@todo rename to beta as in research paper)
+# Discount factor
 alpha = .13
 
 # How much the arrival at the virtual hub can be delayed/expedited (mins)
-etah_slack = 10
+etah_slack = 7
 
 # How long before hub arrival can we allocate into formations? (mins)
 lock_time = 20
@@ -11,17 +11,17 @@ lock_time = 20
 phi_max = 15
 
 # The amount of hubs in the system
-count_hubs = 1
+count_hubs = 2
 
-# A measure for how far the hub is away from the origin
-Z = .17
+# A measure for how far the hub is away from the origin midpoint
+Z = .15
 
 # Departure time distribution bound (becomes param for uniform(-,+))
 dt = 10
 
 # If flight list was calibrated, use this value as the selection criterium for
 # the minimum formation required probability
-min_P = 0.8
+min_P = 0.75
 
 # Mainly used for validation. One way in which validation is performed is by
 # comparing the simulation output to a manual calculation. Having a single

@@ -22,17 +22,20 @@ import os
 
 import numpy as np
 
+config.count_hubs = 1
+config.Z = 0.25
+config.alpha = .13
+
 def execute():
     single_run()
 
 def single_run():
-
     sim.init()
     aircraft_handlers.init()
     formation_handlers.init()
     statistics.init()
-    #visualization.init()
-    
+    visualization.init()
+
     # Construct flight list
     planes = [
         Aircraft('FLT001', Route([Waypoint('DUS'), Waypoint('IAD')]), 0),
@@ -41,7 +44,7 @@ def single_run():
         Aircraft('FLT004', Route([Waypoint('LHR'), Waypoint('ATL')]), 45),
         Aircraft('FLT005', Route([Waypoint('FRA'), Waypoint('SFO')]), 0),
     ]
-    
+
     # Find hubs
     config.hubs = builders.build_hubs(planes, config.count_hubs, config.Z)
     

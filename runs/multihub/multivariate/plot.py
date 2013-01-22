@@ -33,8 +33,14 @@ config.interesting_z_axes = [{
     'name' : 'Average Formation Size',
     'column' : 'avg_formation_size'
 },{
+    'name' : 'Formation Count',
+    'column' : 'formation_count'
+},{
     'name' : 'Fuel Saved',
     'column' : 'fuel_saved'
+},{
+    'name' : 'Fuel Saved [kg]',
+    'column' : 'fuel_saved_abs'
 },{
     'name' : 'Fuel Saved (Without Delay Costs)',
     'column' : 'fuel_saved_disregard_delay'

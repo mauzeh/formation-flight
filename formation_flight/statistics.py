@@ -235,6 +235,9 @@ def handle_finish(event):
         vars['fuel_delay'] = vars['hub_delay_avg'] * fuel_per_minute * (
             vars['formation_aircraft_count'] - vars['formation_count']
         )
+        vars['fuel_saved_abs'] = vars['fuel_direct'] - (
+            vars['fuel_actual'] + vars['fuel_delay']
+        )
         vars['fuel_saved'] = 1 -\
             (vars['fuel_actual'] + vars['fuel_delay']) / vars['fuel_direct']
         vars['fuel_saved_disregard_delay'] = 1 -\

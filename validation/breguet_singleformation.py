@@ -18,7 +18,7 @@ import config
 import numpy as np
 import matplotlib.pyplot as plt
 
-config.Z = 0.065
+config.Z = .25#0.065
 
 def w(d, W, model):
     result = W * (1 - math.exp(-d * model['c_T'] / (model['V'] * model['L_D'])))
@@ -197,8 +197,13 @@ def execute():
     F_solo = 0
     for flight in solo:
 
-        # Direct great circle connection
-        d_direct = flight['route'].get_length()
+        # Total route length
+        full_route = Route([
+            flight['route'].waypoints[0],
+            hub,
+            flight['route'].waypoints[-1],
+        ])
+        d_total = full_route.get_length()
 
         # Distance from origin to hub
         origin_to_hub   = Route([flight['route'].waypoints[0], hub])
@@ -208,13 +213,13 @@ def execute():
         d_1 = d_origin_to_hub - d_0
 
         # Hub to TOD (not to exit point)
-        d_2 = d_direct - d_0 - d_1 - d_4
-        
+        d_2 = d_total - d_0 - d_1 - d_4
+
         flight['f'] = fuel_per_stage(
             d_1, d_2, models[flight['aircraft']]
         )
         flight['d'] = [d_0, d_1, d_2, d_3, d_4]
-        
+
         F_solo += sum(flight['f'])
 
     print 'solo fuel burn: %.2f' % (F_solo)
@@ -295,8 +300,53 @@ def execute():
         row += ' & %d' % sum(flight['f'])
     row += r' \\'
     print row
+    
+    S_d = (
+        formation[0]['d'][2] +\
+        formation[1]['d'][2] +\
+        formation[2]['d'][2]
+    )/(
+        sum(formation[0]['d']) +\
+        sum(formation[1]['d']) +\
+        sum(formation[2]['d']) +\
+        sum(solo[0]['d']) +\
+        sum(solo[1]['d'])
+    )
+    
+    F_s = 1 - (
+        sum(formation[0]['f']) +\
+        sum(formation[1]['f']) +\
+        sum(formation[2]['f']) +\
+        sum(solo[0]['f']) +\
+        sum(solo[1]['f'])
+    )/(
+        sum(benchmark[0]['f']) +\
+        sum(benchmark[1]['f']) +\
+        sum(benchmark[2]['f']) +\
+        sum(benchmark[3]['f']) +\
+        sum(benchmark[4]['f'])
+    )
+    
+    p_tot = (
+        sum(formation[0]['d']) +\
+        sum(formation[1]['d']) +\
+        sum(formation[2]['d']) +\
+        sum(solo[0]['d']) +\
+        sum(solo[1]['d'])
+    )/(
+        sum(benchmark[0]['d']) +\
+        sum(benchmark[1]['d']) +\
+        sum(benchmark[2]['d']) +\
+        sum(benchmark[3]['d']) +\
+        sum(benchmark[4]['d'])
+    ) - 1
 
-
+    print '--ANALYTICAL OUTPUT RESULTS--'
+    print r'$S_f$ & 0.6 & 0.6 \\'
+    print r'$S_d$ & %.4f & %.4f \\' % (S_d, S_d)
+    print r'$F_s$ & %.4f & %.4f \\' % (F_s, F_s)
+    print r'$p_{tot}$ & %.4f & %.4f \\' % (p_tot, p_tot)
+    
 
 
 
