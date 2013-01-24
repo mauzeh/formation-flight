@@ -26,7 +26,7 @@ def execute():
 
         config.count_hubs = count_hubs
     
-        for value in np.linspace(0, .25, ny):
+        for value in np.linspace(0, .30, ny):
 
             config.alpha = value
             run.single_run()

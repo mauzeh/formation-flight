@@ -24,6 +24,15 @@ def init():
     sim.dispatcher.register('aircraft-arrive', handle_arrive)
     sim.dispatcher.register('sim-finish',      handle_finish)
     
+    vars['config_alpha']      = config.alpha
+    vars['config_etah_slack'] = config.etah_slack
+    vars['config_lock_time']  = config.lock_time
+    vars['config_phi_max']    = config.phi_max
+    vars['config_count_hubs'] = config.count_hubs
+    vars['config_Z']          = config.Z
+    vars['config_dt']         = config.dt
+    vars['config_min_P']      = config.min_P
+    
     vars['distance_formation'] = 0
     vars['distance_solo'] = 0
     vars['distance_direct'] = 0
@@ -32,13 +41,29 @@ def init():
     vars['aircraft_count'] = 0
     vars['formation_aircraft_count'] = 0
     vars["formation_count"] = 0
-    vars['Q_sum'] = 0
-    vars['hub_delay_sum'] = 0
-    vars['phi_obs_sum'] = 0
+    vars['sim_start'] = 0
+    
+    vars['phi_obs_avg'] = 0
+    vars['sim_finish'] = 0
+    vars['Q_avg'] = 0
+    vars['formation_success_rate'] = 0
+    vars['avg_formation_size'] = 0
+    vars['distance_total'] = 0
+    vars['distance_success_rate'] = 0
+    vars['distance_penalty'] = 0
+    vars['alpha_effective'] = 0
+    vars['hub_delay_avg'] = 0
+    vars['fuel_delay'] = 0
+    vars['fuel_saved_abs'] = 0
+    vars['fuel_saved'] = 0
+    vars['fuel_saved_disregard_delay'] = 0
 
 def handle_start(event):
     global vars
     vars['sim_start'] = int(event.time)
+    vars['phi_obs_sum'] = 0
+    vars['hub_delay_sum'] = 0
+    vars['Q_sum'] = 0
 
 def handle_depart(event):
     global vars, hubs
@@ -221,7 +246,7 @@ def handle_finish(event):
 
     vars['sim_finish'] = int(event.time)
 
-    if vars['formation_aircraft_count'] > 0.:
+    if vars['formation_aircraft_count'] > 0:
         if 'Q_sum' in vars:
             vars['Q_avg'] = float(vars['Q_sum']) /\
                 vars['formation_aircraft_count']
@@ -243,10 +268,10 @@ def handle_finish(event):
             vars['distance_penalty']
         vars['hub_delay_avg'] = vars['hub_delay_sum'] /\
             vars['formation_aircraft_count']
-
+    
         # estimate hub delay fuel
         fuel_per_minute = 150
-
+    
         vars['fuel_delay'] = vars['hub_delay_avg'] * fuel_per_minute * (
             vars['formation_aircraft_count'] - vars['formation_count']
         )
@@ -258,17 +283,6 @@ def handle_finish(event):
         vars['fuel_saved_disregard_delay'] = 1 -\
             (vars['fuel_actual']) / vars['fuel_direct']
         vars['phi_obs_avg'] = vars['phi_obs_sum'] / vars['aircraft_count']
-        del vars['phi_obs_sum']
-        del vars['Q_sum']
-        del vars['hub_delay_sum']
-
-    vars['config_alpha']      = config.alpha
-    vars['config_etah_slack'] = config.etah_slack
-    vars['config_lock_time']  = config.lock_time
-    vars['config_phi_max']    = config.phi_max
-    vars['config_count_hubs'] = config.count_hubs
-    vars['config_Z']          = config.Z
-    vars['config_dt']         = config.dt
-    vars['config_min_P']      = config.min_P
-
-    #debug.print_dictionary(vars)
+    del vars['phi_obs_sum']
+    del vars['Q_sum']
+    del vars['hub_delay_sum']

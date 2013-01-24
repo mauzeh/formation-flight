@@ -21,7 +21,7 @@ config.interesting_y_axes = [{
     'name' : 'Average Formation Size',
     'column' : 'avg_formation_size'
 },{
-    'name' : 'Fuel Saved',
+    'name' : 'Fuel Saved (Relative)',
     'column' : 'fuel_saved'
 },{
     'name' : 'Fuel Saved (Without Delay Costs)',
@@ -60,29 +60,3 @@ def run():
         fig_path = fig_path.replace('/sink/', '/')
         make_sure_path_exists(os.path.dirname(fig_path))
         plt.savefig(fig_path)
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        

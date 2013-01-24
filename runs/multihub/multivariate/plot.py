@@ -25,7 +25,8 @@ config.interesting_z_axes = [{
     'column' : 'distance_penalty'
 },{
     'name' : 'Distance Success Rate',
-    'column' : 'distance_success_rate'
+    'column' : 'distance_success_rate',
+    'levels' : np.arange(.7,.8,.01)
 },{
     'name' : 'Formation Success Rate',
     'column' : 'formation_success_rate'
@@ -36,7 +37,7 @@ config.interesting_z_axes = [{
     'name' : 'Formation Count',
     'column' : 'formation_count'
 },{
-    'name' : 'Fuel Saved',
+    'name' : 'Fuel Saved [%]',
     'column' : 'fuel_saved'
 },{
     'name' : 'Fuel Saved [kg]',
@@ -45,13 +46,13 @@ config.interesting_z_axes = [{
     'name' : 'Fuel Saved (Without Delay Costs)',
     'column' : 'fuel_saved_disregard_delay'
 },{
-    'name' : 'Accumulated Hub Delay (minutes)',
-    'column' : 'hub_delay_sum'
-},{
-    'name' : 'Average Hub Delay (minutes)',
+    'name' : 'Average Hub Delay [min]',
     'column' : 'hub_delay_avg'
 },{
-    'name' : '$Q_{avg}$',
+    'name' : 'Delay Fuel [kg]',
+    'column' : 'fuel_delay'
+},{
+    'name' : r'$Q_{avg}$',
     'column' : 'Q_avg'
 },{
     'name' : 'Delay Fuel [kg]',
@@ -70,7 +71,7 @@ def run():
     
     axis_x = config.axis_x
     axis_y = config.axis_y
-    
+
     for axis_z in config.interesting_z_axes:
         
         plt.figure()
@@ -81,10 +82,10 @@ def run():
         
         # Note that we must convert the lock time into the lock distance L
         if axis_x['column'] == 'config_lock_time':
-            x = 500 * x / 60
+            x = 300 * x / 60
         if axis_y['column'] == 'config_lock_time':
-            y = 500 * y / 60
-        
+            y = 300 * y / 60
+
         try:
             nx = config.output_nx
             ny = config.output_ny
@@ -92,6 +93,11 @@ def run():
             N = len(z)
             nx = math.sqrt(N)
             ny = nx
+        #    
+        #print 'variable: %s, nx = %d, ny = %d, count z = %d. z = %s' % (
+        #    axis_z['column'],
+        #    nx, ny, len(z), z
+        #)
 
         x = x.reshape(nx, ny)
         y = y.reshape(nx, ny)
@@ -101,8 +107,12 @@ def run():
         plt.ylabel(axis_y['name'])
         
         plt.grid(True)
-    
-        cs = plt.contour(x, y, z, 10)
+        
+        try:
+            cs = plt.contour(x, y, z, axis_z['levels'])
+        except KeyError:
+            cs = plt.contour(x, y, z, 10)
+
         plt.clabel(cs)
         
         plt.colorbar()

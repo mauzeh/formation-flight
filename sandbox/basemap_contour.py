@@ -4,6 +4,8 @@ from matplotlib import mlab
 import numpy as np
 import math
 
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+
 lats = np.mgrid[ 40: 70: 3j]
 lons = np.mgrid[-60: 25: 3j]
 
@@ -51,6 +53,8 @@ m.drawstates()
 m.drawcountries()
 
 x, y = m(x, y)
-m.contourf(x, y, z)
+ax = m.contourf(x, y, z)
+
+cb = plt.colorbar()
 
 plt.show()

@@ -7,14 +7,6 @@ vars = {}
 runs = 0.
 aircraft_success = []
 
-config.alpha = .13
-config.etah_slack = 1
-config.lock_time = 30
-config.phi_max = 5
-config.count_hubs = 5
-config.Z = .2
-config.dt = 10
-
 def init():
     
     global runs, aircraft_success
@@ -54,4 +46,4 @@ def handle_arrive(event):
     else:
         # Only adjust average to new amount of runs
         vars[aircraft.label] = ((runs - 1) * vars[aircraft.label]) / runs
-        
+

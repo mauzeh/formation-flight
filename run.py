@@ -1,33 +1,25 @@
 #!/usr/bin/env python
 """Simulation Bootstrapper"""
 
-from runs.multihub.benchmark import run
+from runs.singlehub.z import run
 run.execute()
 
-#from runs.multihub.n_dt import run
-#run.execute()
-#
-#from runs.multihub.n_s import run
-#run.execute()
-#
 #from runs.multihub.n_phi import run
 #run.execute()
-#
+#from runs.multihub.n_s import run
+#run.execute()
+#from runs.multihub.n_pmin import run
+#run.execute()
 #from runs.multihub.n_z import run
 #run.execute()
-
-#from runs.singlehub.locktime_1  import run
+#from runs.multihub.n_dt import run
 #run.execute()
-#
-#from runs.singlehub.locktime_20  import run
+#from runs.multihub.pmin_phi import run
 #run.execute()
-#
-#from runs.singlehub.locktime_40  import run
+#from runs.multihub.L_Z_3hubs import run
 #run.execute()
-#
-#from runs.singlehub.locktime_60  import run
+#from runs.multihub.n_alpha import run
 #run.execute()
-
 
 ## docs: http://docs.python.org/library/profile.html
 #import cProfile, pstats

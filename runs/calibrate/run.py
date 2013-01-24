@@ -15,13 +15,13 @@ from formation_flight import calibrate
 
 import config, os, copy
 
-config.alpha      = .13
+config.alpha      = .25
 config.etah_slack = 1
-config.lock_time  = 60
-config.phi_max    = 2
+config.lock_time  = 20
+config.phi_max    = 5
 config.count_hubs = 1
 config.Z          = .2
-config.dt         = 10
+config.dt         = 30
 
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 

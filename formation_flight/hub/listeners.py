@@ -1,5 +1,7 @@
 """Hub listeners capture hub aircraft flow rates"""
 
+import config
+
 from lib import sim
 from lib.debug import print_line as p
 from lib.debug import print_dictionary
@@ -76,7 +78,7 @@ def plot_flow_rate(data):
         color = '#999999'
     )
     
-    plt.title(r'Traffic Density at hub $(H=1)$')
+    plt.title(r'Traffic Density at hub $(P_{min}=%s)$' % config.min_P)
     plt.xlabel(r'Time of day (UTC)')#, labelpad = 20)
     plt.ylabel(r'Number of flights')#, labelpad = 20)
     

@@ -65,8 +65,12 @@ def run():
     global time, events, dispatcher
     
     # First fire a 'start sim' event just before the first actual event
-    event = min(events, key = lambda e: e.time)
-    dispatcher.bubble(Event('sim-start', None, event.time))
+    if len(events) > 0:
+        event = min(events, key = lambda e: e.time)
+        t = event.time
+    else:
+        t = 0
+    dispatcher.bubble(Event('sim-start', None, t))
     
     while len(events) > 0:
         event = min(events, key = lambda e: e.time)

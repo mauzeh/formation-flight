@@ -26,7 +26,7 @@ def execute():
 
         config.count_hubs = count_hubs
     
-        for value in np.linspace(0, .99, ny):
+        for value in np.linspace(0, 1, ny):
 
             config.min_P = value
             run.single_run()

@@ -17,7 +17,7 @@ import os
 
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 config.count_hubs = 1
-config.min_P = 0.7
+config.min_P = 0.9
 config.dt = 0
 
 def init():

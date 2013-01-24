@@ -17,7 +17,6 @@ import os
 
 import numpy as np
 
-config.lock_time = 20
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 
 def init():

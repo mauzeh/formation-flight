@@ -58,8 +58,8 @@ def run_graph():
         y.append(count)
     
     plt.title(r'Calibration results')
-    plt.ylabel(r'Number of aircraft where $P_f\geq P_{f,min}$')
-    plt.xlabel(r'Criterium $P_{f,min}$')
+    plt.ylabel(r'Number of aircraft')
+    plt.xlabel(r'Criterium $P_{min}$')
     plt.plot(x, y)
     plt.show()
     

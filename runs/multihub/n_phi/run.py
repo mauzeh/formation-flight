@@ -26,7 +26,7 @@ def execute():
 
         config.count_hubs = count_hubs
     
-        for value in np.linspace(.01, 25, ny):
+        for value in np.linspace(.01, 30, ny):
 
             config.phi_max = value
             run.single_run()

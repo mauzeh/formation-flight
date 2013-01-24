@@ -20,7 +20,7 @@ def get_matrix_dimensions():
 def execute():
     
     nx, ny = get_matrix_dimensions()
-    x_range = np.linspace(0, .95, nx)
+    x_range = np.linspace(0, 1, nx)
     y_range = np.linspace(0.01, 25, ny)
     run.init()
 

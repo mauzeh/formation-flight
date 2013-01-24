@@ -18,23 +18,23 @@ def get_weight_ratio(V, C, L_D, distance):
     return answer
 
 def get_fuel_burned_during_cruise(distance, model = None):
-    
+
     if model is None:
         model = copy.deepcopy(config.model)
 
     W_1 = model['W_1']
     V   = model['V']
-    c_L = model['c_L']
+    c_T = model['c_T']
     L_D = model['L_D']
-    
-    answer = W_1 * (1 - 1 / get_weight_ratio(V, c_L, L_D, distance))
-    
+
+    answer = W_1 * (1 - 1 / get_weight_ratio(V, c_T, L_D, distance))
+
     p('validate', 'fuel burn during cruise(): W_1 = %s'    % W_1)
     p('validate', 'fuel burn during cruise(): V = %s'      % V)
-    p('validate', 'fuel burn during cruise(): c_L = %s'    % c_L)
+    p('validate', 'fuel burn during cruise(): c_T = %s'    % c_T)
     p('validate', 'fuel burn during cruise(): L_D = %s'    % L_D)
     p('validate', 'fuel burn during cruise(): answer = %s' % answer)
-    
+
     return answer
 
 def formationburn(

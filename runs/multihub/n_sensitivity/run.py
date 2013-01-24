@@ -30,7 +30,7 @@ def execute():
     sinkdata = []
     
     runs = range(0, 100)
-    hubs = np.arange(1, 10)
+    hubs = np.arange(1, 11)
     
     for n in hubs:
 
@@ -78,7 +78,7 @@ def execute():
     
     plt.xlim(0.5, len(means)+.5)
     plt.xticks(hubs)
-    plt.ylim(0, 0.05)
+    plt.ylim(0, 0.15)
     plt.title(r'Fuel Savings $F_s$')
     plt.xlabel(r'Amount of hubs $H$')
     plt.ylabel(r'Fuel Savings $F_s$')

@@ -9,6 +9,7 @@ from mpl_toolkits.basemap import Basemap
 import config
 
 from lib.geo.point import Point
+from lib.geo.waypoint import Waypoint
 
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 
@@ -20,7 +21,7 @@ config.plots = [
     },{
         'column' : 'formation_success_rate',
         'title'  : r'Formation Success Rate $S_f$',
-        'levels' : np.arange(0, 1.05, .05),
+        'levels' : np.arange(.8, 1.01, .01),
     },{
         'column' : 'avg_formation_size',
         'title'  : r'Average Formation Size $N_{avg}$',
@@ -32,7 +33,7 @@ config.plots = [
     },{
         'column' : 'fuel_saved',
         'title'  : r'Fuel Saved',
-        'levels' : np.arange(-0.1, 0.1, 0.01),
+        'levels' : np.arange(-.05, 0.15, 0.01),
     },{
         'column' : 'distance_penalty',
         'title'  : r'Distance Penalty $P_d$',
@@ -120,8 +121,10 @@ def do_plot(plotconf, data):
     m.drawmeridians(meridians,labels=[0,0,0,1],fontsize=10)
 
     # Midpoints were determined in runs/singlehub/trunk
-    midpoint_origins = Point(50., 8.)
-    midpoint_destinations = Point(35.,-87.)
+    #midpoint_origins = Point(50., 8.)
+    midpoint_origins = Waypoint('LUX')
+    #midpoint_destinations = Point(35.,-87.)
+    midpoint_destinations = Waypoint('ATL')
 
     lon1 = midpoint_origins.lon
     lat1 = midpoint_origins.lat

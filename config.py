@@ -1,5 +1,5 @@
 # Discount factor
-alpha = .26
+alpha = .25
 
 # How much the arrival at the virtual hub can be delayed/expedited (mins)
 etah_slack = 7
@@ -11,10 +11,10 @@ lock_time = 20
 phi_max = 15
 
 # The amount of hubs in the system
-count_hubs = 2
+count_hubs = 1
 
 # A measure for how far the hub is away from the origin midpoint
-Z = .15
+Z = .19
 
 # Departure time distribution bound (becomes param for uniform(-,+))
 dt = 10
@@ -27,9 +27,9 @@ min_P = 0.75
 # comparing the simulation output to a manual calculation. Having a single
 # aircraft model makes this a bit easier.
 model = {
-    'name' : 'B772',
+    'name' : '332',
     'V'    : 500,
-    'c_L'  : .6,
+    'c_T'  : .6,
     'L_D'  : 17,
     #'W_1' : 297550 - 14000 # B777 Maxweight at start of cruise
     'W_1'  : 300000

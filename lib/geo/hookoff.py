@@ -1,12 +1,13 @@
+import config
 import math
 from lib.geo.point import Point
 from lib.geo.waypoint import Waypoint
 from lib.geo.segment import Segment
 
 def omega(d, W_1):
-    V = 500
-    c_T = .6
-    L_D = 19
+    V = config.model['V']
+    c_T = config.model['c_T']
+    L_D = config.model['L_D']
     return W_1 * (1-math.exp(-d*c_T/(V*L_D)))
 
 def d(p1, p2):
@@ -55,5 +56,8 @@ def get_hookoff(trunk, des, alpha):
                 hookoff_distance
             )
             return hookoff
-    
         fuel_total = F_3 + F_4
+    
+    # If no good location was found, return the hub itself. The aircraft would
+    # then hook off rightt away
+    return hub

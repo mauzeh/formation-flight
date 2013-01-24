@@ -94,23 +94,7 @@ class Formation(list):
                 aircraft.hookoff_point
             ))
     
-            # If Z is really big, the hookoff point may inadvertedly be
-            # projected back into where the aircraft came from. In that case,
-            # there is no benefit to flying in formation so the aircraft should
-            # hook off as soon as they hook up.
-            #angle = hub_to_destination.get_initial_bearing() -\
-            #        hub_to_hookoff.get_initial_bearing()
-            #p('angle = %s - %s = %s' % (
-            #    hub_to_destination.get_initial_bearing(),
-            #    hub_to_hookoff.get_initial_bearing(),
-            #    angle
-            #))
-            #if abs(angle) > 90:
-            #    aircraft.hookoff_point = aircraft.hub
-            #    hub_to_hookoff = Segment(aircraft.hub, aircraft.hookoff_point)
-    
             aircraft.hookoff_point.name = 'hookoff-%s' % aircraft.hookoff_point
-            #aircraft.P = hub_to_hookoff.get_length() / hub_to_midpoint.get_length()
             
         # Place aircraft in order, ascending with Q, to fulfill LIFO condition.
         formation = sorted(self, key = lambda item: item.Q)

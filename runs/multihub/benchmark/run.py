@@ -20,6 +20,16 @@ import numpy as np
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 
 def init():
+    
+    config.alpha      = .25
+    config.etah_slack = 7
+    config.lock_time  = 20
+    config.phi_max    = 15
+    config.count_hubs = 1
+    config.Z          = .17
+    config.dt         = 10
+    config.min_P      = .75
+    
     sink.init(config.sink_dir)
 
 def execute():
@@ -27,7 +37,7 @@ def execute():
     single_run()
 
 def single_run():
-
+    
     sim.init()
     aircraft_handlers.init()
     formation_handlers.init()
@@ -35,19 +45,23 @@ def single_run():
     #plot.init()
     
     # Construct flight list
-    #planes = generators.get_via_stdin()
-    planes = generators.get_manual()
+    planes = generators.get_via_stdin()
+    #planes = generators.get_manual()
     
-    # Find hubs
-    config.hubs = builders.build_hubs(planes, config.count_hubs, config.Z)
+    if len(planes) > 0:
 
-    # Allocate hubs to flights
-    allocators.allocate(planes, config.hubs)
+        # Find hubs
+        config.hubs = builders.build_hubs(planes, config.count_hubs, config.Z)
     
-    for flight in planes:
-        sim.events.append(sim.Event('aircraft-init', flight, 0))
-    
+        # Allocate hubs to flights
+        allocators.allocate(planes, config.hubs)
+        
+        for flight in planes:
+            sim.events.append(sim.Event('aircraft-init', flight, 0))
+        
     sim.run()
 
     sink.push(statistics.vars)
     debug.print_dictionary(statistics.vars)
+    
+
