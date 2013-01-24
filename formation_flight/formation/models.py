@@ -5,7 +5,9 @@ from allocators import *
 from synchronizers import * 
 from lib.debug import print_line as p
 from lib.geo.segment import Segment
-from lib.geo.util import project_segment, get_hookoff_quotient, midpoint
+#from lib.geo.util import project_segment, get_hookoff_quotient
+from lib.geo.util import midpoint
+from lib.geo.hookoff import get_hookoff
 import config
 
 class Formation(list):
@@ -54,23 +56,33 @@ class Formation(list):
                 arrival_midpoint
             ))
     
-            theta = abs(hub_to_destination.get_initial_bearing() -
-                        hub_to_midpoint.get_initial_bearing())
-            (a, b) = project_segment(theta, hub_to_destination.get_length())
-            aircraft.Q = get_hookoff_quotient(a, b, config.alpha)
+            #theta = abs(hub_to_destination.get_initial_bearing() -
+            #            hub_to_midpoint.get_initial_bearing())
+            #(a, b) = project_segment(theta, hub_to_destination.get_length())
+            #aircraft.Q = get_hookoff_quotient(a, b, config.alpha)
 
-            p('critical', 'hookoff params for aircraft %s: %s' % (
-                aircraft,
-                'a = %s, b = %s, Q = %s, HUB to HOOKOFF = %.2f' % (
-                    a, b, aircraft.Q, a * aircraft.Q
-                )
-            ))
+            #p('critical', 'hookoff params for aircraft %s: %s' % (
+            #    aircraft,
+            #    'a = %s, b = %s, Q = %s, HUB to HOOKOFF = %.2f' % (
+            #        a, b, aircraft.Q, a * aircraft.Q
+            #    )
+            #))
 
-            aircraft.hookoff_point = self.hub.get_position(
-                hub_to_midpoint.get_initial_bearing(),
-                a * aircraft.Q
+            #aircraft.hookoff_point = self.hub.get_position(
+            #    hub_to_midpoint.get_initial_bearing(),
+            #    a * aircraft.Q
+            #)
+            
+            aircraft.hookoff_point = get_hookoff(
+                hub_to_midpoint,
+                aircraft.destination,
+                config.alpha
             )
+            
             hub_to_hookoff = Segment(aircraft.hub, aircraft.hookoff_point)
+            
+            aircraft.Q = hub_to_hookoff.get_length() /\
+                         hub_to_midpoint.get_length()
 
             p('flight %s, hub %s to hook-off point: %s' % (
                 aircraft,
