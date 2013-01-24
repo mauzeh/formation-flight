@@ -1,5 +1,5 @@
 # Discount factor
-alpha = .13
+alpha = .26
 
 # How much the arrival at the virtual hub can be delayed/expedited (mins)
 etah_slack = 7

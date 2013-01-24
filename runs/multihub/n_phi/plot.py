@@ -5,7 +5,7 @@ import config, os
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 
 config.axis_x = {
-    'name' : r'$n$',
+    'name' : r'$H$',
     'column' : 'config_count_hubs'
 }
 config.axis_y = {

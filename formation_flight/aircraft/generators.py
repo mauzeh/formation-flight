@@ -11,12 +11,17 @@ from lib.debug import print_line as p
 def get_manual():
 
     # Override auto-planes, useful when reproducing a bug...
+    #return [
+    #    Aircraft('FLT001', Route([Waypoint('DUS'), Waypoint('IAD')]), 0),
+    #    Aircraft('FLT002', Route([Waypoint('BRU'), Waypoint('ORD')]), 0),
+    #    Aircraft('FLT003', Route([Waypoint('AMS'), Waypoint('IAH')]), 0),
+    #    Aircraft('FLT004', Route([Waypoint('LHR'), Waypoint('ATL')]), 45),
+    #    Aircraft('FLT005', Route([Waypoint('FRA'), Waypoint('SFO')]), 0),
+    #]
     return [
-        Aircraft('FLT001', Route([Waypoint('DUS'), Waypoint('IAD')]), 0),
-        Aircraft('FLT002', Route([Waypoint('BRU'), Waypoint('ORD')]), 0),
-        Aircraft('FLT003', Route([Waypoint('AMS'), Waypoint('IAH')]), 0),
-        Aircraft('FLT004', Route([Waypoint('LHR'), Waypoint('ATL')]), 45),
-        Aircraft('FLT005', Route([Waypoint('FRA'), Waypoint('SFO')]), 0),
+        Aircraft('FLT001', Route([Waypoint('LHR'), Waypoint('DFW')]), 570),
+        Aircraft('FLT002', Route([Waypoint('LHR'), Waypoint('IAH')]), 570),
+        Aircraft('FLT003', Route([Waypoint('FCO'), Waypoint('LAX')]), 495),
     ]
 
 # Keep track of what was passed via stdin for a potential re-init

@@ -35,8 +35,8 @@ def single_run():
     #plot.init()
     
     # Construct flight list
-    planes = generators.get_via_stdin()
-    #planes = generators.get_manual()
+    #planes = generators.get_via_stdin()
+    planes = generators.get_manual()
     
     # Find hubs
     config.hubs = builders.build_hubs(planes, config.count_hubs, config.Z)

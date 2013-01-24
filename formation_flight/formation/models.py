@@ -59,7 +59,7 @@ class Formation(list):
             (a, b) = project_segment(theta, hub_to_destination.get_length())
             aircraft.Q = get_hookoff_quotient(a, b, config.alpha)
 
-            p('validate', 'hookoff params for aircraft %s: %s' % (
+            p('critical', 'hookoff params for aircraft %s: %s' % (
                 aircraft,
                 'a = %s, b = %s, Q = %s, HUB to HOOKOFF = %.2f' % (
                     a, b, aircraft.Q, a * aircraft.Q

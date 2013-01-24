@@ -77,7 +77,7 @@ class FormationAllocatorEtah(FormationAllocator):
                     aircraft, leader_heading, buddy, buddy_heading, phi_obs
                 )
             )
-            return phi_obs < config.phi_max
+            return phi_obs <= (config.phi_max/2)
 
         candidates = filter(heading_filter, candidates)
 

@@ -235,8 +235,11 @@ def get_hookoff_quotient(a, b, beta):
        float b:     distance from B to C
        float beta:  discount factor when flying in formation (0 < beta < 1)
     """
-    alpha_list = range(0, 90, 5)
+    alpha_list = range(0, 99, 1)
     
+    # Start from back to front for performance reasons
+    alpha_list.reverse()
+
     costs_list = []
     min_cost = None
     min_alpha = 0

@@ -34,6 +34,7 @@ def init():
     vars["formation_count"] = 0
     vars['Q_sum'] = 0
     vars['hub_delay_sum'] = 0
+    vars['phi_obs_sum'] = 0
 
 def handle_start(event):
     global vars
@@ -74,8 +75,22 @@ def handle_alive(event):
         #)
     
     vars["formation_count"] += 1
-
     vars['formation_aircraft_count'] += len(formation)
+    
+    formation_phi = 0
+    for aircraft in formation:
+        
+        hub_to_dest = Segment(aircraft.hub, aircraft.destination)
+        hub_to_hookoff = Segment(aircraft.hub, aircraft.hookoff_point)
+        
+        bearing = hub_to_dest.get_initial_bearing()
+        formation_bearing = hub_to_hookoff.get_initial_bearing()
+        phi_obs = abs(bearing - formation_bearing)
+        p('debug', 'Aircraft %s, phi_obs: %.2f' % (aircraft, phi_obs))
+        #assert phi_obs <= config.phi_max
+        formation_phi += phi_obs
+        #print aircraft.route.segments[0].initial_bearing()
+    vars['phi_obs_sum'] += formation_phi
         
     for aircraft in formation:
         vars['Q_sum']   = vars['Q_sum'] + aircraft.Q
@@ -242,6 +257,10 @@ def handle_finish(event):
             (vars['fuel_actual'] + vars['fuel_delay']) / vars['fuel_direct']
         vars['fuel_saved_disregard_delay'] = 1 -\
             (vars['fuel_actual']) / vars['fuel_direct']
+        vars['phi_obs_avg'] = vars['phi_obs_sum'] / vars['aircraft_count']
+        del vars['phi_obs_sum']
+        del vars['Q_sum']
+        del vars['hub_delay_sum']
 
     vars['config_alpha']      = config.alpha
     vars['config_etah_slack'] = config.etah_slack
