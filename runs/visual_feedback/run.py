@@ -16,6 +16,14 @@ from formation_flight import statistics
 import config
 import os
 
+config.count_hubs = 1
+config.Z = 0.25
+config.dt = 15
+config.phi_max = 10
+config.lock_time = 20
+config.etah_slack = 5
+config.min_P = 0.9
+
 import numpy as np
 
 def execute():
@@ -28,13 +36,13 @@ def single_run():
     formation_handlers.init()
     statistics.init()
     visualization.init()
-    
+
     # Construct flight list
     planes = generators.get_via_stdin()
-    
+
     # Find hubs
     config.hubs = builders.build_hubs(planes, config.count_hubs, config.Z)
-    
+
     # Allocate hubs to flights
     allocators.allocate(planes, config.hubs)
     

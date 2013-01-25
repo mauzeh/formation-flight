@@ -17,7 +17,7 @@ config.plots = [
     {
         'column' : 'formation_count',
         'title'  : r'Formation Count $M$',
-        'levels' : np.arange(0, 30, 2),
+        'levels' : np.arange(40, 60, 1),
     },{
         'column' : 'formation_success_rate',
         'title'  : r'Formation Success Rate $S_f$',
@@ -32,7 +32,7 @@ config.plots = [
         'levels' : np.arange(0, 1.05, .05),
     },{
         'column' : 'fuel_saved',
-        'title'  : r'Fuel Saved',
+        'title'  : r'Fuel Saved (Relative)',
         'levels' : np.arange(-.05, 0.15, 0.01),
     },{
         'column' : 'distance_penalty',
@@ -135,9 +135,9 @@ def do_plot(plotconf, data):
     m.drawgreatcircle(lon1, lat1, lon2, lat2, linewidth = 3, color='#000000')
     
     x, y = m(x, y)
-    m.contourf(x, y, z, plotconf['levels'])
+    cs = m.contourf(x, y, z, plotconf['levels'])
 
-    plt.colorbar()
+    plt.colorbar(cs, orientation = 'vertical', shrink = 0.65)
     plt.title(plotconf['title'])
     
     #plt.show()
@@ -146,5 +146,5 @@ def do_plot(plotconf, data):
     fig_path = fig_path.replace('/runs/', '/plots/')
     fig_path = fig_path.replace('/sink/', '/')
     make_sure_path_exists(os.path.dirname(fig_path))
-    plt.savefig(fig_path)
+    plt.savefig(fig_path, bbox_inches='tight')
     

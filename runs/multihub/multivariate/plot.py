@@ -20,13 +20,16 @@ config.axis_y = {
     'column' : 'config_lock_time'
 }
 
+font = {'size' : 20}
+matplotlib.rc('font', **font)
+
 config.interesting_z_axes = [{
     'name' : 'Distance Penalty',
     'column' : 'distance_penalty'
 },{
     'name' : 'Distance Success Rate',
     'column' : 'distance_success_rate',
-    'levels' : np.arange(.7,.8,.01)
+    #'levels' : np.arange(.7,.8,.01)
 },{
     'name' : 'Formation Success Rate',
     'column' : 'formation_success_rate'
@@ -124,4 +127,5 @@ def run():
         fig_path = fig_path.replace('/runs/', '/plots/')
         fig_path = fig_path.replace('/sink/', '/')
         make_sure_path_exists(os.path.dirname(fig_path))
+        #plt.show()
         plt.savefig(fig_path)

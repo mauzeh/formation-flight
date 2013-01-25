@@ -22,15 +22,12 @@ def handle_arrive(event):
         aircraft.waypoints_passed
     ))
     
-    # Temp: only draw flights to selected West Coast destinations
-    #if aircraft.destination.name not in [
-    #    'SFO',
-    #    'LAX',
-    #    'SEA',
-    #    'YVR',
-    #    'SAN'
-    #]:
-    #    return
+    # Temp for timing analysis (no formations yet)
+    # We place these segment in the formation var so that the lines are
+    # nice and green
+    #segments['formation'].append(Segment(aircraft.origin, aircraft.hub))
+    #segments['formation'].append(Segment(aircraft.hub, aircraft.destination))
+    #return
     
     if hasattr(aircraft, 'formation'):
         segments['formation'].append(Segment(aircraft.origin, aircraft.hub))
@@ -60,11 +57,11 @@ def render(event):
     for segment in segments['solo']:
         m.drawgreatcircle(segment.start.lon, segment.start.lat,
                           segment.end.lon, segment.end.lat,
-                          linewidth = 1.5, color='r')
+                          linewidth = 1, color='r')
         x, y = m(segment.start.lon, segment.start.lat)
-        m.plot(x, y, 'ro', ms = 8)
+        m.plot(x, y, 'ro', ms = 4)
         x, y = m(segment.end.lon, segment.end.lat)
-        m.plot(x, y, 'ro', ms = 8)
+        m.plot(x, y, 'ro', ms = 4)
 
     for segment in segments['formation']:
         p('geo-debug', 'Start to plot a formation trajectory')
@@ -74,11 +71,11 @@ def render(event):
         ))
         m.drawgreatcircle(segment.start.lon, segment.start.lat,
                           segment.end.lon, segment.end.lat,
-                          linewidth = 1.5, color='g')
+                          linewidth = 1, color='g')
         x, y = m(segment.start.lon, segment.start.lat)
-        m.plot(x, y, 'go', ms = 8)
+        m.plot(x, y, 'go', ms = 4)
         x, y = m(segment.end.lon, segment.end.lat)
-        m.plot(x, y, 'go', ms = 8)
+        m.plot(x, y, 'go', ms = 4)
         p('geo-debug', 'Done with plotting a formation trajectory')
     
     m.drawcoastlines(color='#8f8457')

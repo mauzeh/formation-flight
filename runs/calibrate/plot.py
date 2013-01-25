@@ -57,7 +57,7 @@ def run_graph():
                 count += 1
         y.append(count)
     
-    plt.title(r'Calibration results')
+    plt.title(r'Formation Probability')
     plt.ylabel(r'Number of aircraft')
     plt.xlabel(r'Criterium $P_{min}$')
     plt.plot(x, y)

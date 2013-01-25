@@ -21,7 +21,7 @@ dt = 10
 
 # If flight list was calibrated, use this value as the selection criterium for
 # the minimum formation required probability
-min_P = 0.75
+min_P = 0.3
 
 # Mainly used for validation. One way in which validation is performed is by
 # comparing the simulation output to a manual calculation. Having a single
