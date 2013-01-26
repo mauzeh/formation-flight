@@ -17,12 +17,12 @@ import config
 import os
 
 config.count_hubs = 1
-config.Z = 0.25
+config.Z = 0.19
 config.dt = 15
 config.phi_max = 10
 config.lock_time = 20
 config.etah_slack = 5
-config.min_P = 0.9
+config.min_P = 0.01
 
 import numpy as np
 

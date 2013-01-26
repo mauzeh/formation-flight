@@ -15,13 +15,23 @@ from formation_flight import calibrate
 
 import config, os, copy
 
+# Deze werkte goed (P=0.3 gaf hogere abs savings dan P=0)
+#config.alpha      = .25
+#config.etah_slack = 5
+#config.lock_time  = 20
+#config.phi_max    = 5
+#config.count_hubs = 1
+#config.Z          = .25
+#config.dt         = 30
+
+config.etah_slack = 7
+config.phi_max    = 10
+config.dt         = 15
+
 config.alpha      = .25
-config.etah_slack = 1
 config.lock_time  = 20
-config.phi_max    = 5
 config.count_hubs = 1
-config.Z          = .2
-config.dt         = 30
+config.Z          = .25
 
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 
@@ -32,7 +42,7 @@ def execute():
     # Construct flight list (for aircraft lookup)
     planes = generators.get_via_stdin()
     
-    runs = 100
+    runs = 10
     
     for i in xrange(1, runs + 1):
         # Construct flight list once more for the sim runs
@@ -53,8 +63,8 @@ def execute():
             '%.2f' % value
         ])
     sink.dump_rows(rows)
-    for row in rows:
-        print row
+    #for row in rows:
+    #    print row
 
 def single_run(planes):
     
@@ -75,5 +85,23 @@ def single_run(planes):
     
     sim.run()
 
-
+def plot():
     
+    import plot
+    plot.run()
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

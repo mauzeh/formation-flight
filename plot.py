@@ -3,22 +3,17 @@
 
 import config
 
-from runs.multihub.n_dt import plot
-plot.run()
+from run import plot
+plot()
 
-#from runs.multihub.n_phi import plot
-#plot.run()
-#from runs.multihub.n_s import plot
-#plot.run()
-#from runs.multihub.n_pmin import plot
-#plot.run()
-#from runs.multihub.n_z import plot
-#plot.run()
-#from runs.multihub.n_dt import plot
-#plot.run()
-#from runs.multihub.pmin_phi import plot
-#plot.run()
 #from runs.multihub.L_Z_3hubs import plot
-#plot.run()
+#from runs.multihub.n_phi import plot
+#from runs.multihub.n_s import plot
+#from runs.multihub.n_pmin import plot
+#from runs.multihub.n_z import plot
+#from runs.multihub.n_dt import plot
+#from runs.multihub.pmin_phi import plot
+#from runs.multihub.L_Z_3hubs import plot
 #from runs.multihub.n_alpha import plot
+
 #plot.run()
