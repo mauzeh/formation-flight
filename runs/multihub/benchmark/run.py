@@ -20,16 +20,6 @@ import numpy as np
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 
 def init():
-    
-    #config.alpha      = .25
-    #config.etah_slack = 7
-    #config.lock_time  = 20
-    #config.phi_max    = 15
-    #config.count_hubs = 3
-    #config.Z          = .17
-    #config.dt         = 10
-    #config.min_P      = .75
-    
     sink.init(config.sink_dir)
 
 def execute():

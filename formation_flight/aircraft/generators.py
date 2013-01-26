@@ -61,12 +61,13 @@ def get_via_stdin():
             
         # Keep track of scheduled departure time for later retrieval
         departure_time_scheduled = departure_time
-        
+
         # Departure times are randomly distributed
         # In some rare cases (only for early aircraft) the departure time might
         # become negative so we restrict it to being only positive
         departure_time = departure_time +\
-            random.uniform(max(0, -1 * config.dt), config.dt)
+            random.uniform(-1 * config.dt, config.dt)
+        departure_time = max(0, departure_time)
 
         aircraft = Aircraft(
             label = label,

@@ -10,3 +10,7 @@ config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 
 def execute():
     run.execute()
+
+def plot():
+    from .. import plot
+    plot.run()

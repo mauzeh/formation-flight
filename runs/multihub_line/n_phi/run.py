@@ -12,8 +12,8 @@ config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 def get_matrix():
     
     #x = np.array([1,2,3,4,6,8])
-    x = np.array([1,4,8])
-    y = np.linspace(0, 90, 5)
+    x = np.array([1,2,4,8])
+    y = np.linspace(0, 25, 100)
     
     return x,y
 

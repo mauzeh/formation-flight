@@ -15,16 +15,14 @@ from formation_flight import statistics
 import config
 import os
 
-config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 config.count_hubs = 1
-config.min_P = 0.9
+config.min_P = 0.95
 config.dt = 0
-
-def init():
-    sink.init(config.sink_dir)
+# Important otherwise flights are synchronized leading to wrong results
+config.etah_slack = 0 
+config.Z = .25
 
 def execute():
-    init()
     single_run()
 
 def single_run():
@@ -52,5 +50,4 @@ def single_run():
 
     sim.run()
 
-    sink.push(statistics.vars)
     debug.print_dictionary(statistics.vars)

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
 """Validation Bootstrapper"""
 
-from validation.breguet_singleformation import execute
+from validation.get_max_fuel_burn import execute
 execute()

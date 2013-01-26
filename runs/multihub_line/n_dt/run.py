@@ -11,10 +11,9 @@ config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 
 def get_matrix():
     
-    #x = np.array([1,2,3,4,6,8])
-    x = np.array([1])
-    y = np.linspace(0, 1, 100)
-
+    x = np.array([1,2,4,8])
+    y = np.linspace(0, 600, 100)
+    
     return x,y
 
 def execute():
@@ -28,7 +27,7 @@ def execute():
     
         for value in y:
 
-            config.min_P = value
+            config.dt = value
             run.single_run()
 
 def plot():
@@ -36,8 +35,8 @@ def plot():
     from .. import plot as plt
     
     config.axis_x = {
-        'name' : r'Probability criterium $P_{min}$',
-        'column' : 'config_min_P'
+        'name' : r'Departure time uncertainty $\sigma$',
+        'column' : 'config_dt'
     }
     
     config.x, config.y = get_matrix()

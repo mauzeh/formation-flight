@@ -8,11 +8,13 @@ from formation_flight.hub import builders
 from formation_flight.hub import allocators
 
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
 import math
 
 from lib import sim, debug, sink
 from lib.debug import print_line as p
+from lib.util import make_sure_path_exists
 
 from formation_flight import statistics
 
@@ -23,13 +25,16 @@ import numpy as np
 
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 
+font = {'size' : 20}
+matplotlib.rc('font', **font)
+
 def execute():
     
     sink.init(config.sink_dir)
     
     sinkdata = []
     
-    runs = range(0, 100)
+    runs = range(0, 10)
     hubs = np.arange(1, 11)
     
     for n in hubs:
@@ -48,7 +53,7 @@ def execute():
     print '#################################'
     print '############ NOTICE #############'
     print 'This run has a built-in plotter.'
-    print 'You must save the plot manually!'
+    print '#################################'
     
     means = []
     errors = []
@@ -78,11 +83,19 @@ def execute():
     
     plt.xlim(0.5, len(means)+.5)
     plt.xticks(hubs)
-    plt.ylim(0, 0.15)
-    plt.title(r'Fuel Savings $F_s$')
+    plt.ylim(0, max(means)*1.1)
+    plt.title(r'Fuel Saved')
     plt.xlabel(r'Amount of hubs $H$')
-    plt.ylabel(r'Fuel Savings $F_s$')
-    plt.show()
+    plt.ylabel(r'Fuel Saved $F_s$ [%]')
+    
+    fig_path = '%s/plot_%s.pdf' % (config.sink_dir, 'fuel_saved')
+    fig_path = fig_path.replace('/runs/', '/plots/')
+    fig_path = fig_path.replace('/sink/', '/')
+    make_sure_path_exists(os.path.dirname(fig_path))
+    plt.savefig(
+        fig_path,
+        bbox_inches='tight'
+    )
     
 def single_run():
 
@@ -92,15 +105,15 @@ def single_run():
     statistics.init()
     
     # Construct flight list
-    planes = generators.get_via_stdin()
+    config.planes = generators.get_via_stdin()
     
     # Find hubs
-    config.hubs = builders.build_hubs(planes, config.count_hubs, config.Z)
+    config.hubs = builders.build_hubs(config.planes, config.count_hubs, config.Z)
 
     # Allocate hubs to flights
-    allocators.allocate(planes, config.hubs)
+    allocators.allocate(config.planes, config.hubs)
     
-    for flight in planes:
+    for flight in config.planes:
         sim.events.append(sim.Event('aircraft-init', flight, 0))
     
     sim.run()

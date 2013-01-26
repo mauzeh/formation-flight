@@ -1,6 +1,7 @@
 from mpl_toolkits.basemap import Basemap
 import numpy as np
 import matplotlib.pyplot as plt
+import config
 
 from lib.geo.segment import Segment
 from lib.geo.route import Route
@@ -12,9 +13,15 @@ segments = {
     'solo'      : []
 }
 
+
 def init():
     sim.dispatcher.register('aircraft-arrive', handle_arrive)
-    sim.dispatcher.register('sim-finish', render)
+    print '#######################################'
+    print '############# IMPORTANT ###############'
+    print '##                                   ##'
+    print '## You must call render() explicitly ##'
+    print '##                                   ##'
+    print '#######################################'
 
 def handle_arrive(event):
     aircraft = event.sender
@@ -41,18 +48,26 @@ def handle_arrive(event):
         for segment in route.segments:
             segments['solo'].append(segment)
 
-def render(event):
+def render():
+    
     # create new figure, axes instances.
     fig = plt.figure()
     ax  = fig.add_axes([0.1,0.1,0.8,0.8], axisbg = '#a5bfdd')
     
+    llcrnrlon = config.map_dimensions['lon'][0]
+    urcrnrlon = config.map_dimensions['lon'][1]
+    
+    llcrnrlat = config.map_dimensions['lat'][0]
+    urcrnrlat = config.map_dimensions['lat'][1]
+    
     # setup mercator map projection.
-    m = Basemap(llcrnrlon = -130., llcrnrlat = 1.,
-                urcrnrlon = 40.,   urcrnrlat = 70.,
-                rsphere = (6378137.00,6356752.3142),
-                resolution = 'c',
-                projection = 'merc',
-                lat_0 = 40.,lon_0 = -20.,lat_ts = 20.)
+    m = Basemap(
+        llcrnrlon = llcrnrlon, llcrnrlat = llcrnrlat,
+        urcrnrlon = urcrnrlon, urcrnrlat = urcrnrlat,
+        rsphere = (6378137.00,6356752.3142),
+        resolution = 'c', projection = 'merc',
+        #lat_0 = 40.,lon_0 = -20.,lat_ts = 20.
+    )
     
     for segment in segments['solo']:
         m.drawgreatcircle(segment.start.lon, segment.start.lat,
@@ -81,7 +96,7 @@ def render(event):
     m.drawcoastlines(color='#8f8457')
     m.fillcontinents(color='#f5f0db')
     m.drawcountries(color='#a9a06d')
-    m.drawparallels(np.arange(10,90,20), labels = [1,1,0,1])
-    m.drawmeridians(np.arange(-180,180,30), labels = [1,1,0,1])
-    ax.set_title('Flights')
-    plt.show()
+    m.drawparallels(np.arange(10,90,10), labels = [1,1,0,1])
+    m.drawmeridians(np.arange(-180,180,20), labels = [1,1,0,1])
+    
+    return plt, ax

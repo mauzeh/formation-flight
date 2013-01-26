@@ -16,10 +16,13 @@ config.axes_y = [{
     'name' : 'Distance Penalty',
     'column' : 'distance_penalty'
 },{
-    'name' : 'Distance Success Rate',
+    'name' : r'Distance Flown [NM]',
+    'column' : 'distance_total',
+},{
+    'name' : r'Distance Success Rate $S_d$',
     'column' : 'distance_success_rate',
 },{
-    'name' : 'Formation Success Rate',
+    'name' : r'Formation Success Rate $S_f$',
     'column' : 'formation_success_rate'
 },{
     'name' : 'Average Formation Size',
@@ -66,6 +69,10 @@ def run():
     j = 0
     for axis_y in config.axes_y:
         
+        print 'Plotting %s (%d of %d)' % (
+            axis_y['column'], (j+1), len(config.axes_y)
+        )
+        
         axis_x = config.axis_x
     
         fig = plt.figure(j)
@@ -76,10 +83,8 @@ def run():
         
         # Note that we must convert the lock time into the lock distance L
         if axis_x['column'] == 'config_lock_time':
-            x = 300 * x / 60
-        if axis_y['column'] == 'config_lock_time':
-            y = 300 * y / 60
-    
+            raise Error('lock time needs conversion')
+        
         nx = len(config.x)
         ny = len(config.y)
     
@@ -97,7 +102,13 @@ def run():
         
         i = 0
         for line in config.x:
-            plt.plot(x[0,:], y[i,:], label = r'$H=%d$' % line)
+
+            if axis_x['column'] == 'config_dt':
+                horizontal = x[0,:] / 20
+            else:
+                horizontal = x[0,:]
+
+            plt.plot(horizontal, y[i,:], label = r'$H=%d$' % line)
             i += 1
     
         plt.grid(True)
@@ -105,7 +116,7 @@ def run():
         lgd = ax.legend(
             loc='upper center',
             bbox_to_anchor=(0.5,-0.15),
-            ncol = 3
+            ncol = 2
         )
         fig.savefig(
             'samplefigure.pdf',

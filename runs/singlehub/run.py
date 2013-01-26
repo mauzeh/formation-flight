@@ -21,15 +21,13 @@ from lib.geo.waypoint import Waypoint
 import numpy as np
 
 # Create custom set of hubs
-lats = np.mgrid[ 40: 70: 15j]
-lons = np.mgrid[-60: 25: 15j]
+lats = np.mgrid[ 40: 70: 25j]
+lons = np.mgrid[-60: 25: 25j]
 
 config.hubs = []
 for lat in lats:
     for lon in lons:
         config.hubs.append(Point(lat, lon))
-
-config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 
 def execute():
     
@@ -87,3 +85,5 @@ def execute():
 
         sink.push(d)
         debug.print_dictionary(d)
+
+

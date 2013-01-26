@@ -35,6 +35,12 @@ model = {
     'W_1'  : 300000
 }
 
+# When drawing a map, use these dimensions unless overridden
+map_dimensions = {
+    'lat' : [1.,    70.],
+    'lon' : [-130., 40.]
+}
+
 # Restrictions on formations. Options: 
 #   'same-airline',
 #   'same-aircraft-type', and

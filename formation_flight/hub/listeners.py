@@ -34,6 +34,10 @@ def init(hubs):
 def handle_at_waypoint(event):
 
     aircraft = event.sender
+    
+    # Discard flight times above end of day (midnight)
+    if event.time > 1440:
+        return
 
     # Round the time so we can group the flights into time buckets
     index = round_float(event.time - float(interval_length)/2, interval_length)
@@ -83,7 +87,7 @@ def plot_flow_rate(data):
     plt.ylabel(r'Number of flights')#, labelpad = 20)
     
     plt.xlim(0, 1440)
-    plt.ylim(0, 30)
+    plt.ylim(0, 40)
     
     plt.xticks(
         [0,

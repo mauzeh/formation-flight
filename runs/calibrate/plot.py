@@ -1,9 +1,14 @@
 import config
+from lib.util import make_sure_path_exists
 from lib.util import tsv_get_column_index
 import os
 
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
+
+font = {'size' : 22}
+matplotlib.rc('font', **font)
 
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 
@@ -61,5 +66,32 @@ def run_graph():
     plt.ylabel(r'Number of aircraft')
     plt.xlabel(r'Criterium $P_{min}$')
     plt.plot(x, y)
-    plt.show()
+    #plt.show()
+    
+    fig_path = '%s/plot.pdf' % (config.sink_dir)
+    fig_path = fig_path.replace('/runs/', '/plots/')
+    fig_path = fig_path.replace('/sink/', '/')
+    make_sure_path_exists(os.path.dirname(fig_path))
+    plt.savefig(
+        fig_path,
+        bbox_inches='tight'
+    )
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     

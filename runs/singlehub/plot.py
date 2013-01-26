@@ -6,38 +6,43 @@ import math
 from lib.util import make_sure_path_exists
 from lib.util import tsv_get_column_index
 from mpl_toolkits.basemap import Basemap
+import matplotlib
 import config
 
 from lib.geo.point import Point
 from lib.geo.waypoint import Waypoint
 
-config.sink_dir = '%s/sink' % os.path.dirname(__file__)
-
 config.plots = [
     {
         'column' : 'formation_count',
         'title'  : r'Formation Count $M$',
-        'levels' : np.arange(40, 60, 1),
+        #'levels' : np.arange(40, 60, 1),
+        'levels' : 20,
     },{
         'column' : 'formation_success_rate',
         'title'  : r'Formation Success Rate $S_f$',
-        'levels' : np.arange(.8, 1.01, .01),
+        'levels' : 20,
+        #'levels' : np.arange(.8, 1.01, .01),
     },{
         'column' : 'avg_formation_size',
         'title'  : r'Average Formation Size $N_{avg}$',
         'levels' : 20,
+        #'levels' : 20,
     },{
         'column' : 'distance_success_rate',
         'title'  : r'Distance Success Rate $S_d$',
-        'levels' : np.arange(0, 1.05, .05),
+        'levels' : 20,
+        #'levels' : np.arange(0, 1.05, .05),
     },{
         'column' : 'fuel_saved',
         'title'  : r'Fuel Saved (Relative)',
-        'levels' : np.arange(-.05, 0.15, 0.01),
+        'levels' : 20,
+        #'levels' : np.arange(-.05, 0.15, 0.01),
     },{
         'column' : 'distance_penalty',
         'title'  : r'Distance Penalty $P_d$',
         'levels' : 20,
+        #'levels' : 20,
     }
 ]
 
@@ -52,6 +57,9 @@ config.plots = [
 #config.contour_levels = np.arange(.8, 1, .05)
 
 #print data_file
+
+font = {'size' : 15}
+matplotlib.rc('font', **font)
 
 def run():
     
@@ -113,18 +121,16 @@ def do_plot(plotconf, data):
     m.drawcountries()
     
     # draw lat/lon grid lines every 10 degrees.
-    # draw parallels.
     parallels = np.arange(-360.,360.,10.)
-    m.drawparallels(parallels,labels=[1,0,0,0],fontsize=10)
-    # draw meridians
-    meridians = np.arange(-360.,360.,10.)
-    m.drawmeridians(meridians,labels=[0,0,0,1],fontsize=10)
+    meridians = np.arange(-360.,360.,20.)
+    m.drawparallels(parallels,labels=[1,0,0,0])
+    m.drawmeridians(meridians,labels=[0,0,0,1])
 
     # Midpoints were determined in runs/singlehub/trunk
     #midpoint_origins = Point(50., 8.)
     midpoint_origins = Waypoint('LUX')
     #midpoint_destinations = Point(35.,-87.)
-    midpoint_destinations = Waypoint('ATL')
+    midpoint_destinations = Waypoint('PIT')
 
     lon1 = midpoint_origins.lon
     lat1 = midpoint_origins.lat
@@ -147,4 +153,3 @@ def do_plot(plotconf, data):
     fig_path = fig_path.replace('/sink/', '/')
     make_sure_path_exists(os.path.dirname(fig_path))
     plt.savefig(fig_path, bbox_inches='tight')
-    
