@@ -47,10 +47,6 @@ def build_hubs(planes, count_hubs, Z):
 
     for od_chunk in od_chunks:
 
-        #hub_segment = Segment(
-        #    construct_hub(origin_chunk, destination_chunk, Z = 0),
-        #    construct_hub(origin_chunk, destination_chunk, Z = 1))
-
         hub = construct_hub(
             origins = reduce_points(od_chunk[0]),
             destinations = reduce_points(od_chunk[1]),

@@ -1,4 +1,4 @@
-"""Captures data and puts it into data/output.tsv"""
+"""Captures data and puts it into a specified data file"""
 import csv
 from lib import sim
 from lib.util import make_sure_path_exists, force_symlink

@@ -8,12 +8,12 @@ import math
 from lib.geo.point import Point
 
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
-config.legend = r'$H=%d$'
+config.legend = r'$\alpha=%.2f$'
 
 def get_matrix():
     
-    x = np.array([1,2,3,6])
-    y = np.linspace(0, 1, 100)
+    x = np.array([.25, .5, .75, .9])
+    y = np.linspace(0, 60, 100)
     
     return x,y
 
@@ -24,11 +24,11 @@ def execute():
 
     for count_hubs in x:
 
-        config.count_hubs = count_hubs
+        config.alpha = count_hubs
     
         for value in y:
 
-            config.alpha = value
+            config.etah_slack = value
             run.single_run()
 
 def plot():
@@ -36,8 +36,8 @@ def plot():
     from .. import plot as plt
     
     config.axis_x = {
-        'name' : r'Formation Discount $\alpha$',
-        'column' : 'config_alpha'
+        'name' : r'Slack $s$',
+        'column' : 'config_etah_slack'
     }
     
     config.x, config.y = get_matrix()

@@ -13,7 +13,6 @@ segments = {
     'solo'      : []
 }
 
-
 def init():
     sim.dispatcher.register('aircraft-arrive', handle_arrive)
     print '#######################################'

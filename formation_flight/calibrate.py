@@ -41,7 +41,7 @@ def handle_arrive(event):
     global planes, runs, aircraft_success
     
     if aircraft in aircraft_success:
-        # Increment amount of time in formation and update with new runs
+        # Increment amount of times in formation and update with new runs
         vars[aircraft.label] = ((runs - 1) * vars[aircraft.label] + 1.) / runs
     else:
         # Only adjust average to new amount of runs

@@ -65,6 +65,8 @@ config.axes_y = [{
     'yticks_formatter' : abs_delay_fuel_formatter
 }]
 
+
+
 font = {'size' : 24}
 matplotlib.rc('font', **font)
 
@@ -120,7 +122,7 @@ def run():
             else:
                 horizontal = x[0,:]
 
-            plt.plot(horizontal, y[i,:], label = r'$H=%d$' % line)
+            plt.plot(horizontal, y[i,:], label = config.legend % line)
             i += 1
     
         plt.grid(True)

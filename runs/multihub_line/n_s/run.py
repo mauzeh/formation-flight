@@ -8,11 +8,12 @@ import math
 from lib.geo.point import Point
 
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
+config.legend = r'$H=%d$'
 
 def get_matrix():
     
-    x = np.array([1,2,4,8])
-    y = np.linspace(0, 30, 100)
+    x = np.array([1,2,3,6])
+    y = np.linspace(0, 45, 100)
     
     return x,y
 

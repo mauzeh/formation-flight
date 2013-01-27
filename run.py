@@ -19,13 +19,14 @@
 #from runs.visual_feedback.europe import run
 #from runs.visual_feedback.usa import run
 
-#from runs.multihub_line.n_dt import run
-#from runs.multihub_line.n_s import run
-from runs.multihub_line.n_alpha import run
+#from runs.multihub_line.alpha_s import run
+#from runs.multihub_line.n_alpha import run
+from runs.multihub_line.n_dt import run
 #from runs.multihub_line.n_phi import run
+#from runs.multihub_line.n_pmin import run
+#from runs.multihub_line.n_s import run
 #from runs.multihub_line.n_z import run
 #from runs.multihub_line.n_z_zoomed import run
-#from runs.multihub_line.n_pmin import run
 
 if __name__ == '__main__':
     run.execute()
