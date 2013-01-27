@@ -36,7 +36,7 @@ def plot():
     from .. import plot as plt
     
     config.axis_x = {
-        'name' : r'Probability criterium $P_{min}$',
+        'name' : r'Probability criterium $C_{min}$',
         'column' : 'config_min_P'
     }
     

@@ -21,7 +21,7 @@ def run():
     y = data[:, tsv_get_column_index(data_file, 'fuel_saved')]
     
     plt.title('Fuel Savings with Calibrated Flight List')
-    plt.xlabel(r'Minimum Formation Probability $P_{min}$')
+    plt.xlabel(r'Formation Suitability Criterium $C_{min}$')
     plt.ylabel(r'Fuel Saved $S_f$')
     
     plt.plot(x, y)

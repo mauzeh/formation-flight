@@ -65,8 +65,6 @@ config.axes_y = [{
     'yticks_formatter' : abs_delay_fuel_formatter
 }]
 
-
-
 font = {'size' : 24}
 matplotlib.rc('font', **font)
 
@@ -101,13 +99,7 @@ def run():
         
         nx = len(config.x)
         ny = len(config.y)
-    
-        #    
-        #print 'variable: %s, nx = %d, ny = %d, count z = %d. z = %s' % (
-        #    axis_z['column'],
-        #    nx, ny, len(z), z
-        #)
-        #
+
         x = x.reshape(nx, ny)
         y = y.reshape(nx, ny)
         
@@ -131,11 +123,6 @@ def run():
             loc='upper center',
             bbox_to_anchor=(0.5,-0.15),
             ncol = 2
-        )
-        fig.savefig(
-            'samplefigure.pdf',
-            bbox_extra_artists=(lgd,),
-            bbox_inches='tight'
         )
 
         fig_path = '%s/plot_%s.pdf' % (config.sink_dir, axis_y['column'])

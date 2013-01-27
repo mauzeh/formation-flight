@@ -9,7 +9,7 @@ config.axis_x = {
     'column' : 'config_count_hubs'
 }
 config.axis_y = {
-    'name' : r'$P_{min}$',
+    'name' : r'$C_{min}$',
     'column' : 'config_min_P'
 }
 

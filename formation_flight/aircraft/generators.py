@@ -68,6 +68,11 @@ def get_via_stdin():
         departure_time = departure_time +\
             random.uniform(-1 * config.dt, config.dt)
         departure_time = max(0, departure_time)
+        
+        p('debug', 'sched: %d, real: %d' % (
+            departure_time_scheduled,
+            departure_time
+        ))
 
         aircraft = Aircraft(
             label = label,

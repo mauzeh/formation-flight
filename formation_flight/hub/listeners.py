@@ -1,11 +1,16 @@
 """Hub listeners capture hub aircraft flow rates"""
 
+import os
 import config
 
 from lib import sim
 from lib.debug import print_line as p
 from lib.debug import print_dictionary
 from lib.util import round_float
+from lib.util import make_sure_path_exists
+
+import matplotlib.pyplot as plt
+import matplotlib
 
 import numpy as np
 import math
@@ -13,7 +18,8 @@ import math
 vars = {}
 interval_length = 30
 
-import matplotlib.pyplot as plt
+font = {'size' : 20}
+matplotlib.rc('font', **font)
 
 def init(hubs):
 
@@ -72,7 +78,7 @@ def plot_flow_rate(data):
         
         time_labels.append('%02d:%02d' % (hours, minutes))
 
-    #plt.rc(('xtick.major', 'ytick.major'), pad = 10)
+    plt.rc(('xtick.major', 'ytick.major'), pad = 10)
     
     plt.bar(
         timestamps,
@@ -82,32 +88,45 @@ def plot_flow_rate(data):
         color = '#999999'
     )
     
-    plt.title(r'Traffic Density at hub $(P_{min}=%s)$' % config.min_P)
-    plt.xlabel(r'Time of day (UTC)')#, labelpad = 20)
-    plt.ylabel(r'Number of flights')#, labelpad = 20)
+    t = plt.title(r'Traffic Density at hub ($C_{min}=%s$)' % config.min_P)
+    t.set_y(1.03) 
+    plt.subplots_adjust(top = 0.85, bottom = 0.2) 
+    
+    plt.xlabel(r'Time of day (UTC)', labelpad = 10)
+    plt.ylabel(r'Number of flights', labelpad = 5)
     
     plt.xlim(0, 1440)
     plt.ylim(0, 40)
     
-    plt.xticks(
+    xt = plt.xticks(
         [0,
-         180,
-         360,
-         540,
+         240,
+         480,
          720,
-         900,
-         1080,
-         1260,
+         960,
+         1200,
          1440],
         ['00:00',
-         '03:00',
-         '06:00',
-         '09:00',
+         '04:00',
+         '08:00',
          '12:00',
-         '15:00',
+         '16:00',
          '18:00',
-         '21:00',
+         '22:00',
          '00:00']
     )
     
-    plt.show()
+    fig_path = '%s/plot_%s.pdf' % (
+        config.sink_dir,
+        str(config.min_P).replace('.','_')
+    )
+    fig_path = fig_path.replace('/runs/', '/plots/')
+    fig_path = fig_path.replace('/sink/', '/')
+    
+    make_sure_path_exists(os.path.dirname(fig_path))
+    
+    #plt.show()
+    plt.savefig(
+        fig_path,
+        bbox_inches='tight'
+    )

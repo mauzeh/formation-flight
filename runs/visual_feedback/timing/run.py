@@ -25,16 +25,21 @@ import numpy as np
 
 from .. import run
 
-config.count_hubs = 2
-config.min_P = 0.12
+config.count_hubs = 1
+config.min_P = 0.95
 config.dt = 0
-config.Z = 0.1
+config.Z = 0.25
 config.phi_max = 15
 config.etah_slack = 30
 
 config.map_dimensions = {
-    'lat' : [ 35., 70.],
-    'lon' : [-20., 20.]
+    'lat' : [ 0., 70.],
+    'lon' : [-130., 30.]
+}
+
+config.map = {
+    'parallels' : np.arange(0, 90, 20),
+    'meridians' : np.arange(-180, 180, 45)
 }
 
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
@@ -51,25 +56,9 @@ def create_segments(flights):
     }
 
     for aircraft in flights:
-        
-        # Temp for timing analysis (no formations yet)
-        # We place these segment in the formation var so that the lines are
-        # nice and green
-        #segments['formation'].append(Segment(aircraft.origin, aircraft.hub))
-        #segments['formation'].append(Segment(aircraft.hub, aircraft.destination))
-        #return
-        
-        if hasattr(aircraft, 'formation'):
-            segments['formation'].append(Segment(aircraft.origin, aircraft.hub))
-            segments['formation'].append(Segment(aircraft.hub, aircraft.hookoff_point))
-            segments['formation'].append(Segment(aircraft.hookoff_point, aircraft.destination))
-        else:
-            # Note: not all aircraft fly via the hub. If their origin is within the
-            # lock area, they fly directly to the destination
-            route = Route(aircraft.waypoints_passed)
-            for segment in route.segments:
-                segments['solo'].append(segment)
-    
+        segments['benchmark'].append(Segment(aircraft.origin, aircraft.hub))
+        segments['benchmark'].append(Segment(aircraft.hub, aircraft.destination))
+
     return segments
 
 def execute():
@@ -87,10 +76,5 @@ def execute():
 
     make_sure_path_exists(os.path.dirname(fig_path))
     
-    plt.title(r'$H=%d$, $Z=%.2f$, $S_f=%.2f$' % (
-        config.count_hubs,
-        config.Z,
-        statistics.vars['formation_success_rate']
-    ))
-
+    #plt.show()
     plt.savefig(fig_path, bbox_inches='tight')

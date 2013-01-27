@@ -15,8 +15,10 @@ from formation_flight import statistics
 import config
 import os
 
+config.sink_dir = '%s/sink' % os.path.dirname(__file__)
+
 config.count_hubs = 1
-config.min_P = 0.95
+config.min_P = 0
 config.dt = 0
 # Important otherwise flights are synchronized leading to wrong results
 config.etah_slack = 0 

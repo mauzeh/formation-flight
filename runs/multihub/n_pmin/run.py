@@ -30,3 +30,6 @@ def execute():
 
             config.min_P = value
             run.single_run()
+
+def plot():
+    print 'not yet implemented'

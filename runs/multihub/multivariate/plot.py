@@ -75,7 +75,14 @@ def run():
     axis_x = config.axis_x
     axis_y = config.axis_y
 
+    i = 0
     for axis_z in config.interesting_z_axes:
+        
+        i += 1
+        
+        print 'Plotting %s (%d of %d)' % (
+            axis_z['column'], i, len(config.interesting_z_axes)
+        )
         
         plt.figure()
     

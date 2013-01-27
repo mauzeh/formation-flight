@@ -26,16 +26,30 @@ import numpy as np
 from .. import run
 from ..europe.run import create_segments
 
+# Use this for the pre calib run
+#config.count_hubs = 1
+#config.min_P = 0
+#config.dt = 0
+#config.Z = 0.25
+#config.phi_max = 45
+#config.etah_slack = 30
+
+# Use this for the post-calib run
 config.count_hubs = 1
 config.min_P = 0.95
-config.dt = 0
-config.Z = 0.98
-config.phi_max = 15
-config.etah_slack = 30
+config.dt = 30
+config.Z = 0.25
+config.phi_max = 5
+config.etah_slack = 10
 
 config.map_dimensions = {
-    'lat' : [ 15., 60.],
-    'lon' : [-130., -60.]
+    'lat' : [ 0., 70.],
+    'lon' : [-130., 40.]
+}
+
+config.map = {
+    'parallels' : np.arange(0, 90, 20),
+    'meridians' : np.arange(-180, 180, 45)
 }
 
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
@@ -51,17 +65,12 @@ def execute():
 
     plt, ax = run.render(segments)
 
-    name = 'count_hubs_%d' % config.count_hubs
+    name = str(config.min_P).replace('.','_')
     fig_path = '%s/plot_%s.pdf' % (config.sink_dir, name)
     fig_path = fig_path.replace('/runs/', '/plots/')
     fig_path = fig_path.replace('/sink/', '/')
 
     make_sure_path_exists(os.path.dirname(fig_path))
     
-    plt.title(r'$H=%d$, $Z=%.2f$, $S_f=%.2f$' % (
-        config.count_hubs,
-        config.Z,
-        statistics.vars['formation_success_rate']
-    ))
-
     plt.savefig(fig_path, bbox_inches='tight')
+    #plt.show()

@@ -62,9 +62,9 @@ def run_graph():
                 count += 1
         y.append(count)
     
-    plt.title(r'Formation Probability')
+    plt.title(r'Formation Suitability')
     plt.ylabel(r'Number of aircraft')
-    plt.xlabel(r'Criterium $P_{min}$')
+    plt.xlabel(r'Suitability Criterium $C_{min}$')
     plt.plot(x, y)
     #plt.show()
     

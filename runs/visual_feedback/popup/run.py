@@ -24,53 +24,24 @@ import os
 import numpy as np
 
 from .. import run
+from ..europe.run import create_segments
 
-config.count_hubs = 2
-config.min_P = 0.12
+config.count_hubs = 1
+config.min_P = 0
 config.dt = 0
-config.Z = 0.1
-config.phi_max = 15
-config.etah_slack = 30
+config.Z = 0.25
+config.phi_max = 5
+config.etah_slack = 5
 
 config.map_dimensions = {
-    'lat' : [ 35., 70.],
-    'lon' : [-20., 20.]
+    'lat' : [ 0., 70.],
+    'lon' : [-130., 40.]
 }
 
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 
 font = {'size' : 20}
 matplotlib.rc('font', **font)
-
-def create_segments(flights):
-    
-    segments = {
-        'benchmark' : [],
-        'formation' : [],
-        'solo'      : []
-    }
-
-    for aircraft in flights:
-        
-        # Temp for timing analysis (no formations yet)
-        # We place these segment in the formation var so that the lines are
-        # nice and green
-        #segments['formation'].append(Segment(aircraft.origin, aircraft.hub))
-        #segments['formation'].append(Segment(aircraft.hub, aircraft.destination))
-        #return
-        
-        if hasattr(aircraft, 'formation'):
-            segments['formation'].append(Segment(aircraft.origin, aircraft.hub))
-            segments['formation'].append(Segment(aircraft.hub, aircraft.hookoff_point))
-            segments['formation'].append(Segment(aircraft.hookoff_point, aircraft.destination))
-        else:
-            # Note: not all aircraft fly via the hub. If their origin is within the
-            # lock area, they fly directly to the destination
-            route = Route(aircraft.waypoints_passed)
-            for segment in route.segments:
-                segments['solo'].append(segment)
-    
-    return segments
 
 def execute():
 
@@ -93,4 +64,4 @@ def execute():
         statistics.vars['formation_success_rate']
     ))
 
-    plt.savefig(fig_path, bbox_inches='tight')
+    plt.show()
