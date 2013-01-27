@@ -8,6 +8,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 
+def abs_delay_fuel_formatter(locs, labels):
+    return map(lambda x: "%.1f" % x, locs*1e-6)
+
+def fuel_saved_formatter(locs, labels):
+    return map(lambda x: "%.1f" % x, locs*1e-6)
+
+def distance_flown_formatter(locs, labels):
+    return map(lambda x: "%d" % x, locs*1e-3)
+
 config.axis_x = {
     'name' : r'Slack $s$',
     'column' : 'config_etah_slack'
@@ -16,8 +25,9 @@ config.axes_y = [{
     'name' : 'Distance Penalty',
     'column' : 'distance_penalty'
 },{
-    'name' : r'Distance Flown [NM]',
+    'name' : r'Distance Flown [$10^3$ NM]',
     'column' : 'distance_total',
+    'yticks_formatter' : distance_flown_formatter
 },{
     'name' : r'Distance Success Rate $S_d$',
     'column' : 'distance_success_rate',
@@ -31,41 +41,43 @@ config.axes_y = [{
     'name' : 'Formation Count',
     'column' : 'formation_count'
 },{
+    'name' : 'Formation Aircraft Count',
+    'column' : 'formation_aircraft_count'
+},{
     'name' : 'Fuel Saved [%]',
     'column' : 'fuel_saved'
 },{
-    'name' : 'Fuel Saved [kg]',
-    'column' : 'fuel_saved_abs'
+    'name' : 'Fuel Saved [$10^6$ kg]',
+    'column' : 'fuel_saved_abs',
+    'yticks_formatter' : fuel_saved_formatter
 },{
-    'name' : 'Fuel Saved (Without Delay Costs)',
-    'column' : 'fuel_saved_disregard_delay'
+    'name' : 'Fuel Saved (Without Delay) [%]',
+    'column' : 'fuel_saved_disregard_delay',
 },{
     'name' : 'Average Hub Delay [min]',
     'column' : 'hub_delay_avg'
 },{
-    'name' : 'Delay Fuel [kg]',
-    'column' : 'fuel_delay'
-},{
-    'name' : r'$Q_{avg}$',
+    'name' : r'Hook-off point location $Q_{avg}$',
     'column' : 'Q_avg'
 },{
-    'name' : 'Delay Fuel [kg]',
-    'column' : 'fuel_delay'
+    'name' : r'Delay Fuel [$10^6$ kg]',
+    'column' : 'fuel_delay',
+    'yticks_formatter' : abs_delay_fuel_formatter
 }]
 
 font = {'size' : 24}
 matplotlib.rc('font', **font)
 
 def run():
-    
+
     data_file = '%s/latest.tsv' % config.sink_dir
-    
+
     data = np.loadtxt(
         open(data_file, 'rb'),
         delimiter = "\t",
         skiprows = 1
     )
-    
+
     j = 0
     for axis_y in config.axes_y:
         
@@ -127,7 +139,17 @@ def run():
         fig_path = '%s/plot_%s.pdf' % (config.sink_dir, axis_y['column'])
         fig_path = fig_path.replace('/runs/', '/plots/')
         fig_path = fig_path.replace('/sink/', '/')
+        
         make_sure_path_exists(os.path.dirname(fig_path))
+        
+        locs, labels = plt.yticks()
+        
+        try:
+            f = axis_y['yticks_formatter']
+            plt.yticks(locs, f(locs, labels))
+        except KeyError:
+            pass
+        
         plt.savefig(
             fig_path,
             bbox_extra_artists=(lgd,),

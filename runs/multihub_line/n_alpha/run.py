@@ -13,7 +13,7 @@ def get_matrix():
     
     x = np.array([1,2,4,8])
     y = np.linspace(0, 1, 100)
-
+    
     return x,y
 
 def execute():
@@ -27,7 +27,7 @@ def execute():
     
         for value in y:
 
-            config.min_P = value
+            config.alpha = value
             run.single_run()
 
 def plot():
@@ -35,8 +35,8 @@ def plot():
     from .. import plot as plt
     
     config.axis_x = {
-        'name' : r'Probability criterium $P_{min}$',
-        'column' : 'config_min_P'
+        'name' : r'Formation Discount $\alpha$',
+        'column' : 'config_alpha'
     }
     
     config.x, config.y = get_matrix()

@@ -21,8 +21,9 @@
 
 #from runs.multihub_line.n_dt import run
 #from runs.multihub_line.n_s import run
+from runs.multihub_line.n_alpha import run
 #from runs.multihub_line.n_phi import run
-from runs.multihub_line.n_z import run
+#from runs.multihub_line.n_z import run
 #from runs.multihub_line.n_z_zoomed import run
 #from runs.multihub_line.n_pmin import run
 
