@@ -344,7 +344,8 @@ def execute():
     print '--ANALYTICAL OUTPUT RESULTS--'
     print r'$S_f$ & 0.6 & 0.6 \\'
     print r'$S_d$ & %.4f & %.4f \\' % (S_d, S_d)
-    print r'$F_s$ & %.4f & %.4f \\' % (F_s, F_s)
+    print r'$F_s$ & FILLIN & FILLIN \\'
+    print r'$F^{rel}_s$ & %.4f & %.4f \\' % (F_s, F_s)
     print r'$p_{tot}$ & %.4f & %.4f \\' % (p_tot, p_tot)
     
 
