@@ -28,69 +28,108 @@ config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 font = {'size' : 20}
 matplotlib.rc('font', **font)
 
+def fuel_saved_abs_formatter(locs, labels):
+    return map(lambda x: "%.1f" % x, locs*1e-6)
+
 def execute():
     
     sink.init(config.sink_dir)
     
-    sinkdata = []
+    reldata = []
+    absdata = []
     
-    runs = range(0, 10)
-    hubs = np.arange(1, 11)
+    runs = range(0, 25)
+    config.simhubs = np.arange(1, 11)
     
-    for n in hubs:
+    for n in config.simhubs:
 
         fuelsavings_list = []
+        fuelsavings_abs_list = []
         
         for run in runs:
 
             config.count_hubs = n
-            fuel_savings = single_run()
+            fuel_savings, fuel_savings_abs = single_run()
             
             fuelsavings_list.append(fuel_savings)
+            fuelsavings_abs_list.append(fuel_savings_abs)
 
-        sinkdata.append(np.array(fuelsavings_list))
+        reldata.append(np.array(fuelsavings_list))
+        absdata.append(np.array(fuelsavings_abs_list))
 
     print '#################################'
     print '############ NOTICE #############'
     print 'This run has a built-in plotter.'
     print '#################################'
     
-    means = []
-    errors = []
-    for hub_savings_list in sinkdata:
-        means.append(np.mean(hub_savings_list))
-        errors.append(np.std(hub_savings_list))
+    for i in range(0, len(reldata)):
         
-    for i in range(0, len(means)):
-        print r'%d & %.4f & %.4f \\' % (
-            i+1, means[i], errors[i]
+        abs_mean = np.mean(absdata[i])
+        abs_std  = np.std(absdata[i])
+
+        rel_mean = np.mean(reldata[i])
+        rel_std  = np.std(reldata[i])
+        
+        print r'%d & %.4f & %.4f & %d & %d \\' % (
+            i+1,
+            rel_mean, rel_std,
+            abs_mean, abs_std
         )
     
+    do_plot(
+        absdata,
+        filename = 'fuel_saved_abs',
+        title = r'Absolute fuel saved $F_s$ [$10^6$ kg]',
+        ylabel = r'Absolute fuel saved $F_s$ [$10^6$ kg]',
+        formatter = fuel_saved_abs_formatter
+    )
+
+    do_plot(
+        reldata,
+        filename = 'fuel_saved_rel',
+        title = r'Relative fuel saved $F^{rel}_s$ [%]',
+        ylabel = r'Relative fuel saved $F^{rel}_s$ [%]'
+    )
+    
+def do_plot(data, title, ylabel, filename, formatter = None):
+    
+    means = []
+    errors = []
+    for hub_savings_list in data:
+        means.append(np.mean(hub_savings_list))
+        errors.append(np.std(hub_savings_list))
+
     means = np.array(means)
     errors = np.array(errors)
     
+    plt.figure()
     plt.grid(True)
     
     (mean_line, caps, _) = plt.errorbar(
         np.arange(1, len(means)+1),
         means, yerr = errors, elinewidth = 2
     )
-    
+
     mean_line.set_color('#000000')
     
     for cap in caps:
         cap.set_markeredgewidth(2)
     
     plt.xlim(0.5, len(means)+.5)
-    plt.xticks(hubs)
+    plt.xticks(config.simhubs)
     plt.ylim(0, max(means)*1.1)
-    plt.title(r'Fuel Saved')
-    plt.xlabel(r'Amount of hubs $H$')
-    plt.ylabel(r'Fuel Saved $F_s$ [%]')
+    plt.title(title)
+    plt.xlabel(r'Number of hubs $H$')
+    plt.ylabel(ylabel)
     
-    fig_path = '%s/plot_%s.pdf' % (config.sink_dir, 'fuel_saved')
+    if formatter is not None:
+        locs, labels = plt.yticks()
+        plt.yticks(locs, formatter(locs, labels))
+    
+    fig_path = '%s/%s.pdf' % (config.sink_dir, filename)
     fig_path = fig_path.replace('/runs/', '/plots/')
     fig_path = fig_path.replace('/sink/', '/')
+    
     make_sure_path_exists(os.path.dirname(fig_path))
     plt.savefig(
         fig_path,
@@ -120,4 +159,4 @@ def single_run():
 
     debug.print_dictionary(statistics.vars)
     
-    return statistics.vars['fuel_saved']
+    return statistics.vars['fuel_saved'], statistics.vars['fuel_saved_abs']

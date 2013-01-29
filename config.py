@@ -32,7 +32,7 @@ model = {
     'c_T'  : .6,
     'L_D'  : 17,
     #'W_1' : 297550 - 14000 # B777 Maxweight at start of cruise
-    'W_1'  : 300000
+    'W_1'  : 200000
 }
 
 # When drawing a map, use these dimensions unless overridden

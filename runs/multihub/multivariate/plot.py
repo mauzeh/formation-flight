@@ -128,11 +128,14 @@ def run():
         plt.colorbar()
         
         #plt.title(r'%s ($n=%d$)' % (axis_z['name'], config.count_hubs))
-        plt.title(r'%s' % axis_z['name'])
+        t = plt.title(r'%s' % axis_z['name'])
+        t.set_y(1.03)
         
         fig_path = '%s/plot_%s.pdf' % (config.sink_dir, axis_z['column'])
         fig_path = fig_path.replace('/runs/', '/plots/')
         fig_path = fig_path.replace('/sink/', '/')
         make_sure_path_exists(os.path.dirname(fig_path))
+        print fig_path
         #plt.show()
+        #return
         plt.savefig(fig_path)

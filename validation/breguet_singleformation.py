@@ -94,7 +94,7 @@ def execute():
             'V'    : 500,
             'c_T'  : .56,
             'L_D'  : 19.26,
-            'MTOW' : 300000
+            'MTOW' : 200000
         },
         '767'  : {
             'V'    : 500,
@@ -121,20 +121,20 @@ def execute():
         'route'    : Route([Waypoint('DUS'), Waypoint('IAD')]),
         'discount' : 0,
     },{
-        'aircraft' : '767',
+        'aircraft' : '777',
         'route'    : Route([Waypoint('BRU'), Waypoint('ORD')]),
         'discount' : config.alpha
     },{
-        'aircraft' : '330',
+        'aircraft' : '777',
         'route'    : Route([Waypoint('AMS'), Waypoint('IAH')]),
         'discount' : config.alpha
     }]
 
     solo = [{
-        'aircraft' : '767',
+        'aircraft' : '777',
         'route'    : Route([Waypoint('LHR'), Waypoint('ATL')])
     },{
-        'aircraft' : '340',
+        'aircraft' : '777',
         'route'    : Route([Waypoint('FRA'), Waypoint('SFO')])
     }]
     

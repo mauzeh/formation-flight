@@ -58,10 +58,11 @@ def execute():
 
     make_sure_path_exists(os.path.dirname(fig_path))
     
-    plt.title(r'$H=%d$, $Z=%.2f$, $S_f=%.2f$' % (
+    t = plt.title(r'$H=%d$, $Z=%.2f$, $S_f=%.2f$' % (
         config.count_hubs,
         config.Z,
         statistics.vars['formation_success_rate']
     ))
+    t.set_y(1.03)
 
     plt.savefig(fig_path, bbox_inches='tight')

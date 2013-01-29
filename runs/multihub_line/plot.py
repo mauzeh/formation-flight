@@ -118,7 +118,10 @@ def run():
             i += 1
     
         plt.grid(True)
-        plt.title(r'%s' % axis_y['name'])
+        t = plt.title(r'%s' % axis_y['name'])
+        t.set_y(1.03)
+        #plt.subplots_adjust(top = 0.85, bottom = 0.2) 
+        
         lgd = ax.legend(
             loc='upper center',
             bbox_to_anchor=(0.5,-0.15),
@@ -138,6 +141,9 @@ def run():
             plt.yticks(locs, f(locs, labels))
         except KeyError:
             pass
+        
+        #plt.show()
+        #return
         
         plt.savefig(
             fig_path,

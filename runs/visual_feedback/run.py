@@ -90,15 +90,6 @@ def render(segments):
         m.plot(x, y, 'bo', ms = 4)
         x, y = m(segment.end.lon, segment.end.lat)
         m.plot(x, y, 'bo', ms = 4)
-    
-    for segment in segments['solo']:
-        m.drawgreatcircle(segment.start.lon, segment.start.lat,
-                          segment.end.lon, segment.end.lat,
-                          linewidth = 1, color='r')
-        x, y = m(segment.start.lon, segment.start.lat)
-        m.plot(x, y, 'ro', ms = 4)
-        x, y = m(segment.end.lon, segment.end.lat)
-        m.plot(x, y, 'ro', ms = 4)
 
     for segment in segments['formation']:
         p('geo-debug', 'Start to plot a formation trajectory')
@@ -115,6 +106,15 @@ def render(segments):
         m.plot(x, y, 'go', ms = 4)
         p('geo-debug', 'Done with plotting a formation trajectory')
     
+    for segment in segments['solo']:
+        m.drawgreatcircle(segment.start.lon, segment.start.lat,
+                          segment.end.lon, segment.end.lat,
+                          linewidth = 1, color='r')
+        x, y = m(segment.start.lon, segment.start.lat)
+        m.plot(x, y, 'ro', ms = 4)
+        x, y = m(segment.end.lon, segment.end.lat)
+        m.plot(x, y, 'ro', ms = 4)
+
     m.drawcoastlines(color='#8f8457')
     m.fillcontinents(color='#f5f0db')
     m.drawcountries(color='#a9a06d')

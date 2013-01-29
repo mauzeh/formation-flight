@@ -40,7 +40,7 @@ config.plots = [
         #'levels' : np.arange(-.05, 0.15, 0.01),
     },{
         'column' : 'distance_penalty',
-        'title'  : r'Distance Penalty $P_d$',
+        'title'  : r'Distance Penalty $D_p$',
         'levels' : 20,
         #'levels' : 20,
     }

@@ -25,10 +25,21 @@ import numpy as np
 
 from .. import run
 
+# Single hub case
+config.count_hubs = 1
+config.min_P = 0.3
+config.dt = 0
+config.Z = 0.12
+config.phi_max = 15
+config.etah_slack = 30
+
+# Dual hub case
+# Call this with:
+# $ cat data/calibrated.tsv | egrep -v '(AGP)' | ./run.py
 config.count_hubs = 2
 config.min_P = 0.12
 config.dt = 0
-config.Z = 0.1
+config.Z = 0.12
 config.phi_max = 15
 config.etah_slack = 30
 
@@ -92,5 +103,5 @@ def execute():
         config.Z,
         statistics.vars['formation_success_rate']
     ))
-
+    #plt.show()
     plt.savefig(fig_path, bbox_inches='tight')
