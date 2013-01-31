@@ -40,9 +40,6 @@ config.map_dimensions = {
 
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 
-font = {'size' : 20}
-matplotlib.rc('font', **font)
-
 def execute():
 
     planes = run.single_run()

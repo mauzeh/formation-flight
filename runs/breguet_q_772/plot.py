@@ -28,9 +28,6 @@ def run():
         'L_D'  : 19.26
     }
     
-    matplotlib.rc('font', **font)
-    matplotlib.rc('mathtext', default='sf')
-    
     # Split the segment hub-destination up into a trunk segment and a
     # cross segment
     (trunk, cross) = project_segment(trunk_deviation, hub_to_destination)

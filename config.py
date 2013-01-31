@@ -70,3 +70,10 @@ debug.print_severities = [
     #'warning',
     'critical'
 ]
+
+import matplotlib
+matplotlib.rcParams['font.size'] = 18.
+matplotlib.rcParams['font.family'] = 'serif'
+matplotlib.rcParams['axes.labelsize'] = 16.
+matplotlib.rcParams['xtick.labelsize'] = 16.
+matplotlib.rcParams['ytick.labelsize'] = 16.

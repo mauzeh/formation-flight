@@ -58,9 +58,6 @@ config.plots = [
 
 #print data_file
 
-font = {'size' : 15}
-matplotlib.rc('font', **font)
-
 def run():
     
     data_file = '%s/latest.tsv' % config.sink_dir

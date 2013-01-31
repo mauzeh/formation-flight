@@ -22,9 +22,6 @@ config.axis_y = {
 
 config.output_nx, config.output_ny = get_matrix_dimensions()
 
-font = {'size' : 20}
-matplotlib.rc('font', **font)
-
 config.interesting_z_axes = [{
     'name' : 'Average Formation Size',
     'column' : 'avg_formation_size'

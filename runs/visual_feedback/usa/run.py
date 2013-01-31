@@ -40,9 +40,6 @@ config.map_dimensions = {
 
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 
-font = {'size' : 20}
-matplotlib.rc('font', **font)
-
 def execute():
 
     planes = run.single_run()
@@ -63,6 +60,6 @@ def execute():
         config.Z,
         statistics.vars['formation_success_rate']
     ))
-    t.set_y(1.03)
+    #t.set_y(1.03)
 
     plt.savefig(fig_path, bbox_inches='tight')

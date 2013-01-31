@@ -20,9 +20,6 @@ config.axis_y = {
     'column' : 'config_lock_time'
 }
 
-font = {'size' : 20}
-matplotlib.rc('font', **font)
-
 config.interesting_z_axes = [{
     'name' : 'Distance Penalty',
     'column' : 'distance_penalty'
@@ -129,7 +126,7 @@ def run():
         
         #plt.title(r'%s ($n=%d$)' % (axis_z['name'], config.count_hubs))
         t = plt.title(r'%s' % axis_z['name'])
-        t.set_y(1.03)
+        #t.set_y(1.03)
         
         fig_path = '%s/plot_%s.pdf' % (config.sink_dir, axis_z['column'])
         fig_path = fig_path.replace('/runs/', '/plots/')

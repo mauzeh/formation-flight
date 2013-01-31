@@ -18,9 +18,6 @@ import math
 vars = {}
 interval_length = 30
 
-font = {'size' : 20}
-matplotlib.rc('font', **font)
-
 def init(hubs):
 
     assert len(hubs) > 0
@@ -89,8 +86,9 @@ def plot_flow_rate(data):
     )
     
     t = plt.title(r'Traffic Density at hub ($C_{min}=%s$)' % config.min_P)
-    t.set_y(1.03) 
-    plt.subplots_adjust(top = 0.85, bottom = 0.2) 
+    #t.set_y(1.03) 
+    plt.subplots_adjust(top = 0.85, bottom = 0.2)
+    plt.grid()
     
     plt.xlabel(r'Time of day (UTC)', labelpad = 10)
     plt.ylabel(r'Number of flights', labelpad = 5)

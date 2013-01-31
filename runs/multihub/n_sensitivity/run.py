@@ -25,9 +25,6 @@ import numpy as np
 
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 
-font = {'size' : 20}
-matplotlib.rc('font', **font)
-
 def fuel_saved_abs_formatter(locs, labels):
     return map(lambda x: "%.1f" % x, locs*1e-6)
 
@@ -79,16 +76,16 @@ def execute():
     do_plot(
         absdata,
         filename = 'fuel_saved_abs',
-        title = r'Absolute fuel saved $F_s$ [$10^6$ kg]',
-        ylabel = r'Absolute fuel saved $F_s$ [$10^6$ kg]',
+        title = r'Fuel Saved [$10^6$ kg]',
+        ylabel = r'Fuel Saved [$10^6$ kg]',
         formatter = fuel_saved_abs_formatter
     )
 
     do_plot(
         reldata,
         filename = 'fuel_saved_rel',
-        title = r'Relative fuel saved $F^{rel}_s$ [%]',
-        ylabel = r'Relative fuel saved $F^{rel}_s$ [%]'
+        title = r'Fuel Saved [%]',
+        ylabel = r'Fuel Saved [%]'
     )
     
 def do_plot(data, title, ylabel, filename, formatter = None):

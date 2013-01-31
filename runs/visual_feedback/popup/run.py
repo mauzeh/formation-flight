@@ -27,11 +27,11 @@ from .. import run
 from ..europe.run import create_segments
 
 config.count_hubs = 1
-config.min_P = 0
+config.min_P = 0.6
 config.dt = 0
 config.Z = 0.25
-config.phi_max = 5
-config.etah_slack = 5
+config.phi_max = 15
+config.etah_slack = 15
 
 config.map_dimensions = {
     'lat' : [ 0., 70.],
@@ -39,9 +39,6 @@ config.map_dimensions = {
 }
 
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
-
-font = {'size' : 20}
-matplotlib.rc('font', **font)
 
 def execute():
 
@@ -58,11 +55,4 @@ def execute():
 
     make_sure_path_exists(os.path.dirname(fig_path))
     
-    t = plt.title(r'$H=%d$, $Z=%.2f$, $S_f=%.2f$' % (
-        config.count_hubs,
-        config.Z,
-        statistics.vars['formation_success_rate']
-    ))
-    t.set_y(1.03)
-
-    plt.show()
+    plt.savefig(fig_path, bbox_inches='tight')

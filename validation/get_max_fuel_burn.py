@@ -9,9 +9,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 
-font = {'size' : 18}
-matplotlib.rc('font', **font)
-
 W_1 = 250000
 
 model = {

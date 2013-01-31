@@ -7,9 +7,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 
-font = {'size' : 22}
-matplotlib.rc('font', **font)
-
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 
 def run():

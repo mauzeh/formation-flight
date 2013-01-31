@@ -1,7 +1,30 @@
-This a simulation framework for the application of formation flight in commercial aviation. The simulation framework is written in Python.
+Author:
+==============================================
+This software is developed by Maurits Dekkers (bluedackers@gmail.com)
 
-It is part of a Msc thesis project at the faculty of Aerospace Engineering at Delft University of Technology.
+General information:
+==============================================
+This a simulation framework for the application of formation flight in 
+commercial aviation. The simulation framework is written in Python. It is 
+part of an M.Sc. thesis project at the faculty of Aerospace Engineering 
+at Delft University of Technology.
 
-Currently, this project is in its infantile stages and a lot is going to change.
+Requirements:
+==============================================
+- Numpy 1.5+
+- Matplotlib 1.1+
+- Basemap 1.0+
 
-It is also my first attempt at managing an open-source project. Please bear with me as I learn how to properly communicate and document the code.
+Usage:
+==============================================
+To run the simulation, perform the following command:
+
+$ cat data/calibrated.tsv | ./run.py
+
+Each time the simulation finishes a single run, the performance output 
+variables are printed to stdout.
+
+The script run.py is the main entry point of the simulation. Is accepts 
+the flight schedule as input over a Linux pipe. Numerous precalibrated run 
+scripts are available in the runs directory. To select a different run, open
+run.py and uncomment the import statement pertaining to the appropriate run.

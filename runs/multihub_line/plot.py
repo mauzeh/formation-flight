@@ -65,9 +65,6 @@ config.axes_y = [{
     'yticks_formatter' : abs_delay_fuel_formatter
 }]
 
-font = {'size' : 24}
-matplotlib.rc('font', **font)
-
 def run():
 
     data_file = '%s/latest.tsv' % config.sink_dir
@@ -109,17 +106,15 @@ def run():
         i = 0
         for line in config.x:
 
-            if axis_x['column'] == 'config_dt':
-                horizontal = x[0,:] / 20
-            else:
-                horizontal = x[0,:]
+            horizontal = x[0,:]
+            vertical = y[i,:]
 
-            plt.plot(horizontal, y[i,:], label = config.legend % line)
+            plt.plot(horizontal, vertical, label = config.legend % line)
             i += 1
     
         plt.grid(True)
         t = plt.title(r'%s' % axis_y['name'])
-        t.set_y(1.03)
+        #t.set_y(1.03)
         #plt.subplots_adjust(top = 0.85, bottom = 0.2) 
         
         lgd = ax.legend(

@@ -44,9 +44,6 @@ config.map = {
 
 config.sink_dir = '%s/sink' % os.path.dirname(__file__)
 
-font = {'size' : 20}
-matplotlib.rc('font', **font)
-
 def create_segments(flights):
     
     segments = {
