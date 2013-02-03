@@ -36,7 +36,7 @@ def plot():
     from .. import plot as plt
     
     config.axis_x = {
-        'name' : r'Departure time uncertainty $\sigma$',
+        'name' : r'Departure time uncertainty $\sigma$ [min]',
         'column' : 'config_dt'
     }
     
