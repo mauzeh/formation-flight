@@ -9,6 +9,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 
+matplotlib.rcParams['font.size'] = 15.
+matplotlib.rcParams['font.family'] = 'serif'
+matplotlib.rcParams['axes.labelsize'] = 14.
+matplotlib.rcParams['xtick.labelsize'] = 14.
+matplotlib.rcParams['ytick.labelsize'] = 14.
+
 W_1 = 250000
 
 model = {
@@ -87,8 +93,8 @@ for i in x:
         100 * y2[i-1]
     )
 
-plt.plot(x, y2, label = r'Maximum Discount $\alpha_{max}$')
-plt.plot(x, y1, label = r'Maximum Fuel Savings $F_{s,max}$')
+plt.plot(x, y2, marker = 'o', markersize = 10, label = r'Maximum Discount $\alpha_{max}$')
+plt.plot(x, y1, marker = 'o', markersize = 10, label = r'Maximum Fuel Savings $F_{s,max}$')
 
 plt.title('Upper limits on formation benefits')
 
@@ -112,40 +118,3 @@ plt.savefig('plots/upper_limits/plot.pdf')
 
 def execute():
     pass
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
