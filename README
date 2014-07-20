@@ -24,7 +24,7 @@ $ cat data/calibrated.tsv | ./run.py
 Each time the simulation finishes a single run, the performance output 
 variables are printed to stdout.
 
-The script run.py is the main entry point of the simulation. Is accepts 
+The script run.py is the main entry point of the simulation. It accepts 
 the flight schedule as input over a Linux pipe. Numerous precalibrated run 
 scripts are available in the runs directory. To select a different run, open
 run.py and uncomment the import statement pertaining to the appropriate run.
